@@ -6,6 +6,8 @@
 	</a>
 </div>
 
+<img src="https://img.shields.io/badge/license-MIT-green" alt="License">
+
 ## About Studio Link
 
 Studio Link is a SIP application to create high quality Audio over IP (AoIP) connections.
