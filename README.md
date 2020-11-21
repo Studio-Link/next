@@ -6,7 +6,9 @@
 	</a>
 </div>
 <div align="center">
-<a href="https://github.com/Studio-Link/next/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="License"></a>
+<a href="https://github.com/Studio-Link/next/blob/main/LICENSE">
+    <img src="https://img.shields.io/badge/license-MIT-green" alt="License">
+</a>
 </div>
 
 ## About Studio Link

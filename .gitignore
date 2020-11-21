@@ -1,0 +1,5 @@
+/build*
+.vscode
+
+/www/dist
+/www/node_modules
