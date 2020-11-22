@@ -4,7 +4,7 @@
       <h2 class="pl-1 font-bold text-sl-on_surface_2 text-sm">
         Local Track
       </h2>
-      <div class="flex items-center justify-center bg-sl-02dp rounded-lg shadow h-44">
+      <div class="flex items-center justify-center bg-sl-02dp rounded-lg shadow h-44 mt-1">
         <Button>
           <svg
             xmlns="http://www.w3.org/2000/svg"

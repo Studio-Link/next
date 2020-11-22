@@ -1,5 +1,12 @@
 /build*
 .vscode
 
-/www/dist
-/www/node_modules
+/webui/dist
+/webui/node_modules
+
+/re
+/rem
+/baresip
+
+/3rdparty_lib
+/3rdparty_include

@@ -4,7 +4,7 @@
     class="relative inline-block text-left z-10"
   >
     <div class="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg">
-      <div class="rounded-md bg-sl-04dp shadow-xs">
+      <div class="rounded-md  bg-sl-06dp shadow-xs">
         <div
           class="py-1"
           role="menu"

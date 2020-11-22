@@ -5,14 +5,14 @@
     @mouseenter="setActive()"
   >
     <div class="flex justify-between px-1">
-      <h2 class="font-semibold text-sl-on_surface_2 text-sm truncate pr-2">
+      <h2 class="font-semibold text-sl-disabled text-sm truncate pr-2">
         {{ getTrackName() }}
       </h2>
       <!-- <div class="font-semibold text-sm text-green-500 uppercase">Connected</div> -->
       <!-- <div class="font-semibold text-sm text-yellow-500 uppercase">Calling</div> -->
       <!-- <div class="font-semibold text-sm text-red-500 uppercase">Error</div> -->
     </div>
-    <div class="bg-sl-02dp rounded-lg shadow h-44">
+    <div class="bg-sl-02dp rounded-lg shadow h-44 mt-1">
       <div class="flex justify-end">
         <div class="flex-shrink-0 pr-2 text-right mt-1">
           <button
