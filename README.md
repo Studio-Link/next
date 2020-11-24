@@ -1,4 +1,4 @@
-# Studio Link (next generation App)
+# StudioLink (next generation App)
 
 <div align="center">
 	<a href="https://studio-link.de" target="_blank">
@@ -11,11 +11,11 @@
 </a>
 </div>
 
-## About Studio Link
+## About StudioLink
 
-Studio Link is a SIP application to create high quality Audio over IP (AoIP) connections.
+StudioLink is a SIP application to create high quality Audio over IP (AoIP) connections.
 
-## Screenshot
+## Screenshot (Preview)
 
 ![Screenshot App Next-Alpha](https://raw.githubusercontent.com/Studio-Link/next/main/doc/images/screenshot_alpha.png)
 
@@ -23,7 +23,7 @@ Studio Link is a SIP application to create high quality Audio over IP (AoIP) con
 
 Please use the prebuilt binarys at https://doku.studio-link.de/standalone/installation-standalone.html
 
-## Supported Platforms
+## Supported Platforms (planned)
 
 - Windows 64Bit
 - macOS 64Bit/arm64
@@ -33,7 +33,8 @@ Please use the prebuilt binarys at https://doku.studio-link.de/standalone/instal
 
 ## Roadmap/Release cycle
 
-Every ~3 Months a new Feature Release is planned (usually last sunday of the month).
+Every ~3 Months a new major Release is planned (usually last sunday of the month).
+In the meantime there can be several minor/patch releases (planned at short notice).
 
 To see the progress you can watch the [Roadmap](https://github.com/Studio-Link/next/projects/1)
 
