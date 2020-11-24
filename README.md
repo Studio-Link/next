@@ -15,6 +15,10 @@
 
 Studio Link is a SIP application to create high quality Audio over IP (AoIP) connections.
 
+## Screenshot
+
+![Screenshot App Next-Alpha](https://raw.githubusercontent.com/Studio-Link/next/main/doc/images/screenshot_alpha.png)
+
 ## Usage
 
 Please use the prebuilt binarys at https://doku.studio-link.de/standalone/installation-standalone.html
