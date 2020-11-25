@@ -1,32 +1,38 @@
 <template>
-  <ul class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 mb-36 sm:mb-24">
+  <ul
+    class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mb-36 sm:mb-24"
+  >
     <li class="col-span-1">
-      <h2 class="pl-1 font-bold text-sl-on_surface_2 text-sm">
-        Local Track
-      </h2>
-      <div class="flex items-center justify-center bg-sl-02dp rounded-lg shadow h-44 mt-1">
-        <Button>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-            class="h-6 mr-1"
-          >
-            <path
-              fill-rule="evenodd"
-              d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z"
-              clip-rule="evenodd"
-            />
-          </svg>
-          Select Microphone
-        </Button>
+      <h2 class="pl-1 font-bold text-sl-on_surface_2 text-sm">Local Track</h2>
+      <div class="flex mt-1">
+        <div
+          class="flex items-center justify-center bg-sl-02dp rounded-lg shadow h-44 w-full"
+        >
+          <Button>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              class="h-6 mr-1"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z"
+                clip-rule="evenodd"
+              />
+            </svg>
+            Select Microphone
+          </Button>
+        </div>
+
+        <div class="flex w-4 items-end ml-0.5 mb-px">
+          <div class="w-2 bg-green-900 rounded" style="height: 30%"></div>
+          <div class="w-px"></div>
+          <div class="w-2 bg-yellow-900 rounded" style="height: 80%"></div>
+        </div>
       </div>
     </li>
-    <RemoteTrack
-      v-for="index in remoteTracks"
-      :key="index"
-      :pkey="index"
-    />
+    <RemoteTrack v-for="index in remoteTracks" :key="index" :pkey="index" />
     <li
       v-if="!newTrackDisabled"
       class="col-span-1"
@@ -37,11 +43,17 @@
         <button
           accesskey="t"
           aria-label="Add Remote Track"
-          :class="{'text-sl-disabled': newTrackVisible, 'text-sl-01dp': !newTrackVisible}"
+          :class="{
+            'text-sl-disabled': newTrackVisible,
+            'text-sl-01dp': !newTrackVisible,
+          }"
           class="inline-flex items-center rounded-lg px-20 py-12 font-bold text-2xl leading-none uppercase tracking-wide focus:outline-none focus:text-sl-disabled"
           @focus="newTrackVisible = true"
           @focusout="newTrackVisible = false"
-          @click="newRemoteTrack(); newTrackVisible = false"
+          @click="
+            newRemoteTrack();
+            newTrackVisible = false;
+          "
         >
           <svg
             aria-hidden="true"
@@ -86,7 +98,7 @@ export default defineComponent({
         tracks.setActive(next);
         remoteTracks.value = next;
       }
-      if (!tracks.isValid(next+1)) {
+      if (!tracks.isValid(next + 1)) {
         newTrackDisabled.value = true;
       }
     }
