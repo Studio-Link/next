@@ -9,18 +9,18 @@
     "@tailwindcss/aspect-ratio": "^0.2.0",
     "@tailwindcss/forms": "^0.2.1",
     "@tailwindcss/typography": "^0.3.1",
-    "tailwindcss": "compat",
     "typeface-roboto": "0.0.75",
     "typeface-roboto-mono": "0.0.75",
-    "vue": "^3.0.2"
+    "vue": "^3.0.3"
   },
   "devDependencies": {
-    "postcss": "^7.0.35",
+    "@vue/compiler-sfc": "^3.0.3",
     "autoprefixer": "^9.8.6",
-    "@vue/compiler-sfc": "^3.0.2",
     "eslint": "^7.14.0",
     "eslint-plugin-vue": "^7.1.0",
+    "postcss": "^7.0.35",
     "prettier-eslint": "^12.0.0",
-    "vite": "^1.0.0-rc.9"
+    "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.0.1",
+    "vite": "^1.0.0-rc.13"
   }
 }

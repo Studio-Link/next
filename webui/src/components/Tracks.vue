@@ -26,9 +26,9 @@
         </div>
 
         <div class="flex w-4 items-end ml-0.5 mb-px">
-          <div class="w-2 bg-green-900 rounded" style="height: 30%"></div>
+          <div class="w-2 bg-green-500 bg-opacity-30 rounded" style="height: 30%"></div>
           <div class="w-px"></div>
-          <div class="w-2 bg-yellow-900 rounded" style="height: 80%"></div>
+          <div class="w-2 bg-yellow-300 bg-opacity-30 rounded" style="height: 80%"></div>
         </div>
       </div>
     </li>

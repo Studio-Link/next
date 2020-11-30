@@ -3,7 +3,7 @@
     <div
       class="text-right mt-4 sm:mt-0 text-sm text-sl-on_surface_2"
     >
-      v20.05.5-alpha
+      v21.01.0-next-dev
     </div>
   </div>
 </template>

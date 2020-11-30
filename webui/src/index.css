@@ -3,3 +3,9 @@
 @import 'tailwindcss/components';
 
 @import 'tailwindcss/utilities';
+
+
+/* Helper class "?" to identify elements quickly */
+.\? {
+	box-shadow: inset 1px 1px rgb(236, 15, 170), inset -1px -1px rgb(236, 15, 170);
+}
