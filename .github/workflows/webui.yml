@@ -19,5 +19,6 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: 14.x
+    - run: cd webui && npm install
     - run: cd webui && npm lint
     - run: cd webui && npm run build
