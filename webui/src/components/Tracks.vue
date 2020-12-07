@@ -77,33 +77,33 @@
 </template>
 
 <script>
-import RemoteTrack from "./RemoteTrack.vue";
-import { ref, defineComponent } from "vue";
-import { tracks } from "../states/tracks";
+import RemoteTrack from './RemoteTrack.vue'
+import { ref, defineComponent } from 'vue'
+import { tracks } from '../states/tracks'
 
 // tracks.update();
 
 export default defineComponent({
   components: {
-    RemoteTrack,
+    RemoteTrack
   },
-  setup() {
-    const newTrackVisible = ref(false);
-    const newTrackDisabled = ref(false);
-    const remoteTracks = ref(0);
+  setup () {
+    const newTrackVisible = ref(false)
+    const newTrackDisabled = ref(false)
+    const remoteTracks = ref(0)
 
-    function newRemoteTrack() {
-      let next = remoteTracks.value + 1;
+    function newRemoteTrack () {
+      const next = remoteTracks.value + 1
       if (tracks.isValid(next)) {
-        tracks.setActive(next);
-        remoteTracks.value = next;
+        tracks.setActive(next)
+        remoteTracks.value = next
       }
       if (!tracks.isValid(next + 1)) {
-        newTrackDisabled.value = true;
+        newTrackDisabled.value = true
       }
     }
 
-    return { newTrackDisabled, newTrackVisible, remoteTracks, newRemoteTrack };
-  },
-});
+    return { newTrackDisabled, newTrackVisible, remoteTracks, newRemoteTrack }
+  }
+})
 </script>

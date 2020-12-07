@@ -4,23 +4,22 @@ import "./index.css";
 import "typeface-roboto-mono";
 import Button from "./components/Button.vue";
 import { tracks } from "./states/tracks";
+import { config } from "./config";
 
-//window.ws_host = location.host;
-window.ws_host = "127.0.0.1:3333";
-
-tracks.init_websocket();
+tracks.init_websocket(config.ws_host());
 
 let handleClickOutside;
 
 const app = createApp(App);
 app.directive("click-outside", {
-  beforeMount(el, binding, vnode) {
+  beforeMount(el, binding) {
     handleClickOutside = (e) => {
       e.stopPropagation();
       const { handler, exclude } = binding.value;
       let clickedOnExcludedEl = false;
 
-      // Gives you the ability to exclude certain elements if you want, pass as array of strings to exclude
+      // Gives you the ability to exclude certain elements if you want, 
+      // pass as array of strings to exclude
       if (exclude) {
         exclude.forEach((refName) => {
           if (!clickedOnExcludedEl) {

@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
-    "build": "NODE_ENV=production vite --assetsDir assets build"
+    "build": "NODE_ENV=production vite --assetsDir assets build",
+    "lint": "eslint . --ext .ts"
   },
   "dependencies": {
     "@tailwindcss/aspect-ratio": "^0.2.0",
@@ -11,13 +12,19 @@
     "@tailwindcss/typography": "^0.3.1",
     "typeface-roboto": "0.0.75",
     "typeface-roboto-mono": "0.0.75",
-    "vue": "^3.0.3"
+    "vue": "^3.0.4"
   },
   "devDependencies": {
-    "@vue/compiler-sfc": "^3.0.3",
+    "@typescript-eslint/eslint-plugin": "^4.9.0",
+    "@typescript-eslint/parser": "^4.9.0",
+    "@vue/compiler-sfc": "^3.0.4",
     "autoprefixer": "^9.8.6",
-    "eslint": "^7.14.0",
-    "eslint-plugin-vue": "^7.1.0",
+    "eslint": "^7.15.0",
+    "eslint-config-standard": "^16.0.2",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-vue": "^7.2.0",
     "postcss": "^7.0.35",
     "prettier-eslint": "^12.0.0",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.0.1",

@@ -4,7 +4,7 @@ export const tracks = {
   state: reactive([]),
   active_debounce: Boolean,
 
-  getTrackName(id) {
+  getTrackName(id: number): string {
     if (this.state[id]) {
       return this.state[id].name;
     }
@@ -12,8 +12,8 @@ export const tracks = {
     return "error";
   },
 
-  init_websocket() {
-    this.socket = new WebSocket("ws://" + window.ws_host + "/ws_tracks");
+  init_websocket(ws_host: string): void {
+    this.socket = new WebSocket("ws://" + ws_host + "/ws_tracks");
     this.socket.onerror = function () {
       console.log("Websocket error");
     };
@@ -21,7 +21,7 @@ export const tracks = {
     this.active_debounce = false;
   },
 
-  update() {
+  update(): void {
     let i: number;
     for (i = 0; i < this.state.length; i++) {
       this.state.pop();
@@ -38,25 +38,25 @@ export const tracks = {
     this.state.push({ name: "Remote 8", active: false });
   },
 
-  isValid(id: number) {
+  isValid(id: number): boolean {
     if (this.state[id]) {
       return true;
     }
     return false;
   },
 
-  isActive(id: number) {
+  isActive(id: number): boolean {
     if (this.state[id]) {
       return this.state[id].active;
     }
     return false;
   },
 
-  debounce_recover() {
+  debounce_recover(): void {
     this.active_debounce = false;
   },
 
-  setActive(id: number) {
+  setActive(id: number): void {
     //Workaround for mouseenter event after focus change
     if (this.active_debounce) return;
     this.active_debounce = true;
