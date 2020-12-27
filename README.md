@@ -40,12 +40,17 @@ To see the progress you can watch the [Roadmap](https://github.com/Studio-Link/n
 
 ### Milestones
 
-- [v21.01.0-next-alpha - 2020-01-01](https://github.com/Studio-Link/next/milestone/1)
-- v21.03.0-next-beta - 2020-03-28
-- v21.06.0-next - TBD
+- [v21.03.0-next-alpha - 2020-03-01](https://github.com/Studio-Link/next/milestone/1)
+- v21.06.0-next-beta - TBD 
 - v21.09.0 - TBD
 - v22.01.0 - TBD
 
 ## Changelog
 
 See [CHANGELOG.md](CHANGELOG.md)
+
+
+## Community support
+
+- [English](https://github.com/Studio-Link/next/discussions)
+- [German](https://sendegate.de/c/studio-link/33)
