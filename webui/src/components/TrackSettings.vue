@@ -16,7 +16,7 @@
           </p>
           <a
             href="#"
-            class="group flex items-center px-4 py-2 text-sm leading-5 text-sl-on_surface_2 hover:bg-sl-surface focus:outline-none focus:bg-sl-surface truncate"
+            class="group flex items-center px-4 py-2 text-sm leading-5 text-sl-on_surface_2 hover:bg-sl-01dp focus:outline-none focus:bg-sl-surface truncate"
             role="menuitem"
           >
             <svg
@@ -36,7 +36,7 @@
           </a>
           <a
             href="#"
-            class="group flex items-center px-4 py-2 text-sm leading-5 text-sl-on_surface_2 hover:bg-sl-surface focus:outline-none focus:bg-sl-surface"
+            class="group flex items-center px-4 py-2 text-sm leading-5 text-sl-on_surface_2 hover:bg-sl-01dp focus:outline-none focus:bg-sl-surface"
             role="menuitem"
           >
             <svg
@@ -57,7 +57,7 @@
           <div class="border-t border-sl-surface"></div>
           <a
             href="#"
-            class="group flex items-center px-4 py-2 text-sm leading-5 text-sl-on_surface_2 hover:bg-sl-surface focus:outline-none focus:bg-sl-surface"
+            class="group flex items-center px-4 py-2 text-sm leading-5 text-sl-on_surface_2 hover:bg-sl-01dp focus:outline-none focus:bg-sl-surface"
             role="menuitem"
           >
             <svg
@@ -73,7 +73,7 @@
           </a>
           <a
             href="#"
-            class="group flex items-center px-4 py-2 text-sm leading-5 text-sl-on_surface_2 hover:bg-sl-surface hover:text-red-500 focus:outline-none focus:bg-sl-surface focus:text-red-500"
+            class="group flex items-center px-4 py-2 text-sm leading-5 text-sl-on_surface_2 hover:bg-sl-01dp hover:text-red-500 focus:outline-none focus:bg-sl-surface focus:text-red-500"
             role="menuitem"
           >
             <svg
