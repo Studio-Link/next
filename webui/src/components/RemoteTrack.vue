@@ -8,13 +8,16 @@
       <h2 class="font-semibold text-sl-disabled text-sm truncate pr-2">
         {{ getTrackName() }}
       </h2>
-      <!-- <div class="font-semibold text-sm text-green-500 uppercase">Connected</div> -->
+      <div class="font-semibold text-sm text-green-600 uppercase">Connected</div>
       <!-- <div class="font-semibold text-sm text-yellow-500 uppercase">Calling</div> -->
       <!-- <div class="font-semibold text-sm text-red-500 uppercase">Error</div> -->
+      <!-- <div class="font-semibold text-sm text-sl-green uppercase">Connected</div> -->
+      <!-- <div class="font-semibold text-sm text-sl-yellow uppercase">Calling</div> -->
+      <!-- <div class="font-semibold text-sm text-sl-red uppercase">Error</div> -->
     </div>
 
     <div class="flex mt-1">
-      <div class="bg-sl-02dp rounded-lg shadow h-44 w-full">
+      <div class="bg-sl-02dpa rounded-lg h-44 w-full shadow">
         <div class="flex justify-end">
           <div class="flex-shrink-0 pr-2 text-right mt-1">
             <button
@@ -99,9 +102,9 @@
       </div>
 
       <div class="flex w-4 items-end ml-0.5 mb-px">
-        <div :id="'level_'+pkey+'_l'" class="w-2 bg-green-900 rounded" style="height: 30%"></div>
+        <div :id="'level_'+pkey+'_l'" class="w-2 bg-green-700 rounded" style="height: 30%"></div>
         <div class="w-px"></div>
-        <div :id="'level_'+pkey+'_r'" class="w-2 bg-yellow-900 rounded" style="height: 80%"></div>
+        <div :id="'level_'+pkey+'_r'" class="w-2 bg-yellow-600 rounded" style="height: 80%"></div>
       </div>
     </div>
   </li>

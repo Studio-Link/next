@@ -1,8 +1,7 @@
 /build*
 .vscode
 
-/webui/dist
-/webui/node_modules
+/webui_old
 
 /re
 /rem

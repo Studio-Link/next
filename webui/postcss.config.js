@@ -1,7 +1,6 @@
-/* eslint-disable no-undef */
 module.exports = {
-	plugins: {
-		tailwindcss: {},
-		autoprefixer: {},
-	}
+  plugins: {
+    "@tailwindcss/jit": {},
+    autoprefixer: {},
+  },
 };

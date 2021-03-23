@@ -1,31 +1,3 @@
-@import "tailwindcss/base";
-
-@import "tailwindcss/components";
-
-@import "tailwindcss/utilities";
-
-/* Helper class "?" to identify elements quickly */
-.\? {
-  box-shadow: inset 1px 1px rgb(236, 15, 170), inset -1px -1px rgb(236, 15, 170);
-}
-
-/* Works on Firefox */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: #2f2f2f #121212;
-}
-
-/* Works on Chrome, Edge, and Safari */
-*::-webkit-scrollbar {
-  width: 12px;
-}
-
-*::-webkit-scrollbar-track {
-  background: #121212;
-}
-
-*::-webkit-scrollbar-thumb {
-  background-color: #2f2f2f;
-  border-radius: 20px;
-  border: 3px solid #121212;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

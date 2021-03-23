@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 module.exports = {
-  purge: ["./index.html", './src/**/*.{vue,js,ts,jsx,tsx}'],
+  purge: ["./index.html", "./src/**/*.{vue,js,ts,jsx,tsx}"],
   darkMode: false, // or 'media' or 'class'
   theme: {
     container: {
@@ -41,6 +41,27 @@ module.exports = {
           "12dp": "#333",
           "16dp": "#353535",
           "24dp": "#383838",
+          pink: "#f9114f",
+          red: "#ff3918",
+          yellow: "#ffe61e",
+          blue: "#02f5ea",
+          darkblue: "#02b7ff",
+          green: "#8ce568",
+
+          /*
+| elevation | overlay |   hex   |
+| --------- | ------- | ------- |
+|   00dp    |    0%   | #121212 |
+|   01dp    |    5%   | #1e1e1e |
+|   02dp    |    7%   | #222222 |
+|   03dp    |    8%   | #242424 |
+|   04dp    |    9%   | #272727 |
+|   06dp    |   11%   | #2c2c2c |
+|   08dp    |   12%   | #2e2e2e |
+|   12dp    |   14%   | #333333 |
+|   16dp    |   15%   | #343434 |
+|   24dp    |   16%   | #383838 |
+*/
         },
       },
     },

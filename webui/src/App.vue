@@ -1,5 +1,5 @@
 <template>
-  <header class="flex flex-wrap items-end justify-between sm:mb-4 sm:mt-4 p-2">
+  <header class="flex flex-wrap items-end justify-between sm:mb-4 p-2">
     <a aria-label="Logo Reload App" href="javascript:window.location.reload(true)">
       <img src="/logo_standalone.svg" class="h-10" />
     </a>
