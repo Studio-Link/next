@@ -1,8 +1,22 @@
 import { reactive } from "vue";
-export const tracks = {
-  socket: Object,
+
+interface Track {
+    socket?: WebSocket,
+    state: any,
+    active_debounce: Boolean
+    update: Function,
+    getTrackName: Function,
+    init_websocket: Function,
+    isValid: Function,
+    isActive: Function,
+    setActive: Function,
+    debounce_recover: Function
+}
+
+
+export const tracks: Track = {
   state: reactive([]),
-  active_debounce: Boolean,
+  active_debounce: false,
 
   getTrackName(id: number): string {
     if (this.state[id]) {
@@ -13,6 +27,7 @@ export const tracks = {
   },
 
   init_websocket(ws_host: string): void {
+    //this.socket = new WebSocket("ws://" + ws_host + "/ws_tracks");
     this.socket = new WebSocket("ws://" + ws_host + "/ws_tracks");
     this.socket.onerror = function () {
       console.log("Websocket error");

@@ -8,7 +8,9 @@
       <h2 class="font-semibold text-sl-disabled text-sm truncate pr-2">
         {{ getTrackName() }}
       </h2>
-      <div class="font-semibold text-sm text-green-600 uppercase">Connected</div>
+      <div class="font-semibold text-sm text-green-600 uppercase">
+        Connected
+      </div>
       <!-- <div class="font-semibold text-sm text-yellow-500 uppercase">Calling</div> -->
       <!-- <div class="font-semibold text-sm text-red-500 uppercase">Error</div> -->
       <!-- <div class="font-semibold text-sm text-sl-green uppercase">Connected</div> -->
@@ -48,13 +50,13 @@
         </div>
         <div v-if="isActive()" class="flex-1 px-4 grid grid-cols-1">
           <label
-            :for="pkey"
+            :for="pkey.toString()"
             class="block text-sm font-medium leading-5 text-sl-on_surface_2"
             >Enter Partner ID</label
           >
           <div class="mt-1 relative rounded-md shadow-sm">
             <input
-              :id="pkey"
+              :id="pkey.toString()"
               type="text"
               ref="slid"
               class="form-input block w-full sm:text-sm sm:leading-5 text-sl-on_surface_1 bg-sl-surface mb-2 border-none focus:ring-sl-primary rounded-lg"
@@ -102,9 +104,17 @@
       </div>
 
       <div class="flex w-4 items-end ml-0.5 mb-px">
-        <div :id="'level_'+pkey+'_l'" class="w-2 bg-green-700 rounded" style="height: 30%"></div>
+        <div
+          :id="'level_' + pkey + '_l'"
+          class="w-2 bg-green-700 rounded"
+          style="height: 30%"
+        ></div>
         <div class="w-px"></div>
-        <div :id="'level_'+pkey+'_r'" class="w-2 bg-yellow-600 rounded" style="height: 80%"></div>
+        <div
+          :id="'level_' + pkey + '_r'"
+          class="w-2 bg-yellow-600 rounded"
+          style="height: 80%"
+        ></div>
       </div>
     </div>
   </li>

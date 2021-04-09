@@ -8,23 +8,25 @@ import { config } from "./config";
 
 tracks.init_websocket(config.ws_host());
 
-let handleClickOutside;
+let handleClickOutside: any;
 
 const app = createApp(App);
 app.directive("click-outside", {
   beforeMount(el, binding) {
-    handleClickOutside = (e) => {
+    handleClickOutside = (e: any) => {
       e.stopPropagation();
       const { handler, exclude } = binding.value;
       let clickedOnExcludedEl = false;
 
-      // Gives you the ability to exclude certain elements if you want, 
+      // Gives you the ability to exclude certain elements if you want,
       // pass as array of strings to exclude
       if (exclude) {
-        exclude.forEach((refName) => {
+        exclude.forEach((refName: string) => {
           if (!clickedOnExcludedEl) {
-            const excludedEl = binding.instance.$refs[refName];
-            clickedOnExcludedEl = excludedEl.contains(e.target);
+            if (binding != null && binding.instance != null) {
+              const excludedEl: any = binding.instance.$refs[refName];
+              clickedOnExcludedEl = excludedEl.contains(e.target);
+            }
           }
         });
       }
