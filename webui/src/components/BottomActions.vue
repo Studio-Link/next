@@ -14,6 +14,13 @@
     >
       Record
     </button>
+    <button
+      :class="{ 'bg-red-900 hover:bg-red-800': record, 'bg-sl-08dp': !record}"
+      class="ml-20 rounded-full h-20 w-20 flex items-center justify-center hover:bg-gray-700 shadow uppercase font-semibold"
+      @click="record = !record"
+    >
+     Chat 
+    </button>
   </div>
 </template>
 

@@ -21,7 +21,7 @@ module.exports = {
           primary: "#de7b00",
           primary_h: "#ff8d00",
           surface: "#121212",
-          disabled: "#6c6c6c",
+          disabled: "#7B7B7B",
           on_surface_1: "#e0e0e0",
           on_surface_2: "#a0a0a0",
           "01dpa": "rgba(255, 255, 255, 0.05)",

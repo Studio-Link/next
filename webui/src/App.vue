@@ -1,11 +1,16 @@
 <template>
-  <header class="flex flex-wrap items-end justify-between sm:mb-4 p-2">
-    <a aria-label="Logo Reload App" href="javascript:window.location.reload(true)">
+  <header class="flex flex-wrap items-end justify-between sm:mb-3 p-2">
+    <a
+      aria-label="Logo Reload App"
+      href="javascript:window.location.reload(true)"
+    >
       <img src="/logo_standalone.svg" class="h-10" />
     </a>
     <!--HeadStatus /-->
     <Navbar></Navbar>
   </header>
+ 
+  <RoomsNav />
   <Tracks class="p-2" />
 
   <footer class="bottom-0 container fixed mb-4">
@@ -23,8 +28,8 @@ import BottomActions from "./components/BottomActions.vue";
 import Tracks from "./components/Tracks.vue";
 import HeadStatus from "./components/HeadStatus.vue";
 import Navbar from "./components/Navbar.vue";
+import RoomsNav from "./components/RoomsNav.vue";
 import { defineComponent } from "vue";
-
 
 export default defineComponent({
   name: "App",
@@ -34,6 +39,7 @@ export default defineComponent({
     Tracks,
     HeadStatus,
     Navbar,
+    RoomsNav
   },
 });
 </script>
