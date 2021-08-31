@@ -31,19 +31,13 @@ Please use the prebuilt binarys at https://doku.studio-link.de/standalone/instal
 - Android
 - iOS
 
-## Roadmap/Release cycle
-
-Every ~3 Months a new major Release is planned (usually last sunday of the month).
-In the meantime there can be several minor/patch releases (planned at short notice).
+## Roadmap
 
 To see the progress you can watch the [Roadmap](https://github.com/Studio-Link/next/projects/1)
 
 ### Milestones
 
-- [v21.03.0-next-alpha - 2020-03-01](https://github.com/Studio-Link/next/milestone/1)
-- v21.06.0-next-beta - TBD 
-- v21.09.0 - TBD
-- v22.01.0 - TBD
+- [v22.01.0-next-alpha](https://github.com/Studio-Link/next/milestone/1)
 
 ## Changelog
 
