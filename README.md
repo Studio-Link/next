@@ -23,6 +23,12 @@ StudioLink is a SIP application to create high quality Audio over IP (AoIP) conn
 
 Please use the prebuilt binarys at https://doku.studio-link.de/standalone/installation-standalone.html
 
+## Development Build
+
+```bash
+make
+```
+
 ## Supported Platforms (planned)
 
 - Windows 64Bit
