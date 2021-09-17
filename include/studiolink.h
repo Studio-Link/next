@@ -5,6 +5,8 @@
 extern "C" {
 #endif
 
+int sl_main(void);
+
 #ifdef __cplusplus
 }
 #endif

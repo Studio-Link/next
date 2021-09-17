@@ -2,6 +2,9 @@
 # Makefile
 #
 # Copyright (C) 2021 Studio.Link Sebastian Reimers
+# Imported variables:
+#   V			Verbose mode (example: make V=1)
+#   CPU_CORES	Override CPU Core detection
 #
 
 VER_MAJOR := 22
@@ -17,19 +20,24 @@ BARESIP_VERSION := master
 
 BARESIP_MODULES := account opus vp8 portaudio
 
-MAKE += -j4
+ifeq ($(OS),darwin)
+CPU_CORES := $(shell sysctl -n hw.ncpu)
+else
+CPU_CORES := $(shell nproc)
+endif
+
+MAKE += -j$(CPU_CORES)
 
 ifeq ($(V),)
 HIDE=@
+MAKE += --no-print-directory
 endif
 
+default: third_party studiolink.a
 
-default: third_party libsl
-
-.PHONY: libsl
-libsl: libre librem libbaresip
-	$(MAKE) -C src info
-
+.PHONY: studiolink.a
+studiolink.a: libre librem libbaresip
+	$(MAKE) -C src $@
 
 .PHONY: libre
 libre: third_party/re
@@ -40,7 +48,6 @@ libre: third_party/re
 		$(shell find third_party/re/include -name "*.h") \
 		third_party/include/re
 
-
 .PHONY: librem
 librem: third_party/rem libre
 	@rm -f third_party/rem/librem.*
@@ -49,7 +56,6 @@ librem: third_party/rem libre
 	$(HIDE) install -m 0644 \
 		$(shell find third_party/rem/include -name "*.h") \
 		third_party/include/rem
-
 
 .PHONY: libbaresip
 libbaresip: third_party/baresip libre librem
@@ -61,16 +67,13 @@ libbaresip: third_party/baresip libre librem
 	cp -a third_party/baresip/libbaresip.a third_party/lib/
 	cp -a third_party/baresip/include/baresip.h third_party/include/
 
-
 .PHONY: third_party_dir
 third_party_dir:
 	mkdir -p third_party/include
 	mkdir -p third_party/lib
 
-
 .PHONY: third_party
 third_party: third_party_dir libre librem libbaresip
-
 
 third_party/re:
 	mkdir -p third_party/include/re
@@ -78,13 +81,11 @@ third_party/re:
 		git -C third_party clone https://github.com/baresip/re.git)
 	git -C third_party/re checkout $(LIBRE_VERSION)
 
-
 third_party/rem:
 	mkdir -p third_party/include/rem
 	$(shell [ ! -d third_party/rem ] && \
 		git -C third_party clone https://github.com/baresip/rem.git)
 	git -C third_party/rem checkout $(LIBREM_VERSION)
-
 
 third_party/baresip:
 	$(shell [ ! -d third_party/baresip ] && \
@@ -92,25 +93,26 @@ third_party/baresip:
 		https://github.com/baresip/baresip.git)
 	git -C third_party/baresip checkout $(BARESIP_VERSION)
 
-
 .PHONY: bareinfo
 bareinfo:
 	$(MAKE) -C third_party/baresip STATIC=1 MODULES="$(BARESIP_MODULES)" \
 		bareinfo
 
-
 .PHONY: clean
 clean:
-	make -C third_party/baresip clean
-	make -C third_party/rem clean
-	make -C third_party/re clean
-
+	$(HIDE)$(MAKE) -C third_party/baresip clean
+	$(HIDE)$(MAKE) -C third_party/rem clean
+	$(HIDE)$(MAKE) -C third_party/re clean
+	$(HIDE)$(MAKE) -C src clean
 
 .PHONY: distclean
 distclean:
 	rm -Rf third_party
 
-
 .PHONY: ccheck
 ccheck:
 	tests/ccheck.py src Makefile
+
+.PHONY: tree
+tree:
+	tree -L 4 -I "third_party|node_modules" -d .
