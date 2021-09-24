@@ -2,9 +2,9 @@
 # Makefile
 #
 # Copyright (C) 2021 Studio.Link Sebastian Reimers
-# Imported variables:
+# Variables:
 #   V			Verbose mode (example: make V=1)
-#   CPU_CORES	Override CPU Core detection
+#   CORES		Override CPU Core detection
 #
 
 VER_MAJOR := 22
@@ -12,8 +12,10 @@ VER_MINOR := 1
 VER_PATCH := 0
 VER_PRE   := alpha
 
-#OPENSSL_VERSION :=
-#OPUS_VERSION	:=
+OPENSSL_VERSION := 3.0.0
+OPENSSL_MIRROR  := https://www.openssl.org/source
+OPUS_VERSION    := 1.3.1
+OPUS_MIRROR     := https://archive.mozilla.org/pub/opus
 LIBRE_VERSION   := master
 LIBREM_VERSION  := master
 BARESIP_VERSION := master
@@ -21,28 +23,48 @@ BARESIP_VERSION := master
 BARESIP_MODULES := account opus vp8 portaudio
 
 ifeq ($(OS),darwin)
-CPU_CORES := $(shell sysctl -n hw.ncpu)
+CORES := $(shell sysctl -n hw.ncpu)
 else
-CPU_CORES := $(shell nproc)
+CORES := $(shell nproc)
 endif
 
-MAKE += -j$(CPU_CORES)
+MAKE += -j$(CORES)
 
 ifeq ($(V),)
 HIDE=@
 MAKE += --no-print-directory
 endif
 
+##############################################################################
+#
+# Main
+#
+
 default: third_party studiolink.a
 
 .PHONY: studiolink.a
 studiolink.a: libre librem libbaresip
-	$(MAKE) -C src $@
+	$(MAKE) -C src SYSROOT_ALT=../third_party $@
+
+.PHONY: info
+info:
+	$(MAKE) -C src SYSROOT_ALT=../third_party $@
+
+##############################################################################
+#
+# Third Party section
+#
+
+.PHONY: openssl
+openssl: third_party/openssl
+
+.PHONY: opus
+opus: third_party/opus
 
 .PHONY: libre
-libre: third_party/re
+libre: third_party/re openssl
 	@rm -f third_party/re/libre.*
-	$(MAKE) -C third_party/re libre.a
+	$(MAKE) -C third_party/re SYSROOT_ALT=../. libre.a
 	cp -a third_party/re/libre.a third_party/lib/
 	$(HIDE) install -m 0644 \
 		$(shell find third_party/re/include -name "*.h") \
@@ -51,17 +73,17 @@ libre: third_party/re
 .PHONY: librem
 librem: third_party/rem libre
 	@rm -f third_party/rem/librem.*
-	$(MAKE) -C third_party/rem librem.a
+	$(MAKE) -C third_party/rem SYSROOT_ALT=../. librem.a
 	cp -a third_party/rem/librem.a third_party/lib/
 	$(HIDE) install -m 0644 \
 		$(shell find third_party/rem/include -name "*.h") \
 		third_party/include/rem
 
 .PHONY: libbaresip
-libbaresip: third_party/baresip libre librem
+libbaresip: third_party/baresip opus libre librem
 	@rm -f third_party/baresip/libbaresip.* \
 		third_party/baresip/src/static.c
-	$(MAKE) -C third_party/baresip STATIC=1 \
+	$(MAKE) -C third_party/baresip SYSROOT_ALT=../. STATIC=1 \
 		MODULES="$(BARESIP_MODULES)" \
 		libbaresip.a
 	cp -a third_party/baresip/libbaresip.a third_party/lib/
@@ -73,7 +95,29 @@ third_party_dir:
 	mkdir -p third_party/lib
 
 .PHONY: third_party
-third_party: third_party_dir libre librem libbaresip
+third_party: third_party_dir openssl opus libre librem libbaresip
+
+third_party/openssl:
+	@cd third_party && wget ${OPENSSL_MIRROR}/openssl-${OPENSSL_VERSION}.tar.gz
+	@cd third_party && tar -xzf openssl-${OPENSSL_VERSION}.tar.gz
+	@cd third_party && mv openssl-${OPENSSL_VERSION} openssl
+	@rm -f third_party/openssl-${OPENSSL_VERSION}.tar.gz
+	$(HIDE)cd third_party/openssl && \
+		./config no-shared && \
+		$(MAKE) build_libs && \
+		cp *.a ../lib && \
+		cp -a include/openssl ../include/
+
+third_party/opus:
+	cd third_party && wget ${OPUS_MIRROR}/opus-${OPUS_VERSION}.tar.gz && \
+		tar -xzf opus-${OPUS_VERSION}.tar.gz && \
+		mv opus-${OPUS_VERSION} opus && \
+		cd opus && \
+		./configure --with-pic && \
+		$(MAKE) && \
+		cp .libs/libopus.a ../lib/ && \
+		mkdir -p ../include/opus && \
+		cp include/*.h ../include/opus/
 
 third_party/re:
 	mkdir -p third_party/include/re
@@ -95,8 +139,14 @@ third_party/baresip:
 
 .PHONY: bareinfo
 bareinfo:
-	$(MAKE) -C third_party/baresip STATIC=1 MODULES="$(BARESIP_MODULES)" \
+	$(MAKE) -C third_party/baresip SYSROOT_ALT=../. \
+		STATIC=1 MODULES="$(BARESIP_MODULES)" \
 		bareinfo
+
+##############################################################################
+#
+# Tools & Cleanup
+#
 
 .PHONY: clean
 clean:
