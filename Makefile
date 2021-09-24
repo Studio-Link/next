@@ -98,9 +98,10 @@ third_party_dir:
 third_party: third_party_dir openssl opus libre librem libbaresip
 
 third_party/openssl:
-	@cd third_party && wget ${OPENSSL_MIRROR}/openssl-${OPENSSL_VERSION}.tar.gz
-	@cd third_party && tar -xzf openssl-${OPENSSL_VERSION}.tar.gz
-	@cd third_party && mv openssl-${OPENSSL_VERSION} openssl
+	@cd third_party && \
+		wget ${OPENSSL_MIRROR}/openssl-${OPENSSL_VERSION}.tar.gz && \
+		tar -xzf openssl-${OPENSSL_VERSION}.tar.gz && \
+		mv openssl-${OPENSSL_VERSION} openssl
 	@rm -f third_party/openssl-${OPENSSL_VERSION}.tar.gz
 	$(HIDE)cd third_party/openssl && \
 		./config no-shared && \
@@ -111,8 +112,8 @@ third_party/openssl:
 third_party/opus:
 	cd third_party && wget ${OPUS_MIRROR}/opus-${OPUS_VERSION}.tar.gz && \
 		tar -xzf opus-${OPUS_VERSION}.tar.gz && \
-		mv opus-${OPUS_VERSION} opus && \
-		cd opus && \
+		mv opus-${OPUS_VERSION} opus
+	$(HIDE)cd third_party/opus && \
 		./configure --with-pic && \
 		$(MAKE) && \
 		cp .libs/libopus.a ../lib/ && \
