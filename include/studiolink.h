@@ -5,7 +5,9 @@
 extern "C" {
 #endif
 
+int sl_init(void);
 int sl_main(void);
+void sl_close(void);
 
 #ifdef __cplusplus
 }

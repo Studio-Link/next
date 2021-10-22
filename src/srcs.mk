@@ -1,1 +1,1 @@
-SRCS := main.c
+SRCS := studiolink.c

@@ -14,7 +14,7 @@ include $(LIBRE_MK)
 CFLAGS += -I../include -I$(LIBRE_PATH)/include -I$(LIBREM_PATH)/include
 CFLAGS += -I$(BARESIP_PATH)/include
 
-STATIC := studiolink.a
+STATIC := libsl.a
 APP_MK := srcs.mk
 
 include $(APP_MK)

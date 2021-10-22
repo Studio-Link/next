@@ -2,9 +2,10 @@
 # Makefile
 #
 # Copyright (C) 2021 Studio.Link Sebastian Reimers
-# Variables:
+# Variables (make CC=gcc V=1 CORES=2):
 #   V			Verbose mode (example: make V=1)
 #   CORES		Override CPU Core detection
+#   CC			Override CC (default clang)
 #
 
 VER_MAJOR := 22
@@ -22,13 +23,15 @@ BARESIP_VERSION := master
 
 BARESIP_MODULES := account opus vp8 portaudio
 
+CC := clang
+
 ifeq ($(OS),darwin)
 CORES := $(shell sysctl -n hw.ncpu)
 else
 CORES := $(shell nproc)
 endif
 
-MAKE += -j$(CORES)
+MAKE += -j$(CORES) CC=$(CC)
 
 ifeq ($(V),)
 HIDE=@
@@ -40,11 +43,12 @@ endif
 # Main
 #
 
-default: third_party studiolink.a
+default: third_party libsl.a
 
-.PHONY: studiolink.a
-studiolink.a: libre librem libbaresip
+.PHONY: libsl.a
+libsl.a: libre librem libbaresip
 	$(MAKE) -C src SYSROOT_ALT=../third_party $@
+	$(MAKE) -C src SYSROOT_ALT=../third_party compile_commands.json
 
 .PHONY: info
 info:
@@ -65,6 +69,7 @@ opus: third_party/opus
 libre: third_party/re openssl
 	@rm -f third_party/re/libre.*
 	$(MAKE) -C third_party/re SYSROOT_ALT=../. libre.a
+	$(MAKE) -C third_party/re SYSROOT_ALT=../. compile_commands.json
 	cp -a third_party/re/libre.a third_party/lib/
 	$(HIDE) install -m 0644 \
 		$(shell find third_party/re/include -name "*.h") \
@@ -74,6 +79,7 @@ libre: third_party/re openssl
 librem: third_party/rem libre
 	@rm -f third_party/rem/librem.*
 	$(MAKE) -C third_party/rem SYSROOT_ALT=../. librem.a
+	$(MAKE) -C third_party/rem SYSROOT_ALT=../. compile_commands.json
 	cp -a third_party/rem/librem.a third_party/lib/
 	$(HIDE) install -m 0644 \
 		$(shell find third_party/rem/include -name "*.h") \
@@ -86,6 +92,7 @@ libbaresip: third_party/baresip opus libre librem
 	$(MAKE) -C third_party/baresip SYSROOT_ALT=../. STATIC=1 \
 		MODULES="$(BARESIP_MODULES)" \
 		libbaresip.a
+	$(MAKE) -C third_party/baresip SYSROOT_ALT=../. compile_commands.json
 	cp -a third_party/baresip/libbaresip.a third_party/lib/
 	cp -a third_party/baresip/include/baresip.h third_party/include/
 
