@@ -1,88 +1,107 @@
-import { reactive } from "vue";
+import { reactive } from 'vue'
 
 interface Track {
-    socket?: WebSocket,
-    state: any,
-    active_debounce: Boolean
-    update: Function,
-    getTrackName: Function,
-    init_websocket: Function,
-    isValid: Function,
-    isActive: Function,
-    setActive: Function,
-    debounce_recover: Function
+  id: number
+  name: string
 }
 
+interface State extends Track {
+  selected: boolean
+}
 
-export const tracks: Track = {
+interface RemoteTrack extends Track {
+  status?: string
+}
+
+interface Tracks {
+  socket?: WebSocket
+  state: State[]
+  remote_tracks: RemoteTrack[]
+  local_tracks: Track[]
+  stream_tracks: Track[]
+  selected_debounce: boolean
+  clear_tracks(): void
+  update(tracks: any): void
+  getTrackName(id: number): string
+  init_websocket(ws_host: string): void
+  isValid(id: number): boolean
+  isSelected(id: number): boolean
+  select(id: number): void
+}
+
+export const tracks: Tracks = {
   state: reactive([]),
-  active_debounce: false,
+  remote_tracks: reactive([]),
+  local_tracks: reactive([]),
+  stream_tracks: reactive([]),
+  selected_debounce: false,
 
   getTrackName(id: number): string {
     if (this.state[id]) {
-      return this.state[id].name;
+      return this.state[id].name
     }
 
-    return "error";
+    return 'error'
   },
 
   init_websocket(ws_host: string): void {
-    //this.socket = new WebSocket("ws://" + ws_host + "/ws_tracks");
-    this.socket = new WebSocket("ws://" + ws_host + "/ws_tracks");
+    this.socket = new WebSocket('ws://' + ws_host + '/ws/v1/tracks')
     this.socket.onerror = function () {
-      console.log("Websocket error");
-    };
-    tracks.update();
-    this.active_debounce = false;
+      console.log('Websocket error')
+    }
+    this.socket.onmessage = (message) => {
+      const tracks = JSON.parse(message.data)
+      this.update(tracks)
+    }
+    this.selected_debounce = false
   },
 
-  update(): void {
-    let i: number;
-    for (i = 0; i < this.state.length; i++) {
-      this.state.pop();
-    }
+  clear_tracks(): void {
+    this.state.length = 0
+    this.local_tracks.length = 0
+    this.remote_tracks.length = 0
+    this.stream_tracks.length = 0
+  },
 
-    this.state.push({ name: "Local", active: false });
-    this.state.push({ name: "Remote 1", active: false });
-    this.state.push({ name: "Remote 2", active: false });
-    this.state.push({ name: "Remote 3", active: false });
-    this.state.push({ name: "Remote 4", active: false });
-    this.state.push({ name: "Remote 5", active: false });
-    this.state.push({ name: "Remote 6", active: false });
-    this.state.push({ name: "Remote 7", active: false });
-    this.state.push({ name: "Remote 8", active: false });
+  update(tracks): void {
+    this.clear_tracks()
+    for (const key in tracks) {
+        if (tracks[key].type == 'remote') {
+            this.remote_tracks.push(tracks[key])
+        }
+        if (tracks[key].type == 'local') {
+            this.local_tracks.push(tracks[key])
+        }
+        this.state[tracks[key].id] = { id: tracks[key].id, selected: false, name: tracks[key].name }
+    }
   },
 
   isValid(id: number): boolean {
     if (this.state[id]) {
-      return true;
+      return true
     }
-    return false;
+    return false
   },
 
-  isActive(id: number): boolean {
+  isSelected(id: number): boolean {
     if (this.state[id]) {
-      return this.state[id].active;
+      return this.state[id].selected
     }
-    return false;
+    return false
   },
 
-  debounce_recover(): void {
-    this.active_debounce = false;
-  },
-
-  setActive(id: number): void {
+  select(id: number): void {
     //Workaround for mouseenter event after focus change
-    if (this.active_debounce) return;
-    this.active_debounce = true;
-    setTimeout(() => {this.debounce_recover()}, 10);
+    if (this.selected_debounce) return
+    this.selected_debounce = true
+    setTimeout(() => {
+        this.selected_debounce = false
+    }, 20)
 
-    for (let i = 0; i < this.state.length; i++) {
-      if (i == id) {
-        this.state[i].active = true;
-      } else {
-        this.state[i].active = false;
-      }
-    }
+    this.state.forEach(el => {
+        el.selected = false
+    });
+
+    this.state[id].selected = true
   },
-};
+}

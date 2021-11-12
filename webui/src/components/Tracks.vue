@@ -32,7 +32,7 @@
         </div>
       </div>
     </li>
-    <RemoteTrack v-for="index in remoteTracks" :key="index" :pkey="index" />
+    <RemoteTrack v-for="track in remoteTracks" :key="track.id" :pkey="track.id" />
     <li
       v-if="!newTrackDisabled"
       class="col-span-1"
@@ -77,8 +77,8 @@
 </template>
 
 <script>
-import RemoteTrack from './RemoteTrack.vue'
 import { ref, defineComponent } from 'vue'
+import RemoteTrack from './RemoteTrack.vue'
 import { tracks } from '../states/tracks'
 
 // tracks.update();
@@ -90,7 +90,7 @@ export default defineComponent({
   setup () {
     const newTrackVisible = ref(false)
     const newTrackDisabled = ref(false)
-    const remoteTracks = ref(0)
+    const remoteTracks = tracks.remote_tracks
 
     function newRemoteTrack () {
       const next = remoteTracks.value + 1

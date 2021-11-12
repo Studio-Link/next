@@ -82,8 +82,7 @@
                 form-input
                 block
                 w-full
-                sm:text-sm
-                sm:leading-5
+                sm:text-sm sm:leading-5
                 text-sl-on_surface_1
                 bg-sl-surface
                 mb-2
@@ -94,7 +93,7 @@
               placeholder="xyz@studio.link"
             />
           </div>
-          <div class="mt-1 flex justify-between items-center">
+          <div class="mt-2 flex justify-between items-center">
             <Button>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -123,23 +122,27 @@
                   fill-rule="evenodd"
                   d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z"
                   clip-rule="evenodd"
-                />
-              </svg>Link</Button
+                /></svg
+              >Invite</Button
             >
           </div>
         </div>
         <div v-if="!isActive()" class="text-center mt-10 text-sl-disabled">
           No call
         </div>
-        <div class="text-right bottom-0">
-          <button @focus="setActive()">
+        <div class="text-right mt-1 text-xs">
+          <button
+            @focus="setActive()"
+            class="opacity-0 hover:opacity-60 focus:opacity-60"
+            title="Remove track"
+          >
             <svg
-              class="invisible w-5 h-5 text-sl-disabled"
+              class="w-5 h-5"
               viewBox="0 0 20 20"
               fill="currentColor"
+              v-if="isActive()"
             >
               <path
-                v-if="isActive()"
                 fill-rule="evenodd"
                 d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
                 clip-rule="evenodd"
@@ -149,27 +152,20 @@
         </div>
       </div>
 
-      <div class="flex w-4 items-end ml-0.5 mb-px">
-        <div
-          :id="'level_' + pkey + '_l'"
-          class="w-2 bg-green-700 rounded"
-          style="height: 30%"
-        ></div>
-        <div class="w-px"></div>
-        <div
-          :id="'level_' + pkey + '_r'"
-          class="w-2 bg-yellow-600 rounded"
-          style="height: 80%"
-        ></div>
+      <div class="flex w-5 items-end ml-0.5 opacity-60" aria-hidden="true">
+        <div id="levels" class="levels">
+          <div id="level1" class="level"></div>
+          <div id="level2" class="level"></div>
+        </div>
       </div>
     </div>
   </li>
 </template>
 
 <script lang="ts">
-import { ref, defineComponent } from "vue";
-import TrackSettings from "./TrackSettings.vue";
-import { tracks } from "../states/tracks";
+import { ref, defineComponent } from 'vue'
+import TrackSettings from './TrackSettings.vue'
+import { tracks } from '../states/tracks'
 
 export default defineComponent({
   components: {
@@ -177,22 +173,22 @@ export default defineComponent({
   },
   props: { pkey: { type: Number, required: true } },
   setup(props) {
-    const settingsOpen = ref(false);
+    const settingsOpen = ref(false)
 
     function isActive() {
-      return tracks.isActive(props.pkey);
+      return tracks.isSelected(props.pkey)
     }
 
     function setActive() {
-      tracks.setActive(props.pkey);
+      tracks.select(props.pkey)
     }
 
     function getTrackName() {
-      return tracks.getTrackName(props.pkey);
+      return tracks.getTrackName(props.pkey)
     }
 
     function settingsClose() {
-      settingsOpen.value = false;
+      settingsOpen.value = false
     }
 
     return {
@@ -201,7 +197,7 @@ export default defineComponent({
       getTrackName,
       settingsOpen,
       settingsClose,
-    };
+    }
   },
-});
+})
 </script>
