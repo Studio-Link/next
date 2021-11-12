@@ -3,9 +3,9 @@
 #
 # Copyright (C) 2021 Studio.Link Sebastian Reimers
 # Variables (make CC=gcc V=1 CORES=2):
-#   V			Verbose mode (example: make V=1)
-#   CORES		Override CPU Core detection
-#   CC			Override CC (default clang)
+#   V		Verbose mode (example: make V=1)
+#   CORES	Override CPU Core detection
+#   CC		Override CC (default clang)
 #
 
 VER_MAJOR := 22
@@ -13,15 +13,9 @@ VER_MINOR := 1
 VER_PATCH := 0
 VER_PRE   := alpha
 
-OPENSSL_VERSION := 3.0.0
-OPENSSL_MIRROR  := https://www.openssl.org/source
-OPUS_VERSION    := 1.3.1
-OPUS_MIRROR     := https://archive.mozilla.org/pub/opus
-LIBRE_VERSION   := master
-LIBREM_VERSION  := master
-BARESIP_VERSION := master
+include versions.mk
 
-BARESIP_MODULES := account opus vp8 portaudio
+BARESIP_MODULES := account opus
 
 CC := clang
 

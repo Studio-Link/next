@@ -12,7 +12,6 @@ on:
 jobs:
   webui:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
     - name: Use Node.js
@@ -34,17 +33,16 @@ jobs:
   build:
     runs-on: ${{ matrix.os }}
     needs: webui
-
     strategy:
       matrix:
         os: [ubuntu-18.04, macos-latest]
-
     env:
-      CC: ${{ matrix.compiler }}
       MACOSX_DEPLOYMENT_TARGET: "10.10"
-
     steps:
     - uses: actions/checkout@v2
-
+    - uses: actions/cache@v2
+      with:
+        path: 'third_party'
+        key: ${{ runner.os }}-${{ hashFiles('versions.mk') }}
     - name: make StudioLink
       run: make
