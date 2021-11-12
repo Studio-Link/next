@@ -42,7 +42,13 @@ jobs:
     - uses: actions/checkout@v2
     - uses: actions/cache@v2
       with:
-        path: 'third_party'
+        path: |
+            third_party
+            !third_party/re
+            !third_party/rem
+            !third_party/baresip
+            !third_party/include/re
+            !third_party/include/rem
         key: ${{ runner.os }}-${{ hashFiles('versions.mk') }}
     - name: make StudioLink
       run: make
