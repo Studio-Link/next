@@ -183,6 +183,7 @@ tree:
 .PHONY: test
 test: libsl.a
 	$(HIDE)$(MAKE) -C tests
+	$(HIDE)-$(MAKE) -C tests compile_commands.json &
 	$(HIDE)tests/sltest
 
 .PHONY: watch
