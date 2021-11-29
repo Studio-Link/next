@@ -6,7 +6,7 @@ import Button from "./components/Button.vue";
 import { tracks } from "./states/tracks";
 import { config } from "./config";
 
-tracks.init_websocket(config.ws_host());
+tracks.websocket(config.ws_host());
 
 let handleClickOutside: any;
 

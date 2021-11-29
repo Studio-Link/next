@@ -157,6 +157,7 @@ clean:
 	$(HIDE)[ ! -d third_party/rem ] || $(MAKE) -C third_party/rem clean
 	$(HIDE)[ ! -d third_party/re ] || $(MAKE) -C third_party/re clean
 	$(HIDE)[ ! -d third_party/re ] || $(MAKE) -C src clean
+	$(HIDE)[ ! -d third_party/re ] || $(MAKE) -C tests clean
 
 .PHONY: cleaner
 cleaner: clean
@@ -182,6 +183,7 @@ tree:
 .PHONY: test
 test: libsl.a
 	$(HIDE)$(MAKE) -C tests
+	$(HIDE)-$(MAKE) -C tests compile_commands.json &
 	$(HIDE)tests/sltest
 
 .PHONY: watch
