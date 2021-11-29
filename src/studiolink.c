@@ -3,6 +3,12 @@
 #include <studiolink.h>
 
 
+static int ws_init(void)
+{
+	return 0;
+}
+
+
 /**
  * Init StudioLink
  *
@@ -10,7 +16,11 @@
  */
 int sl_init(void)
 {
-	return 0;
+	int err;
+
+	err = ws_init();
+
+	return err;
 }
 
 
@@ -21,7 +31,9 @@ int sl_init(void)
  */
 int sl_main(void)
 {
-	return 0;
+	int err = 0;
+
+	return err;
 }
 
 

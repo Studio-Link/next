@@ -4,34 +4,34 @@
 # Copyright (C) 2021 Studio.Link Sebastian Reimers
 #
 
-PROJECT      := sl
+PROJECT      := sltest
 
 SYSROOT_ALT  := ../third_party
 LIBRE_PATH   := ../third_party/re
 LIBREM_PATH  := ../third_party/rem
 BARESIP_PATH := ../third_party/baresip
-LIBRE_MK     := $(LIBRE_PATH)/mk/re.mk
+LIBRE_MK     := ../third_party/re/mk/re.mk
 
 include $(LIBRE_MK)
 
 CFLAGS += -I../include -I$(LIBRE_PATH)/include -I$(LIBREM_PATH)/include
 CFLAGS += -I$(BARESIP_PATH)/include
+LFLAGS += -L../src # libsl.a
 
-STATIC := libsl.a
 APP_MK := srcs.mk
+
+BIN    := $(PROJECT)$(BIN_SUFFIX)
+LIBS   += -lsl -lbaresip -lrem -lm
 
 include $(APP_MK)
 
 OBJS := $(patsubst %.c,$(BUILD)/%.o,$(filter %.c,$(SRCS)))
 
-all: $(STATIC)
+all: $(BIN)
 
-$(STATIC): $(OBJS)
-	@echo "  AR	     $@"
-	@$(AR) $(AFLAGS) $@ $(OBJS)
-ifneq ($(RANLIB),)
-	@$(RANLIB) $@
-endif
+$(BIN): $(OBJS)
+	@echo "  LD      $@"
+	@$(CC) $(LFLAGS) $(APP_LFLAGS) $^ -lre $(LIBS) -o $@
 
 $(BUILD)/%.o: %.c $(BUILD) Makefile $(APP_MK)
 	@$(CC) $(CFLAGS) -c $< -o $@ $(DFLAGS)
@@ -42,4 +42,4 @@ $(BUILD): Makefile
 
 .PHONY: clean
 clean:
-	@rm -rf $(STATIC) $(BUILD)
+	@rm -rf $(BIN) $(BUILD)
