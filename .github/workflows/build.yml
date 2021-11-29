@@ -44,5 +44,12 @@ jobs:
       with:
         path: third_party
         key: ${{ runner.os }}-${{ hashFiles('versions.mk') }}
+
+    - name: make info
+      run: |
+        echo "OS: ${{ matrix.os }}"
+        echo "--- make info ---"
+        make info
+
     - name: make StudioLink
       run: make clean && make && make test
