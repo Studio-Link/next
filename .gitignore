@@ -1,6 +1,7 @@
 /build*
 /src/build*
 /tests/build*
+/tests/sltest
 .vscode
 compile_commands.json
 .cache
