@@ -99,7 +99,7 @@ third_party_dir:
 third_party: third_party_dir openssl opus libre librem libbaresip
 
 third_party/openssl:
-	@cd third_party && \
+	$(HIDE)cd third_party && \
 		wget ${OPENSSL_MIRROR}/openssl-${OPENSSL_VERSION}.tar.gz && \
 		tar -xzf openssl-${OPENSSL_VERSION}.tar.gz && \
 		mv openssl-${OPENSSL_VERSION} openssl
@@ -156,8 +156,8 @@ clean:
 		$(MAKE) -C third_party/baresip clean
 	$(HIDE)[ ! -d third_party/rem ] || $(MAKE) -C third_party/rem clean
 	$(HIDE)[ ! -d third_party/re ] || $(MAKE) -C third_party/re clean
-	$(HIDE)[ ! -d third_party/re ] || $(MAKE) -C src clean
-	$(HIDE)[ ! -d third_party/re ] || $(MAKE) -C tests clean
+	$(HIDE)$(MAKE) -C src clean
+	$(HIDE)$(MAKE) -C tests clean
 
 .PHONY: cleaner
 cleaner: clean
