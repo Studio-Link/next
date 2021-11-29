@@ -28,7 +28,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: ccheck
-      run: make ccheck
+      run: |
+        make ccheck
+        clang-tidy -checks=cert-\*,-cert-dcl37-c,-cert-dcl51-cpp,-clang-analyzer-valist.Uninitialized tests/**/*.c
+        clang-tidy -checks=cert-\*,-cert-dcl37-c,-cert-dcl51-cpp,-clang-analyzer-valist.Uninitialized src/**/*.c
 
   build:
     runs-on: ${{ matrix.os }}
