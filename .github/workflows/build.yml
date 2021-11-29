@@ -1,6 +1,3 @@
-# This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
-
 name: Build
 
 on:
@@ -41,9 +38,11 @@ jobs:
       MACOSX_DEPLOYMENT_TARGET: "10.10"
     steps:
     - uses: actions/checkout@v2
-    - name: install clang-12
+    - name: install clang-13
       run: |
-        sudo apt-get update && sudo apt-get install -y clang-tidy-12 clang-12 clang-tools-12
+        wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+        sudo add-apt-repository "deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-13 main"
+        sudo apt-get update && sudo apt-get install -y clang-tools-13 clang-13 clang-tidy-13
 
     - uses: actions/cache@v2
       with:
@@ -58,17 +57,17 @@ jobs:
 
     - name: make StudioLink - Linux
       if: ${{ runner.os == 'Linux' }}
-      run: make clean && make CC=clang-12 && make test
+      run: make clean && make CC=clang-13 && make test
 
     - name: clang-tidy
       if: ${{ runner.os == 'Linux' }}
       run: |
-        clang-tidy-12 -checks=cert-\*,-cert-dcl37-c,-cert-dcl51-cpp,-clang-analyzer-valist.Uninitialized src/**/*.c
-        clang-tidy-12 -checks=cert-\*,-cert-dcl37-c,-cert-dcl51-cpp,-clang-analyzer-valist.Uninitialized tests/**/*.c
+        clang-tidy-13 -checks=cert-\*,-cert-dcl37-c,-cert-dcl51-cpp,-clang-analyzer-valist.Uninitialized src/**/*.c
+        clang-tidy-13 -checks=cert-\*,-cert-dcl37-c,-cert-dcl51-cpp,-clang-analyzer-valist.Uninitialized tests/**/*.c
 
     - name: clang scan-build
       if: ${{ runner.os == 'Linux' }}
-      run: make clean && scan-build-12 make libsl.a
+      run: make clean && scan-build-13 make libsl.a
 
     - name: make StudioLink - macOS
       if: ${{ runner.os == 'macOS' }}
