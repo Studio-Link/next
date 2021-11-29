@@ -1,12 +1,29 @@
 <template>
   <ul
-    class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mb-36 sm:mb-24"
+    class="
+      grid grid-cols-1
+      gap-5
+      sm:grid-cols-2
+      lg:grid-cols-3
+      xl:grid-cols-4
+      mb-36
+      sm:mb-24
+    "
   >
     <li class="col-span-1">
       <h2 class="pl-1 font-bold text-sl-on_surface_2 text-sm">Local Track</h2>
       <div class="flex mt-1">
         <div
-          class="flex items-center justify-center bg-sl-02dp rounded-lg shadow h-44 w-full"
+          class="
+            flex
+            items-center
+            justify-center
+            bg-sl-02dp
+            rounded-lg
+            shadow
+            h-44
+            w-full
+          "
         >
           <Button>
             <svg
@@ -26,13 +43,23 @@
         </div>
 
         <div class="flex w-4 items-end ml-0.5 mb-px">
-          <div class="w-2 bg-green-500 bg-opacity-30 rounded" style="height: 30%"></div>
+          <div
+            class="w-2 bg-green-500 bg-opacity-30 rounded"
+            style="height: 30%"
+          ></div>
           <div class="w-px"></div>
-          <div class="w-2 bg-yellow-300 bg-opacity-30 rounded" style="height: 80%"></div>
+          <div
+            class="w-2 bg-yellow-300 bg-opacity-30 rounded"
+            style="height: 80%"
+          ></div>
         </div>
       </div>
     </li>
-    <RemoteTrack v-for="track in remoteTracks" :key="track.id" :pkey="track.id" />
+    <RemoteTrack
+      v-for="track in remoteTracks"
+      :key="track.id"
+      :pkey="track.id"
+    />
     <li
       v-if="!newTrackDisabled"
       class="col-span-1"
@@ -47,12 +74,23 @@
             'text-sl-disabled': newTrackVisible,
             'text-sl-01dp': !newTrackVisible,
           }"
-          class="inline-flex items-center rounded-lg px-20 py-12 font-bold text-2xl leading-none uppercase tracking-wide focus:outline-none focus:text-sl-disabled"
+          class="
+            inline-flex
+            items-center
+            rounded-lg
+            px-20
+            py-12
+            font-bold
+            text-2xl
+            leading-none
+            uppercase
+            tracking-wide
+            focus:outline-none focus:text-sl-disabled
+          "
           @focus="newTrackVisible = true"
           @focusout="newTrackVisible = false"
           @click="
-            newRemoteTrack();
-            newTrackVisible = false;
+            newTrackVisible = false
           "
         >
           <svg
@@ -76,34 +114,12 @@
   </ul>
 </template>
 
-<script>
-import { ref, defineComponent } from 'vue'
+<script setup lang="ts">
+import { ref } from 'vue'
 import RemoteTrack from './RemoteTrack.vue'
 import { tracks } from '../states/tracks'
 
-// tracks.update();
-
-export default defineComponent({
-  components: {
-    RemoteTrack
-  },
-  setup () {
-    const newTrackVisible = ref(false)
-    const newTrackDisabled = ref(false)
-    const remoteTracks = tracks.remote_tracks
-
-    function newRemoteTrack () {
-      const next = remoteTracks.value + 1
-      if (tracks.isValid(next)) {
-        tracks.setActive(next)
-        remoteTracks.value = next
-      }
-      if (!tracks.isValid(next + 1)) {
-        newTrackDisabled.value = true
-      }
-    }
-
-    return { newTrackDisabled, newTrackVisible, remoteTracks, newRemoteTrack }
-  }
-})
+const newTrackVisible = ref(false)
+const newTrackDisabled = ref(false)
+const remoteTracks = tracks.remote_tracks
 </script>

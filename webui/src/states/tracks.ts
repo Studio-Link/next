@@ -21,9 +21,10 @@ interface Tracks {
   stream_tracks: Track[]
   selected_debounce: boolean
   clear_tracks(): void
+  /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
   update(tracks: any): void
   getTrackName(id: number): string
-  init_websocket(ws_host: string): void
+  websocket(ws_host: string): void
   isValid(id: number): boolean
   isSelected(id: number): boolean
   select(id: number): void
@@ -44,7 +45,7 @@ export const tracks: Tracks = {
     return 'error'
   },
 
-  init_websocket(ws_host: string): void {
+  websocket(ws_host: string): void {
     this.socket = new WebSocket('ws://' + ws_host + '/ws/v1/tracks')
     this.socket.onerror = function () {
       console.log('Websocket error')
@@ -66,13 +67,17 @@ export const tracks: Tracks = {
   update(tracks): void {
     this.clear_tracks()
     for (const key in tracks) {
-        if (tracks[key].type == 'remote') {
-            this.remote_tracks.push(tracks[key])
-        }
-        if (tracks[key].type == 'local') {
-            this.local_tracks.push(tracks[key])
-        }
-        this.state[tracks[key].id] = { id: tracks[key].id, selected: false, name: tracks[key].name }
+      if (tracks[key].type == 'remote') {
+        this.remote_tracks.push(tracks[key])
+      }
+      if (tracks[key].type == 'local') {
+        this.local_tracks.push(tracks[key])
+      }
+      this.state[tracks[key].id] = {
+        id: tracks[key].id,
+        selected: false,
+        name: tracks[key].name,
+      }
     }
   },
 
@@ -95,12 +100,12 @@ export const tracks: Tracks = {
     if (this.selected_debounce) return
     this.selected_debounce = true
     setTimeout(() => {
-        this.selected_debounce = false
+      this.selected_debounce = false
     }, 20)
 
-    this.state.forEach(el => {
-        el.selected = false
-    });
+    this.state.forEach((el) => {
+      el.selected = false
+    })
 
     this.state[id].selected = true
   },

@@ -38,7 +38,9 @@ jobs:
       MACOSX_DEPLOYMENT_TARGET: "10.10"
     steps:
     - uses: actions/checkout@v2
+
     - name: install clang-13
+      if: ${{ runner.os == 'Linux' }}
       run: |
         wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
         sudo add-apt-repository "deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-13 main"
