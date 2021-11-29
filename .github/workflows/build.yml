@@ -45,4 +45,4 @@ jobs:
         path: third_party
         key: ${{ runner.os }}-${{ hashFiles('versions.mk') }}
     - name: make StudioLink
-      run: make clean && make
+      run: make clean && make && make test
