@@ -152,12 +152,13 @@ bareinfo:
 
 .PHONY: clean
 clean:
-	$(HIDE)[ ! -d third_party/baresip ] || \
-		$(MAKE) -C third_party/baresip clean
-	$(HIDE)[ ! -d third_party/rem ] || $(MAKE) -C third_party/rem clean
-	$(HIDE)[ ! -d third_party/re ] || $(MAKE) -C third_party/re clean
-	$(HIDE)$(MAKE) -C src clean
-	$(HIDE)$(MAKE) -C tests clean
+	$(HIDE)[ -d third_party/baresip ] && \
+		$(MAKE) -C third_party/baresip clean || true
+	$(HIDE)[ -d third_party/rem ] && \
+		$(MAKE) -C third_party/rem clean || true
+	$(HIDE)[ -d third_party/re ] && $(MAKE) -C third_party/re clean || true
+	$(HIDE)[ -d third_party/re ] && $(MAKE) -C src clean || true
+	$(HIDE)[ -d third_party/re ] && $(MAKE) -C tests clean || true
 
 .PHONY: cleaner
 cleaner: clean
@@ -170,7 +171,7 @@ cleaner: clean
 
 .PHONY: distclean
 distclean: clean
-	rm -Rf third_party
+	$(HIDE)rm -Rf third_party
 
 .PHONY: ccheck
 ccheck:
@@ -178,7 +179,7 @@ ccheck:
 
 .PHONY: tree
 tree:
-	tree -L 4 -I "third_party|node_modules" -d .
+	tree -L 4 -I "third_party|node_modules|build*" -d .
 
 .PHONY: test
 test: libsl.a
@@ -188,7 +189,7 @@ test: libsl.a
 
 .PHONY: watch
 watch:
-	while true; do \
-		inotifywait -qr -e modify src tests; \
-		make test; sleep 0.1; \
+	$(HIDE)while true; do \
+	inotifywait -qr -e modify src tests; \
+	make test; sleep 0.5; \
 	done
