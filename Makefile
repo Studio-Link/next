@@ -19,11 +19,7 @@ BARESIP_MODULES := account opus
 
 CC := clang
 
-ifeq ($(OS),darwin)
-CORES := $(shell sysctl -n hw.ncpu)
-else
-CORES := $(shell nproc)
-endif
+CORES := $(shell nproc || sysctl -n hw.ncpu)
 
 MAKE += -j$(CORES) CC=$(CC)
 
@@ -45,7 +41,7 @@ libsl.a:
 	$(HIDE)-$(MAKE) -C src compile_commands.json &
 
 .PHONY: info
-info:
+info: third_party_dir third_party/re
 	$(MAKE) -C src $@
 
 ##############################################################################
