@@ -5,3 +5,4 @@ OPUS_MIRROR     := https://archive.mozilla.org/pub/opus
 LIBRE_VERSION   := master
 LIBREM_VERSION  := master
 BARESIP_VERSION := master
+CACHE_VERSION   := 0.0.1 # github cache invalidation workaround
