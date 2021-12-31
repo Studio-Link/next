@@ -31,7 +31,7 @@ all: $(BIN)
 
 $(BIN): $(OBJS)
 	@echo "  LD      $@"
-	@$(CC) $(LFLAGS) $^ $(LIBS) -o $@
+	@$(CC) $(LFLAGS) $(APP_LFLAGS) $^ $(LIBS) -o $@
 
 $(BUILD)/%.o: %.c $(BUILD) Makefile $(APP_MK)
 	@$(CC) $(CFLAGS) -c $< -o $@ $(DFLAGS)
