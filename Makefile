@@ -154,7 +154,7 @@ clean:
 		$(MAKE) -C third_party/rem clean || true
 	$(HIDE)[ -d third_party/re ] && $(MAKE) -C third_party/re clean || true
 	$(HIDE)[ -d third_party/re ] && $(MAKE) -C src clean || true
-	$(HIDE)[ -d third_party/re ] && $(MAKE) -C tests clean || true
+	$(HIDE)[ -d third_party/re ] && $(MAKE) -C test clean || true
 
 .PHONY: cleaner
 cleaner: clean
@@ -171,7 +171,7 @@ distclean: clean
 
 .PHONY: ccheck
 ccheck:
-	tests/ccheck.py src Makefile
+	test/ccheck.py src Makefile
 
 .PHONY: tree
 tree:
@@ -179,13 +179,13 @@ tree:
 
 .PHONY: test
 test: libsl.a
-	$(HIDE)$(MAKE) -C tests
-	$(HIDE)-$(MAKE) -C tests compile_commands.json &
-	$(HIDE)tests/sltest
+	$(MAKE) -C test
+	$(HIDE)-$(MAKE) -C test compile_commands.json &
+	$(HIDE)test/sltest
 
 .PHONY: watch
 watch:
 	$(HIDE)while true; do \
-	inotifywait -qr -e modify src tests; \
+	inotifywait -qr -e modify src test; \
 	make test; sleep 0.5; \
 	done
