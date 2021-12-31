@@ -65,7 +65,7 @@ jobs:
       if: ${{ runner.os == 'Linux' }}
       run: |
         clang-tidy-13 -checks=cert-\*,-cert-dcl37-c,-cert-dcl51-cpp,-clang-analyzer-valist.Uninitialized src/*.c
-        clang-tidy-13 -checks=cert-\*,-cert-dcl37-c,-cert-dcl51-cpp,-clang-analyzer-valist.Uninitialized tests/*.c
+        clang-tidy-13 -checks=cert-\*,-cert-dcl37-c,-cert-dcl51-cpp,-clang-analyzer-valist.Uninitialized test/src/*.c
 
     - name: clang scan-build
       if: ${{ runner.os == 'Linux' }}
