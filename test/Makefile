@@ -21,7 +21,7 @@ LFLAGS += -L../src # libsl.a
 APP_MK := src/srcs.mk
 
 BIN    := $(PROJECT)$(BIN_SUFFIX)
-LIBS   += -lsl -lbaresip -lrem -lm
+LIBS   := -lsl -lbaresip -lrem -lre -lm -lopus $(LIBS)
 
 include $(APP_MK)
 
@@ -31,7 +31,7 @@ all: $(BIN)
 
 $(BIN): $(OBJS)
 	@echo "  LD      $@"
-	@$(CC) $(LFLAGS) $(APP_LFLAGS) $^ -lre $(LIBS) -o $@
+	@$(CC) $(LFLAGS) $^ $(LIBS) -o $@
 
 $(BUILD)/%.o: %.c $(BUILD) Makefile $(APP_MK)
 	@$(CC) $(CFLAGS) -c $< -o $@ $(DFLAGS)

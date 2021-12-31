@@ -179,7 +179,7 @@ tree:
 
 .PHONY: test
 test: libsl.a
-	$(MAKE) -C test
+	$(HIDE)$(MAKE) -C test
 	$(HIDE)-$(MAKE) -C test compile_commands.json &
 	$(HIDE)test/sltest
 

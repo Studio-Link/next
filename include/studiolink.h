@@ -15,7 +15,7 @@
 extern "C" {
 #endif
 
-int sl_init(void);
+int sl_init(const uint8_t *conf);
 int sl_main(void);
 void sl_close(void);
 

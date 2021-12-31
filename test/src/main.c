@@ -20,16 +20,24 @@ static const struct test tests[] = {
 };
 // clang-format on
 
+
 int test_sl_init(void)
 {
-		return sl_init();
+	int err;
+
+	err = sl_init(NULL);
+	if (!err)
+		return EINVAL;
+
+	return 0;
 }
 
 
 int test_sl_close(void)
 {
-	sl_close();
-	return 1;
+	(void)sl_close();
+	
+	return 0;
 }
 
 

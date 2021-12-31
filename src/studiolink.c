@@ -3,22 +3,61 @@
 #include <studiolink.h>
 
 
-static int ws_init(void)
+static void signal_handler(int signum)
 {
-	return 0;
+	(void)signum;
+
+	re_fprintf(stderr, "terminated on signal %d\n", signum);
+
+	re_cancel();
 }
 
 
 /**
  * Init StudioLink
  *
+ * Initializes Libre, Baresip and StudioLink
+ *
+ * @param conf Baresip config
+ *
  * @return int
  */
-int sl_init(void)
+int sl_init(const uint8_t *conf)
 {
+	struct config *config;
 	int err;
 
-	err = ws_init();
+	if (!conf)
+		return EINVAL;
+
+	err = libre_init();
+	if (err)
+		return err;
+
+	(void)sys_coredump_set(true);
+
+	err = conf_configure_buf(conf, str_len((char *)conf));
+	if (err) {
+		warning("sl_init: conf_configure failed: %m\n", err);
+		goto out;
+	}
+
+	config = conf_config();
+	if (!config) {
+		err = ENOENT;
+		warning("sl_init: conf_config failed");
+		goto out;
+	}
+
+	err = baresip_init(config);
+	if (err) {
+		warning("sl_init: baresip init failed (%m)\n", err);
+		goto out;
+	}
+
+out:
+	if (err)
+		sl_close();
 
 	return err;
 }
@@ -31,7 +70,9 @@ int sl_init(void)
  */
 int sl_main(void)
 {
-	int err = 0;
+	int err;
+
+	err = re_main(signal_handler);
 
 	return err;
 }
@@ -39,9 +80,19 @@ int sl_main(void)
 
 /**
  * Close/Exit StudioLink
- *
- * @return int
  */
 void sl_close(void)
 {
+	ua_stop_all(true);
+	ua_close();
+	module_app_unload();
+	conf_close();
+
+	baresip_close();
+	mod_close();
+
+	libre_close();
+
+	tmr_debug();
+	mem_debug();
 }
