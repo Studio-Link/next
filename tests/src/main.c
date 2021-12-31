@@ -10,12 +10,10 @@ struct test {
 	const char *name;
 };
 
-#define TEST(a)                                                               \
-	{                                                                     \
-		a, #a                                                         \
-	}
 
 // clang-format off
+#define TEST(a) {a, #a}
+
 static const struct test tests[] = {
 	TEST(test_sl_init),
 	TEST(test_sl_close)
@@ -24,15 +22,16 @@ static const struct test tests[] = {
 
 int test_sl_init(void)
 {
-	return sl_init();
+		return sl_init();
 }
 
 
 int test_sl_close(void)
 {
 	sl_close();
-	return 0;
+	return 1;
 }
+
 
 static int run_tests(void)
 {
@@ -46,8 +45,7 @@ static int run_tests(void)
 		err = tests[i].exec();
 		if (err) {
 			re_printf("\n");
-			warning("%s: test failed (%m)\n", tests[i].name,
-				err);
+			warning("%s: test failed (%m)\n", tests[i].name, err);
 			return err;
 		}
 	}
