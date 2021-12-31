@@ -17,7 +17,9 @@
                 goto out;                                       \
         }
 
+/* functions */
+int sl_main_timeout(uint32_t timeout_ms);
 
 /* test cases */
-int test_sl_init(void);
-int test_sl_close(void);
+int test_sl_init_main_close(void);
+

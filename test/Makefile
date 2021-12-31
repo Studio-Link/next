@@ -27,6 +27,8 @@ include $(APP_MK)
 
 OBJS := $(patsubst %.c,$(BUILD)/src/%.o,$(filter %.c,$(SRCS)))
 
+-include $(OBJS:.o=.d)
+
 all: $(BIN)
 
 $(BIN): $(OBJS)

@@ -15,29 +15,50 @@ struct test {
 #define TEST(a) {a, #a}
 
 static const struct test tests[] = {
-	TEST(test_sl_init),
-	TEST(test_sl_close)
+	TEST(test_sl_init_main_close),
 };
 // clang-format on
 
-
-int test_sl_init(void)
+static void timeout(void *arg)
 {
-	int err;
+	int *err = arg;
 
-	err = sl_init(NULL);
-	if (!err)
-		return EINVAL;
+	*err = ETIMEDOUT;
 
-	return 0;
+	re_cancel();
 }
 
 
-int test_sl_close(void)
+int sl_main_timeout(uint32_t timeout_ms)
 {
+	struct tmr tmr;
+	int err = 0;
+
+	tmr_init(&tmr);
+	tmr_start(&tmr, timeout_ms, timeout, &err);
+	sl_main();
+	tmr_cancel(&tmr);
+
+	return err;
+}
+
+
+int test_sl_init_main_close(void)
+{
+	int err;
+	const char *config = "opus_bitrate 64000\n";
+
+	err = sl_init(NULL);
+	ASSERT_TRUE(err);
+
+	err = sl_init((uint8_t *)config);
+	ASSERT_TRUE(!err);
+
+	sl_main_timeout(1);
+
 	(void)sl_close();
-	
-	return 0;
+out:
+	return err;
 }
 
 
