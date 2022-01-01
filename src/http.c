@@ -138,7 +138,7 @@ int sl_http_listen(struct http_sock **sock)
 {
 	int err;
 	struct sa srv;
-	
+
 	if (!sock)
 		return EINVAL;
 
