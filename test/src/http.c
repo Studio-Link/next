@@ -11,7 +11,7 @@ static void http_resp_handler(int err, const struct http_msg *msg, void *arg)
 	(void)arg;
 
 	test_err = err;
-	
+
 	re_cancel();
 }
 
