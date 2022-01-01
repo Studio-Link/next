@@ -1,7 +1,7 @@
 #include <re.h>
 #include <baresip.h>
 #include <studiolink.h>
-#include "tests.h"
+#include "test.h"
 
 typedef int(test_exec_h)(void);
 
@@ -16,6 +16,7 @@ struct test {
 
 static const struct test tests[] = {
 	TEST(test_sl_init_main_close),
+	TEST(test_sl_http),
 };
 // clang-format on
 
@@ -39,25 +40,6 @@ int sl_main_timeout(uint32_t timeout_ms)
 	sl_main();
 	tmr_cancel(&tmr);
 
-	return err;
-}
-
-
-int test_sl_init_main_close(void)
-{
-	int err;
-	const char *config = "opus_bitrate 64000\n";
-
-	err = sl_init(NULL);
-	ASSERT_TRUE(err);
-
-	err = sl_init((uint8_t *)config);
-	ASSERT_TRUE(!err);
-
-	sl_main_timeout(1);
-
-	(void)sl_close();
-out:
 	return err;
 }
 

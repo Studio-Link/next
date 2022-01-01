@@ -3,6 +3,9 @@
 #include <studiolink.h>
 
 
+static struct http_sock *httpsock = NULL;
+
+
 static void signal_handler(int signum)
 {
 	(void)signum;
@@ -27,19 +30,18 @@ int sl_init(const uint8_t *conf)
 	struct config *config;
 	int err;
 
-	if (!conf)
-		return EINVAL;
-
 	err = libre_init();
 	if (err)
 		return err;
 
 	(void)sys_coredump_set(true);
 
-	err = conf_configure_buf(conf, str_len((char *)conf));
-	if (err) {
-		warning("sl_init: conf_configure failed: %m\n", err);
-		goto out;
+	if (conf) {
+		err = conf_configure_buf(conf, str_len((char *)conf));
+		if (err) {
+			warning("sl_init: conf_configure failed: %m\n", err);
+			goto out;
+		}
 	}
 
 	config = conf_config();
@@ -52,6 +54,12 @@ int sl_init(const uint8_t *conf)
 	err = baresip_init(config);
 	if (err) {
 		warning("sl_init: baresip init failed (%m)\n", err);
+		goto out;
+	}
+
+	err = sl_http_listen(&httpsock);
+	if (err) {
+		warning("sl_init: http_listen failed (%m)\n", err);
 		goto out;
 	}
 
@@ -83,6 +91,8 @@ int sl_main(void)
  */
 void sl_close(void)
 {
+	mem_deref(httpsock);
+
 	ua_stop_all(true);
 	ua_close();
 	module_app_unload();

@@ -15,9 +15,24 @@
 extern "C" {
 #endif
 
+/* main.c */
 int sl_init(const uint8_t *conf);
 int sl_main(void);
 void sl_close(void);
+
+
+/* http.c */
+enum SL_HTTP_MET {
+	SL_HTTP_GET,
+	SL_HTTP_POST,
+	SL_HTTP_PUT,
+	SL_HTTP_PATCH,
+	SL_HTTP_DELETE,
+};
+struct sl_http;
+int sl_http_alloc(struct sl_http **http, http_resp_h *resph);
+int sl_http_req(struct sl_http *http, enum SL_HTTP_MET sl_met, char *url);
+int sl_http_listen(struct http_sock **sock);
 
 #ifdef __cplusplus
 }

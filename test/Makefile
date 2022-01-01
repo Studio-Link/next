@@ -31,6 +31,7 @@ OBJS := $(patsubst %.c,$(BUILD)/src/%.o,$(filter %.c,$(SRCS)))
 
 all: $(BIN)
 
+.PHONY: $(BIN)
 $(BIN): $(OBJS)
 	@echo "  LD      $@"
 	@$(CC) $(LFLAGS) $(APP_LFLAGS) $^ $(LIBS) -o $@
