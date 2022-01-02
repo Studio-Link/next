@@ -171,7 +171,7 @@ distclean: clean
 
 .PHONY: ccheck
 ccheck:
-	test/ccheck.py src Makefile
+	test/ccheck.py src Makefile test
 
 .PHONY: tree
 tree:
