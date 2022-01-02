@@ -14,15 +14,15 @@ LIBRE_MK     := $(LIBRE_PATH)/mk/re.mk
 
 include $(LIBRE_MK)
 
-CFLAGS += -I../include -I$(LIBRE_PATH)/include -I$(LIBREM_PATH)/include
+CFLAGS += -Iinclude -I$(LIBRE_PATH)/include -I$(LIBREM_PATH)/include
 CFLAGS += -I$(BARESIP_PATH)/include
 
 STATIC := libsl.a
-APP_MK := srcs.mk
+APP_MK := src/srcs.mk
 
 include $(APP_MK)
 
-OBJS := $(patsubst %.c,$(BUILD)/%.o,$(filter %.c,$(SRCS)))
+OBJS := $(patsubst %.c,$(BUILD)/src/%.o,$(filter %.c,$(SRCS)))
 
 all: $(STATIC)
 
@@ -37,7 +37,7 @@ $(BUILD)/%.o: %.c $(BUILD) Makefile $(APP_MK)
 	@$(CC) $(CFLAGS) -c $< -o $@ $(DFLAGS)
 
 $(BUILD): Makefile
-	@mkdir -p $@
+	@mkdir -p $@/src
 	@touch $@
 
 .PHONY: clean

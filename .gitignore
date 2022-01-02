@@ -1,5 +1,5 @@
 /build*
-/src/build*
+/libsl/build*
 /test/build*
 /test/sltest
 .vscode

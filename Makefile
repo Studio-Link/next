@@ -37,12 +37,12 @@ default: third_party libsl.a
 
 .PHONY: libsl.a
 libsl.a:
-	$(HIDE)$(MAKE) -C src $@
-	$(HIDE)-$(MAKE) -C src compile_commands.json &
+	$(HIDE)$(MAKE) -C libsl $@
+	$(HIDE)-$(MAKE) -C libsl compile_commands.json &
 
 .PHONY: info
 info: third_party_dir third_party/re
-	$(MAKE) -C src $@
+	$(MAKE) -C libsl $@
 
 ##############################################################################
 #
