@@ -14,7 +14,7 @@ LIBRE_MK     := ../third_party/re/mk/re.mk
 
 include $(LIBRE_MK)
 
-CFLAGS += -Isrc -I../libsl/include -I$(LIBRE_PATH)/include 
+CFLAGS += -Isrc -I../libsl/include -I$(LIBRE_PATH)/include
 CFLAGS += -I$(LIBREM_PATH)/include -I$(BARESIP_PATH)/include
 LFLAGS += -L../libsl # libsl.a
 
