@@ -11,14 +11,13 @@ struct test {
 };
 
 
-// clang-format off
+/* clang-format off */
 #define TEST(a) {a, #a}
 
 static const struct test tests[] = {
-	TEST(test_sl_init_main_close),
 	TEST(test_sl_http),
 };
-// clang-format on
+/* clang-format on */
 
 static void timeout(void *arg)
 {
@@ -73,8 +72,14 @@ int main(void)
 
 	(void)sys_coredump_set(true);
 
+	log_enable_info(true);
+
+	err = sl_init(NULL);
+	TEST_ERR(err);
+
 	err = run_tests();
-	IF_ERR_GOTO_OUT(err);
+	if (err)
+		goto out;
 
 	re_printf("\x1b[32mOK. %zu tests passed successfully\x1b[;m\n",
 		  ntests);
@@ -85,8 +90,7 @@ out:
 		re_printf("%H\n", re_debug, 0);
 	}
 
-	tmr_debug();
-	mem_debug();
+	sl_close();
 
 	return err;
 }

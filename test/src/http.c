@@ -21,17 +21,13 @@ int test_sl_http(void)
 	int err;
 	struct sl_http *http = NULL;
 
-	err = sl_init(NULL);
-	if (err)
-		return err;
-
 	err = sl_http_alloc(&http, http_resp_handler);
 	TEST_ERR(err);
 
 	err = sl_http_req(http, SL_HTTP_GET, "http://127.0.0.1:9999/");
 	TEST_ERR(err);
 
-	err = sl_main_timeout(1000);
+	err = sl_main_timeout(100);
 	TEST_ERR(err);
 
 	err = test_err;
@@ -39,6 +35,5 @@ int test_sl_http(void)
 
 out:
 	mem_deref(http);
-	(void)sl_close();
 	return err;
 }

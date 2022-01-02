@@ -4,7 +4,6 @@
 
 
 struct sl_http {
-	struct network *net;
 	struct http_cli *client;
 	struct http_reqconn *conn;
 };
@@ -15,7 +14,6 @@ static void destroy(void *arg)
 	struct sl_http *p = arg;
 	mem_deref(p->client);
 	mem_deref(p->conn);
-	mem_deref(p->net);
 }
 
 
@@ -28,11 +26,7 @@ int sl_http_alloc(struct sl_http **http, http_resp_h *resph)
 	if (!p)
 		return ENOMEM;
 
-	err = net_alloc(&p->net, &conf_config()->net);
-	if (err)
-		return err;
-
-	err = http_client_alloc(&p->client, net_dnsc(p->net));
+	err = http_client_alloc(&p->client, net_dnsc(baresip_network()));
 	if (err)
 		return err;
 
@@ -85,7 +79,7 @@ int sl_http_req(struct sl_http *http, enum SL_HTTP_MET sl_met, char *url)
 }
 
 
-static int http_sreply(struct http_conn *conn, uint16_t scode,
+static void http_sreply(struct http_conn *conn, uint16_t scode,
 		       const char *reason, const char *ctype, const char *fmt,
 		       size_t size)
 {
@@ -95,23 +89,28 @@ static int http_sreply(struct http_conn *conn, uint16_t scode,
 	(void)reason;
 
 	mb = mbuf_alloc(size);
-	if (!mb)
-		return ENOMEM;
+	if (!mb) {
+		warning("http_sreply: ENOMEM\n");
+		return;
+	}
 
 	err = mbuf_write_mem(mb, (const uint8_t *)fmt, size);
-	if (err)
+	if (err) {
+		warning("http_sreply: mbuf_write_mem err %m\n", err);
 		goto out;
+	}
 
-	http_reply(conn, 200, "OK",
+	err = http_reply(conn, 200, "OK",
 		   "Content-Type: %s\r\n"
 		   "Content-Length: %zu\r\n"
 		   "Cache-Control: no-cache, no-store, must-revalidate\r\n"
 		   "\r\n"
 		   "%b",
 		   ctype, mb->end, mb->buf, mb->end);
+	if (err)
+		warning("http_sreply: http_reply err %m\n", err);
 out:
 	mem_deref(mb);
-	return err;
 }
 
 
@@ -128,7 +127,7 @@ static void http_req_handler(struct http_conn *conn,
 	 * Static Requests
 	 */
 	if (0 == pl_strcasecmp(&msg->path, "/")) {
-		http_sreply(conn, 200, "OK", "text/html", "hello", 5);
+		http_sreply(conn, 200, "OK", "text/html", "", 0);
 		return;
 	}
 }

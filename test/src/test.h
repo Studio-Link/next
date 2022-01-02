@@ -29,5 +29,4 @@
 int sl_main_timeout(uint32_t timeout_ms);
 
 /* test cases */
-int test_sl_init_main_close(void);
 int test_sl_http(void);
