@@ -19,8 +19,8 @@ jobs:
         cache-dependency-path: 'webui/package-lock.json'
     - name: build 
       run: |
-        cd webui && npm install && npm run build
-        zip -r webui.zip webui
+        cd webui && npm install && npm run build && cd ..
+        zip -r webui.zip webui/dist
     - uses: actions/upload-artifact@v2
       with:
         name: webui
