@@ -27,3 +27,5 @@ compile_commands.json
 /baresip
 
 /third_party
+
+/libsl/assets

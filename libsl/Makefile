@@ -34,12 +34,19 @@ ifneq ($(RANLIB),)
 endif
 
 $(BUILD)/%.o: %.c $(BUILD) Makefile $(APP_MK)
+	@echo "  CC	     $@"
 	@$(CC) $(CFLAGS) -c $< -o $@ $(DFLAGS)
 
-$(BUILD): Makefile
+$(BUILD): Makefile assets
 	@mkdir -p $@/src
 	@touch $@
 
 .PHONY: clean
 clean:
 	@rm -rf $(STATIC) $(BUILD)
+
+assets: assets/index.h
+
+assets/index.h: ../webui/dist/index.html
+	mkdir -p assets
+	cd ../webui/ && xxd -i dist/index.html > ../libsl/assets/index.h

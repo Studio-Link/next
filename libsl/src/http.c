@@ -2,6 +2,8 @@
 #include <baresip.h>
 #include <studiolink.h>
 
+#include "../assets/index.h"
+
 
 struct sl_http {
 	struct http_cli *client;
@@ -80,8 +82,8 @@ int sl_http_req(struct sl_http *http, enum SL_HTTP_MET sl_met, char *url)
 
 
 static void http_sreply(struct http_conn *conn, uint16_t scode,
-		       const char *reason, const char *ctype, const char *fmt,
-		       size_t size)
+			const char *reason, const char *ctype, const char *fmt,
+			size_t size)
 {
 	struct mbuf *mb;
 	int err = 0;
@@ -100,13 +102,14 @@ static void http_sreply(struct http_conn *conn, uint16_t scode,
 		goto out;
 	}
 
-	err = http_reply(conn, 200, "OK",
-		   "Content-Type: %s\r\n"
-		   "Content-Length: %zu\r\n"
-		   "Cache-Control: no-cache, no-store, must-revalidate\r\n"
-		   "\r\n"
-		   "%b",
-		   ctype, mb->end, mb->buf, mb->end);
+	err = http_reply(
+		conn, 200, "OK",
+		"Content-Type: %s\r\n"
+		"Content-Length: %zu\r\n"
+		"Cache-Control: no-cache, no-store, must-revalidate\r\n"
+		"\r\n"
+		"%b",
+		ctype, mb->end, mb->buf, mb->end);
 	if (err)
 		warning("http_sreply: http_reply err %m\n", err);
 out:
@@ -127,7 +130,9 @@ static void http_req_handler(struct http_conn *conn,
 	 * Static Requests
 	 */
 	if (0 == pl_strcasecmp(&msg->path, "/")) {
-		http_sreply(conn, 200, "OK", "text/html", "", 0);
+		http_sreply(conn, 200, "OK", "text/html",
+			    (const char *)dist_index_html,
+			    dist_index_html_len);
 		return;
 	}
 }
