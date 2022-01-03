@@ -17,9 +17,10 @@ jobs:
         node-version: '16'
         cache: 'npm'
         cache-dependency-path: 'webui/package-lock.json'
-    - run: |
-      cd webui && npm install && npm run build
-      zip -r webui.zip webui
+    - name: build 
+      run: |
+        cd webui && npm install && npm run build
+        zip -r webui.zip webui
     - uses: actions/upload-artifact@v2
       with:
         name: webui
@@ -60,7 +61,7 @@ jobs:
       with:
         name: webui
 
-    - name: Unzip webui
+    - name: unzip webui
       run: rm -Rf webui && unzip webui.zip
 
     - name: make info
