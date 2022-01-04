@@ -37,6 +37,7 @@ $(BIN): $(OBJS)
 	@$(CC) $(LFLAGS) $(APP_LFLAGS) $^ $(LIBS) -o $@
 
 $(BUILD)/%.o: %.c $(BUILD) Makefile $(APP_MK)
+	@echo "  CC      $@"
 	@$(CC) $(CFLAGS) -c $< -o $@ $(DFLAGS)
 
 $(BUILD): Makefile
@@ -46,3 +47,7 @@ $(BUILD): Makefile
 .PHONY: clean
 clean:
 	@rm -rf $(BIN) $(BUILD)
+
+.PHONY: integration
+integration:
+	./integration.sh

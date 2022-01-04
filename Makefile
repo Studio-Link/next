@@ -182,6 +182,7 @@ test: libsl.a
 	$(HIDE)$(MAKE) -C test
 	$(HIDE)-$(MAKE) -C test compile_commands.json &
 	$(HIDE)test/sltest
+	$(HIDE)-$(MAKE) -C test integration
 
 .PHONY: watch
 watch:
