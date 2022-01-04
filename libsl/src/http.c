@@ -150,7 +150,7 @@ int sl_http_listen(struct http_sock **sock)
 
 	err = sa_set_str(&srv, "127.0.0.1", 9999);
 
-	info("listen: %J\n", &srv);
+	info("listen webui: http://%J\n", &srv);
 	err = http_listen(sock, &srv, http_req_handler, NULL);
 	if (err)
 		return err;

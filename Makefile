@@ -185,7 +185,7 @@ test: libsl.a linux
 	$(HIDE)test/sltest
 	$(HIDE)$(MAKE) -C test integration
 
-linux:
+linux: libsl.a
 	$(HIDE)$(MAKE) -C app/linux
 
 .PHONY: watch

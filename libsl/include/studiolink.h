@@ -16,7 +16,9 @@ extern "C" {
 #endif
 
 /* main.c */
+int sl_getopt(int argc, char * const argv[]);
 int sl_init(const uint8_t *conf);
+int sl_open_webui(void);
 int sl_main(void);
 void sl_close(void);
 

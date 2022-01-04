@@ -34,8 +34,6 @@ script_trap_err() {
 
 	echo -e "${RED}${FUNCNAME[2]}$NC"
 	echo -e "${RED}${FUNCNAME[1]} - TEST FAILED!$NC"
-	echo "--- STUDIO LINK output ---"
-	kill -INT "$test_pid"
 	exec 1>&3 2>&4
 	cat $script_output
 
@@ -54,13 +52,14 @@ script_trap_exit() {
 	fi
 	if [[ $exit_code -eq 0 ]]; then
 		echo -e "${GREEN}All integration tests were sucessfully!$NC"
-		kill -INT "$test_pid"
 	fi
+
+	kill -INT "$test_pid"
 }
 
 script_init() {
 	readonly script_output="$(mktemp "/tmp/test".XXXXX)"
-	../app/linux/studiolink 1>>"$script_output" 2>&1 &
+	../app/linux/studiolink --headless 1>>"$script_output" 2>&1 &
 	test_pid="$!"
 
 	exec 3>&1 4>&2 1>"$script_output" 2>&1
@@ -82,6 +81,21 @@ a_user_gets_404_if_page_not_exists() {
 a_user_can_connect_with_websocket() {
 	ws_test /tracks
 }
+
+a_user_can_call_cli_help() {
+	../app/linux/studiolink -h || [[ $? == 254 ]]
+}
+
+a_user_can_not_call_unknown_cli_options() {
+	../app/linux/studiolink -sjdfksdf || [[ $? == 22 ]]
+	../app/linux/studiolink -Hasldkfj || [[ $? == 22 ]]
+	../app/linux/studiolink -x || [[ $? == 22 ]]
+	../app/linux/studiolink --headlesssadlkfjasd || [[ $? == 22 ]]
+	set +o pipefail
+	../app/linux/studiolink --headless="asdfjdsf" 2>&1 |
+		grep "option '--headless' doesn't allow an argument"
+	set -o pipefail
+}
 # --- TESTS ---
 
 # echo "Test connection"
@@ -95,6 +109,8 @@ main() {
 	trap script_trap_exit EXIT
 	script_init "$@"
 
+	a_user_can_call_cli_help
+	a_user_can_not_call_unknown_cli_options
 	a_user_gets_404_if_page_not_exists
 	# a_user_can_connect_with_websocket
 }

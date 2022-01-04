@@ -1,6 +1,5 @@
-/build*
-/libsl/build*
-/test/build*
+build-*
+/app/linux/studiolink
 /test/sltest
 .vscode
 compile_commands.json
