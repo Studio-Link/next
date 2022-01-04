@@ -155,6 +155,7 @@ clean:
 	$(HIDE)[ -d third_party/re ] && $(MAKE) -C third_party/re clean || true
 	$(HIDE)[ -d third_party/re ] && $(MAKE) -C libsl clean || true
 	$(HIDE)[ -d third_party/re ] && $(MAKE) -C test clean || true
+	$(HIDE)[ -d third_party/re ] && $(MAKE) -C app/linux clean || true
 
 .PHONY: cleaner
 cleaner: clean
@@ -178,11 +179,14 @@ tree:
 	tree -L 4 -I "third_party|node_modules|build*" -d .
 
 .PHONY: test
-test: libsl.a
+test: libsl.a linux
 	$(HIDE)$(MAKE) -C test
 	$(HIDE)-$(MAKE) -C test compile_commands.json &
 	$(HIDE)test/sltest
-	$(HIDE)-$(MAKE) -C test integration
+	$(HIDE)$(MAKE) -C test integration
+
+linux:
+	$(HIDE)$(MAKE) -C app/linux
 
 .PHONY: watch
 watch:
