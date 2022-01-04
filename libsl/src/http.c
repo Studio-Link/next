@@ -135,6 +135,8 @@ static void http_req_handler(struct http_conn *conn,
 			    dist_index_html_len);
 		return;
 	}
+
+	http_ereply(conn, 404, "Not found");
 }
 
 
