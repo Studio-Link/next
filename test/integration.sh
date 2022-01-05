@@ -91,10 +91,7 @@ a_user_can_not_call_unknown_cli_options() {
 	../app/linux/studiolink -Hasldkfj || [[ $? == 22 ]]
 	../app/linux/studiolink -x || [[ $? == 22 ]]
 	../app/linux/studiolink --headlesssadlkfjasd || [[ $? == 22 ]]
-	set +o pipefail
-	../app/linux/studiolink --headless="asdfjdsf" 2>&1 |
-		grep "option '--headless' doesn't allow an argument"
-	set -o pipefail
+	../app/linux/studiolink --headless="asdfjdsf" || [[ $? == 22 ]] 
 }
 # --- TESTS ---
 
