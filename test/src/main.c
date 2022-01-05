@@ -16,8 +16,10 @@ struct test {
 
 static const struct test tests[] = {
 	TEST(test_sl_http),
+	TEST(test_sl_ws),
 };
 /* clang-format on */
+
 
 static void timeout(void *arg)
 {
@@ -72,7 +74,7 @@ int main(void)
 
 	(void)sys_coredump_set(true);
 
-	log_enable_info(true);
+	log_enable_info(false);
 
 	err = sl_init(NULL);
 	TEST_ERR(err);
