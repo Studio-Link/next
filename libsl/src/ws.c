@@ -2,7 +2,7 @@
 #include <baresip.h>
 #include <studiolink.h>
 
-static struct websock *ws;
+static struct websock *ws = NULL;
 static struct list wsl;
 struct ws_conn {
 	struct le le;
@@ -92,6 +92,8 @@ int sl_ws_close(void)
 		mem_deref(ws_conn);
 	}
 
-	mem_deref(ws);
+	if (ws)
+		ws = mem_deref(ws);
+
 	return 0;
 }
