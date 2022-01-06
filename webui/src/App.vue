@@ -15,7 +15,6 @@
 
   <footer class="bottom-0 container fixed mb-4">
     <div class="flex flex-wrap justify-between items-end px-2">
-      <div class="w-1/3 invisible">Chat | Hand</div>
       <BottomActions />
       <Version />
     </div>

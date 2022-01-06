@@ -1,7 +1,7 @@
 <template>
-  <div class="items-end sm:w-1/3">
+  <div class="absolute bottom-0 inset-x-0 invisible sm:visible">
     <div
-      class="text-right mt-4 sm:mt-0 text-sm text-sl-disabled"
+      class="text-right text-xs text-sl-disabled pr-2"
     >
       v21.01.0-next-dev
     </div>

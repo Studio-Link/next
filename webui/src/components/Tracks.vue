@@ -21,7 +21,8 @@
             bg-sl-02dp
             rounded-lg
             shadow
-            h-44
+            h-24
+            md:h-44
             w-full
           "
         >
@@ -66,7 +67,7 @@
       @mouseenter="newTrackVisible = true"
       @mouseleave="newTrackVisible = false"
     >
-      <div class="flex items-center justify-center h-44 mt-4">
+      <div class="flex items-center justify-center h-24 md:h-44 mt-4">
         <button
           accesskey="t"
           aria-label="Add Remote Track"
