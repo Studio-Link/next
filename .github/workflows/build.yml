@@ -58,7 +58,15 @@ jobs:
       run: |
         wget https://github.com/vi/websocat/releases/download/v1.9.0/websocat_linux64
         mv websocat_linux64 /usr/local/bin/websocat
-    
+        chmod +x /usr/local/bin/websocat
+
+    - name: websocat macos
+      if: ${{ runner.os == 'macOS' }}
+      run: |
+        wget https://github.com/vi/websocat/releases/download/v1.9.0/websocat_mac
+        mv websocat_mac /usr/local/bin/websocat
+        chmod +x /usr/local/bin/websocat
+
     - uses: actions/cache@v2
       with:
         path: third_party
