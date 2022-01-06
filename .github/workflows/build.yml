@@ -57,7 +57,7 @@ jobs:
       if: ${{ runner.os == 'Linux' }}
       run: |
         wget https://github.com/vi/websocat/releases/download/v1.9.0/websocat_linux64
-        mv websocat_linux64 /usr/local/bin/
+        mv websocat_linux64 /usr/local/bin/websocat
     
     - uses: actions/cache@v2
       with:
