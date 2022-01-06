@@ -2,7 +2,15 @@
 #include <baresip.h>
 #include <studiolink.h>
 
-#include "../assets/index.h"
+#include "../assets/index_html.h"
+#include "../assets/index_js.h"
+#include "../assets/vendor_js.h"
+#include "../assets/index_css.h"
+#include "../assets/roboto-mono-latin-400_woff2.h"
+#include "../assets/roboto-mono-latin-500_woff2.h"
+#include "../assets/roboto-mono-latin-600_woff2.h"
+#include "../assets/roboto-mono-latin-700_woff2.h"
+#include "../assets/logo_standalone_svg.h"
 
 
 struct sl_http {
@@ -141,6 +149,51 @@ static void http_req_handler(struct http_conn *conn,
 		http_sreply(conn, 200, "OK", "text/html",
 			    (const char *)dist_index_html,
 			    dist_index_html_len);
+		return;
+	}
+	if (0 == pl_strcasecmp(&msg->path, "/index.js")) {
+		http_sreply(conn, 200, "OK", "application/javascript",
+			    (const char *)dist_index_js, dist_index_js_len);
+		return;
+	}
+	if (0 == pl_strcasecmp(&msg->path, "/vendor.js")) {
+		http_sreply(conn, 200, "OK", "application/javascript",
+			    (const char *)dist_vendor_js, dist_vendor_js_len);
+		return;
+	}
+	if (0 == pl_strcasecmp(&msg->path, "/index.css")) {
+		http_sreply(conn, 200, "OK", "text/css",
+			    (const char *)dist_index_css, dist_index_css_len);
+		return;
+	}
+	if (0 == pl_strcasecmp(&msg->path, "/roboto-mono-latin-400.woff2")) {
+		http_sreply(conn, 200, "OK", "font/woff2",
+			    (const char *)dist_roboto_mono_latin_400_woff2,
+			    dist_roboto_mono_latin_400_woff2_len);
+		return;
+	}
+	if (0 == pl_strcasecmp(&msg->path, "/roboto-mono-latin-500.woff2")) {
+		http_sreply(conn, 200, "OK", "font/woff2",
+			    (const char *)dist_roboto_mono_latin_500_woff2,
+			    dist_roboto_mono_latin_500_woff2_len);
+		return;
+	}
+	if (0 == pl_strcasecmp(&msg->path, "/roboto-mono-latin-600.woff2")) {
+		http_sreply(conn, 200, "OK", "font/woff2",
+			    (const char *)dist_roboto_mono_latin_600_woff2,
+			    dist_roboto_mono_latin_600_woff2_len);
+		return;
+	}
+	if (0 == pl_strcasecmp(&msg->path, "/roboto-mono-latin-700.woff2")) {
+		http_sreply(conn, 200, "OK", "font/woff2",
+			    (const char *)dist_roboto_mono_latin_700_woff2,
+			    dist_roboto_mono_latin_700_woff2_len);
+		return;
+	}
+	if (0 == pl_strcasecmp(&msg->path, "/logo_standalone.svg")) {
+		http_sreply(conn, 200, "OK", "image/svg+xml",
+			    (const char *)dist_logo_standalone_svg,
+			    dist_logo_standalone_svg_len);
 		return;
 	}
 

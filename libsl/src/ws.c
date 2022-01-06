@@ -34,8 +34,6 @@ int sl_ws_open(struct http_conn *conn, enum ws_type type,
 	struct ws_conn *ws_conn;
 	int err;
 
-	warning("ws_open\n");
-
 	ws_conn = mem_zalloc(sizeof(*ws_conn), conn_destroy);
 	if (!ws_conn)
 		return ENOMEM;
