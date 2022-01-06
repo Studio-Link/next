@@ -81,7 +81,7 @@ a_user_gets_404_if_page_not_exists() {
 }
 
 a_user_can_connect_with_websocket() {
-	ws_test /ws/v1/tracks | grep "{}"
+	ws_test /ws/v1/tracks
 }
 
 a_user_can_call_cli_help() {
