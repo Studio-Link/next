@@ -6,6 +6,8 @@ set -o errexit  # Exit on most errors
 set -o nounset  # Disallow expansion of unset variables
 set -o errtrace # Make sure any error trap is inherited
 set -o pipefail # Use last non-zero exit code in a pipeline
+set -o xtrace   # Trace the execution of the script
+
 IFS=$'\n\t'
 
 test_url="127.0.0.1:9999"
