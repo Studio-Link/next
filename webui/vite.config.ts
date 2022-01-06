@@ -7,9 +7,9 @@ export default defineConfig({
 	build: {
 		rollupOptions: {
 			output: {
-				entryFileNames: `[name].js`,   // works
-				chunkFileNames: `[name].js`,   // works
-				assetFileNames: `[name].[ext]` // does not work for images
+				entryFileNames: `[name].js`,
+				chunkFileNames: `[name].js`,
+				assetFileNames: `[name].[ext]`
 			}
 		}
 	}
