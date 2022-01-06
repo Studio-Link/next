@@ -34,6 +34,8 @@ int sl_ws_open(struct http_conn *conn, enum ws_type type,
 	struct ws_conn *ws_conn;
 	int err;
 
+	warning("ws_open\n");
+
 	ws_conn = mem_zalloc(sizeof(*ws_conn), conn_destroy);
 	if (!ws_conn)
 		return ENOMEM;
@@ -54,6 +56,20 @@ out:
 }
 
 
+void sl_ws_send_str(enum ws_type type, char *str)
+{
+	struct le *le;
+
+	LIST_FOREACH(&wsl, le)
+	{
+		struct ws_conn *ws_conn = le->data;
+		if (ws_conn->type != type)
+			continue;
+		websock_send(ws_conn->c, WEBSOCK_TEXT, "%s", str);
+	}
+}
+
+
 int sl_ws_init(void)
 {
 	int err;
@@ -67,12 +83,15 @@ int sl_ws_init(void)
 
 int sl_ws_close(void)
 {
-	for (struct le *le = list_head(&wsl); le; le = le->next) {
-		if (le && le->data) {
-			mem_deref(le->data);
-		}
-	}
-	ws = mem_deref(ws);
+	struct le *le = list_head(&wsl);
+	struct ws_conn *ws_conn;
 
+	while (le) {
+		ws_conn = le->data;
+		le	= le->next;
+		mem_deref(ws_conn);
+	}
+
+	mem_deref(ws);
 	return 0;
 }
