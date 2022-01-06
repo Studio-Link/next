@@ -30,3 +30,4 @@ int sl_main_timeout(uint32_t timeout_ms);
 
 /* test cases */
 int test_sl_http(void);
+int test_sl_ws(void);

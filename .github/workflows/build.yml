@@ -53,6 +53,20 @@ jobs:
         sudo add-apt-repository "deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-13 main"
         sudo apt-get update && sudo apt-get install -y clang-tools-13 clang-13 clang-tidy-13
 
+    - name: websocat linux
+      if: ${{ runner.os == 'Linux' }}
+      run: |
+        wget https://github.com/vi/websocat/releases/download/v1.9.0/websocat_linux64
+        mv websocat_linux64 /usr/local/bin/websocat
+        chmod +x /usr/local/bin/websocat
+
+    - name: websocat macos
+      if: ${{ runner.os == 'macOS' }}
+      run: |
+        wget https://github.com/vi/websocat/releases/download/v1.9.0/websocat_mac
+        mv websocat_mac /usr/local/bin/websocat
+        chmod +x /usr/local/bin/websocat
+
     - uses: actions/cache@v2
       with:
         path: third_party

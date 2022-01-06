@@ -133,6 +133,12 @@ int sl_init(const uint8_t *conf)
 		goto out;
 	}
 
+	err = sl_ws_init();
+	if (err) {
+		warning("sl_init: ws init failed (%m)\n", err);
+		goto out;
+	}
+
 	err = sl_http_listen(&httpsock);
 	if (err) {
 		warning("sl_init: http_listen failed (%m)\n", err);
@@ -196,6 +202,7 @@ int sl_main(void)
  */
 void sl_close(void)
 {
+	sl_ws_close();
 	mem_deref(httpsock);
 
 	ua_stop_all(true);

@@ -6,6 +6,8 @@ set -o errexit  # Exit on most errors
 set -o nounset  # Disallow expansion of unset variables
 set -o errtrace # Make sure any error trap is inherited
 set -o pipefail # Use last non-zero exit code in a pipeline
+set -o xtrace   # Trace the execution of the script
+
 IFS=$'\n\t'
 
 test_url="127.0.0.1:9999"
@@ -70,7 +72,7 @@ curl_head() {
 }
 
 ws_test() {
-	websocat "ws://$test_url}$1" ${2-}
+	websocat -E -1 "ws://${test_url}$1"
 }
 
 # --- TESTS ---
@@ -79,7 +81,7 @@ a_user_gets_404_if_page_not_exists() {
 }
 
 a_user_can_connect_with_websocket() {
-	ws_test /tracks
+	ws_test /ws/v1/tracks
 }
 
 a_user_can_call_cli_help() {
@@ -95,9 +97,6 @@ a_user_can_not_call_unknown_cli_options() {
 }
 # --- TESTS ---
 
-# echo "Test connection"
-# websocat ws://127.0.0.1:9999
-
 # DESC: Main control flow
 # ARGS: $@ (optional): Arguments provided to the script
 # OUTS: None
@@ -109,7 +108,7 @@ main() {
 	a_user_can_call_cli_help
 	a_user_can_not_call_unknown_cli_options
 	a_user_gets_404_if_page_not_exists
-	# a_user_can_connect_with_websocket
+	a_user_can_connect_with_websocket
 }
 
 # ready to backup?

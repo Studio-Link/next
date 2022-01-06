@@ -16,7 +16,7 @@ extern "C" {
 #endif
 
 /* main.c */
-int sl_getopt(int argc, char * const argv[]);
+int sl_getopt(int argc, char *const argv[]);
 int sl_init(const uint8_t *conf);
 int sl_open_webui(void);
 int sl_main(void);
@@ -35,6 +35,18 @@ struct sl_http;
 int sl_http_alloc(struct sl_http **http, http_resp_h *resph);
 int sl_http_req(struct sl_http *http, enum SL_HTTP_MET sl_met, char *url);
 int sl_http_listen(struct http_sock **sock);
+
+/* ws.c */
+enum ws_type { WS_TRACKS };
+int sl_ws_init(void);
+int sl_ws_close(void);
+int sl_ws_open(struct http_conn *conn, enum ws_type type,
+	       const struct http_msg *msg, websock_recv_h *recvh);
+void sl_ws_send_str(enum ws_type ws_type, char *str);
+
+/* ws_tracks.c */
+void sl_ws_tracks(const struct websock_hdr *hdr, struct mbuf *mb, void *arg);
+
 
 #ifdef __cplusplus
 }
