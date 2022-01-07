@@ -138,7 +138,18 @@ static void http_req_handler(struct http_conn *conn,
 	 */
 	if (0 == pl_strcasecmp(&msg->path, "/ws/v1/tracks")) {
 		sl_ws_open(conn, WS_TRACKS, msg, sl_ws_tracks);
-		sl_ws_send_str(WS_TRACKS, "{}");
+		sl_ws_send_str(WS_TRACKS, "[ \
+			{ \
+				\"id\": 1, \
+				\"type\": \"remote\", \
+				\"name\": \"\", \
+				\"status\": \"\", \
+				\"active\": false \
+			}, \
+			{ \
+				\"id\": 2, \
+				\"type\": \"local\" \
+			} ]");
 		return;
 	}
 
