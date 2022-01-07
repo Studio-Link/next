@@ -1,4 +1,3 @@
-#include <asm-generic/errno-base.h>
 #include <re.h>
 #include <baresip.h>
 #include <studiolink.h>
