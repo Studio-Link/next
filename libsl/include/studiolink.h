@@ -24,16 +24,16 @@ void sl_close(void);
 
 
 /* http.c */
-enum SL_HTTP_MET {
+enum sl_http_met {
 	SL_HTTP_GET,
 	SL_HTTP_POST,
 	SL_HTTP_PUT,
 	SL_HTTP_PATCH,
-	SL_HTTP_DELETE,
+	SL_HTTP_DELETE
 };
 struct sl_http;
 int sl_http_alloc(struct sl_http **http, http_resp_h *resph);
-int sl_http_req(struct sl_http *http, enum SL_HTTP_MET sl_met, char *url);
+int sl_http_req(struct sl_http *http, enum sl_http_met sl_met, char *url);
 int sl_http_listen(struct http_sock **sock);
 
 /* ws.c */
@@ -47,6 +47,14 @@ void sl_ws_send_str(enum ws_type ws_type, char *str);
 /* ws_tracks.c */
 void sl_ws_tracks(const struct websock_hdr *hdr, struct mbuf *mb, void *arg);
 
+/* tracks.c */
+enum sl_track_type { SL_TRACK_REMOTE, SL_TRACK_LOCAL };
+enum sl_track_status { SL_TRACK_CONNECTED, SL_TRACK_CLOSED };
+int sl_tracks_init(void);
+int sl_tracks_close(void);
+const struct list *sl_tracks(void);
+int sl_track_add(enum sl_track_type type);
+int sl_tracks_json(struct re_printf *pf);
 
 #ifdef __cplusplus
 }

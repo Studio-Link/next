@@ -16,7 +16,7 @@ struct test {
 
 static const struct test tests[] = {
 	TEST(test_sl_http),
-	TEST(test_sl_ws),
+	TEST(test_tracks),
 };
 /* clang-format on */
 

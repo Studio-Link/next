@@ -145,6 +145,12 @@ int sl_init(const uint8_t *conf)
 		goto out;
 	}
 
+	err = sl_tracks_init();
+	if (err) {
+		warning("sl_init: tracks init failed (%m)\n", err);
+		goto out;
+	}
+
 out:
 	if (err)
 		sl_close();
@@ -204,6 +210,8 @@ void sl_close(void)
 {
 	sl_ws_close();
 	mem_deref(httpsock);
+
+	sl_tracks_close();
 
 	ua_stop_all(true);
 	ua_close();
