@@ -101,12 +101,13 @@ a_user_can_not_call_unknown_cli_options() {
 }
 
 a_user_can_add_tracks() {
-	track_count=$(ws_test /ws/v1/tracks | jq ".[].type" | grep -c remote)
+	track_count=$(ws_test /ws/v1/tracks | jq ".[].type" | grep -c local)
 	[ "$track_count" == "1" ]
 	
 	curl_post /api/v1/tracks/remote
-	# track_count=$(ws_test /ws/v1/tracks | jq ".[].type" | grep -c remote)
-	# [ "$track_count" == "2" ]
+	curl_post /api/v1/tracks/remote
+	track_count=$(ws_test /ws/v1/tracks | jq ".[].type" | grep -c remote)
+	[ "$track_count" == "2" ]
 }
 
 # --- TESTS ---
