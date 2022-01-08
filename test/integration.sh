@@ -76,7 +76,7 @@ curl_post() {
 }
 
 ws_test() {
-	websocat -1 -E ws://${test_url}$1
+	websocat -1 -E -t "ws://${test_url}$1" -
 }
 
 # --- TESTS ---
@@ -124,7 +124,7 @@ main() {
 	a_user_can_not_call_unknown_cli_options
 	a_user_gets_404_if_page_not_exists
 	a_user_can_connect_with_websocket
-	# a_user_can_add_tracks
+	a_user_can_add_tracks
 }
 
 # ready to backup?
