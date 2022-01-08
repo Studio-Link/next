@@ -36,8 +36,8 @@ script_trap_err() {
 
 	echo -e "${RED}${FUNCNAME[2]}$NC"
 	echo -e "${RED}${FUNCNAME[1]} - TEST FAILED!$NC"
-	exec 1>&3 2>&4
-	cat $script_output
+	#exec 1>&3 2>&4
+	#cat $script_output
 
 	# Exit with failure status
 	exit "$exit_code"
@@ -76,7 +76,7 @@ curl_post() {
 }
 
 ws_test() {
-	websocat -E -1 -v "ws://${test_url}$1"
+	websocat -1 -E -t -vvv "ws://${test_url}$1"
 }
 
 # --- TESTS ---
