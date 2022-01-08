@@ -4,13 +4,13 @@
       aria-label="Logo Reload App"
       href="javascript:window.location.reload(true)"
     >
-      <img src="/logo_standalone.svg" class="h-10" />
+      <img src="/logo_standalone.svg" class="h-10" alt="Logo" />
     </a>
     <!-- <HeadStatus /> -->
     <Navbar />
   </header>
 
-  <RoomsNav />
+<!--  <RoomsNav /> -->
   <Tracks class="p-2" />
 
   <footer class="bottom-0 container fixed mb-4">
@@ -26,5 +26,5 @@ import Version from './components/Version.vue'
 import BottomActions from './components/BottomActions.vue'
 import Tracks from './components/Tracks.vue'
 import Navbar from './components/Navbar.vue'
-import RoomsNav from './components/RoomsNav.vue'
+/* import RoomsNav from './components/RoomsNav.vue' */
 </script>

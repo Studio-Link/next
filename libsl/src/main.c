@@ -145,6 +145,12 @@ int sl_init(const uint8_t *conf)
 		goto out;
 	}
 
+	err = sl_tracks_init();
+	if (err) {
+		warning("sl_init: tracks init failed (%m)\n", err);
+		goto out;
+	}
+
 out:
 	if (err)
 		sl_close();
@@ -161,7 +167,7 @@ static void *open_ui(void *arg)
 	/* @TODO: use permanent browser dir */
 	(void)system("chromium --app=http://127.0.0.1:9999 "
 		     "--user-data-dir=/tmp/.studio-link/browser "
-		     "--window-size=1024,768 >/dev/null 2>&1");
+		     "--window-size=1060,768 >/dev/null 2>&1");
 
 	/* @TODO: call re_cancel() (must be done from main thread) */
 	return NULL;
@@ -204,6 +210,8 @@ void sl_close(void)
 {
 	sl_ws_close();
 	mem_deref(httpsock);
+
+	sl_tracks_close();
 
 	ua_stop_all(true);
 	ua_close();

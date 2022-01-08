@@ -6,7 +6,7 @@ set -o errexit  # Exit on most errors
 set -o nounset  # Disallow expansion of unset variables
 set -o errtrace # Make sure any error trap is inherited
 set -o pipefail # Use last non-zero exit code in a pipeline
-set -o xtrace   # Trace the execution of the script
+# set -o xtrace   # Trace the execution of the script
 
 IFS=$'\n\t'
 
@@ -20,7 +20,7 @@ GREEN='\033[0;32m'
 # ARGS: $1 (optional): Exit code (defaults to 1)
 # OUTS: None
 script_trap_err() {
-	local exit_code=1
+	local exit_code=$?
 
 	# Disable the error trap handler to prevent potential recursion
 	trap - ERR
@@ -29,6 +29,7 @@ script_trap_err() {
 	set +o errexit
 	set +o pipefail
 
+	echo "Error on line $(caller) with exit code: $exit_code"
 	# Validate any provided exit code
 	if [[ ${1-} =~ ^[0-9]+$ ]]; then
 		exit_code="$1"
@@ -37,7 +38,7 @@ script_trap_err() {
 	echo -e "${RED}${FUNCNAME[2]}$NC"
 	echo -e "${RED}${FUNCNAME[1]} - TEST FAILED!$NC"
 	exec 1>&3 2>&4
-	cat $script_output
+	cat "$script_output"
 
 	# Exit with failure status
 	exit "$exit_code"
@@ -71,8 +72,12 @@ curl_head() {
 	curl -I "${test_url}$1" 2>/dev/null
 }
 
+curl_post() {
+	curl --fail -X POST "${test_url}$1"
+}
+
 ws_test() {
-	websocat -E -1 "ws://${test_url}$1"
+	websocat -1 -E -t "ws://${test_url}$1" -
 }
 
 # --- TESTS ---
@@ -93,8 +98,19 @@ a_user_can_not_call_unknown_cli_options() {
 	../app/linux/studiolink -Hasldkfj || [[ $? == 22 ]]
 	../app/linux/studiolink -x || [[ $? == 22 ]]
 	../app/linux/studiolink --headlesssadlkfjasd || [[ $? == 22 ]]
-	../app/linux/studiolink --headless="asdfjdsf" || [[ $? == 22 ]] 
+	../app/linux/studiolink --headless="asdfjdsf" || [[ $? == 22 ]]
 }
+
+a_user_can_add_tracks() {
+	track_count=$(ws_test /ws/v1/tracks | jq ".[].type" | grep -c local)
+	[ "$track_count" == "1" ]
+	
+	curl_post /api/v1/tracks/remote
+	curl_post /api/v1/tracks/remote
+	track_count=$(ws_test /ws/v1/tracks | jq ".[].type" | grep -c remote)
+	[ "$track_count" == "2" ]
+}
+
 # --- TESTS ---
 
 # DESC: Main control flow
@@ -109,6 +125,7 @@ main() {
 	a_user_can_not_call_unknown_cli_options
 	a_user_gets_404_if_page_not_exists
 	a_user_can_connect_with_websocket
+	a_user_can_add_tracks
 }
 
 # ready to backup?

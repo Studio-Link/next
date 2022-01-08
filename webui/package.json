@@ -8,15 +8,16 @@
     "serve": "vite preview"
   },
   "dependencies": {
-    "vue": "^3.2.26",
-    "tailwindcss": "^3.0.8",
+    "@headlessui/vue": "^1.4.2",
     "@tailwindcss/aspect-ratio": "^0.4.0",
     "@tailwindcss/forms": "^0.4.0",
     "@tailwindcss/line-clamp": "^0.3.0",
     "@tailwindcss/typography": "^0.5.0",
     "postcss": "^8.4.5",
+    "tailwindcss": "^3.0.8",
     "typeface-roboto": "^1.1.13",
-    "typeface-roboto-mono": "^1.1.13"
+    "typeface-roboto-mono": "^1.1.13",
+    "vue": "^3.2.26"
   },
   "devDependencies": {
     "@types/node": "^17.0.5",

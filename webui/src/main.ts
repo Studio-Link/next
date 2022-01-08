@@ -45,3 +45,7 @@ app.directive("click-outside", {
 });
 app.component("Button", Button);
 app.mount("#app");
+
+document.addEventListener("contextmenu", function(e) {
+e.preventDefault();
+});

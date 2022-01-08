@@ -50,7 +50,7 @@ int sl_http_alloc(struct sl_http **http, http_resp_h *resph)
 }
 
 
-int sl_http_req(struct sl_http *http, enum SL_HTTP_MET sl_met, char *url)
+int sl_http_req(struct sl_http *http, enum sl_http_met sl_met, char *url)
 {
 	struct pl met, uri;
 	int err;
@@ -128,19 +128,13 @@ out:
 static void http_req_handler(struct http_conn *conn,
 			     const struct http_msg *msg, void *arg)
 {
+	char *json_str;
 	(void)arg;
 
 
 	if (!conn || !msg)
 		return;
-	/*
-	 * Websocket Requests
-	 */
-	if (0 == pl_strcasecmp(&msg->path, "/ws/v1/tracks")) {
-		sl_ws_open(conn, WS_TRACKS, msg, sl_ws_tracks);
-		sl_ws_send_str(WS_TRACKS, "{}");
-		return;
-	}
+
 
 	/*
 	 * Static Requests
@@ -197,7 +191,54 @@ static void http_req_handler(struct http_conn *conn,
 		return;
 	}
 
+
+	json_str = mem_zalloc(81920, NULL);
+	if (!json_str) {
+		http_ereply(conn, 500, "Not enough RAM");
+		return;
+	}
+
+	/*
+	 * Websocket Requests
+	 */
+	if (0 == pl_strcasecmp(&msg->path, "/ws/v1/tracks")) {
+		sl_ws_open(conn, WS_TRACKS, msg, sl_ws_tracks);
+		/* 		sl_ws_send_str(WS_TRACKS, "[ \ */
+		/* 			{ \ */
+		/* 				\"id\": 1, \ */
+		/* 				\"type\": \"remote\", \ */
+		/* 				\"name\": \"\", \ */
+		/* 				\"status\": \"\", \ */
+		/* 				\"active\": false \ */
+		/* 			}, \ */
+		/* 			{ \ */
+		/* 				\"id\": 2, \ */
+		/* 				\"type\": \"local\" \ */
+		/* 			} ]"); */
+		/*  */
+
+		re_snprintf(json_str, 81920, "%H", sl_tracks_json);
+		sl_ws_send_str(WS_TRACKS, json_str);
+		goto out;
+	}
+
+
+	/*
+	 * API Requests
+	 */
+	if (0 == pl_strcasecmp(&msg->path, "/api/v1/tracks/remote") &&
+	    0 == pl_strcasecmp(&msg->met, "POST")) {
+		http_sreply(conn, 200, "OK", "text/html", "", 0);
+
+		sl_track_add(SL_TRACK_REMOTE);
+		re_snprintf(json_str, 81920, "%H", sl_tracks_json);
+		sl_ws_send_str(WS_TRACKS, json_str);
+		goto out;
+	}
+
 	http_ereply(conn, 404, "Not found");
+out:
+	mem_deref(json_str);
 }
 
 
