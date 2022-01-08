@@ -18,6 +18,7 @@ compile_commands.json
 *.so
 *.so.*
 *.dylib
+*.h.gch
 
 /webui_old
 
