@@ -101,7 +101,7 @@ a_user_can_not_call_unknown_cli_options() {
 }
 
 a_user_can_add_tracks() {
-	track_count=$(ws_test /ws/v1/tracks | jq ".[].type")
+	track_count=$(ws_test /ws/v1/tracks)
 	[ "$track_count" == "1" ]
 	
 	curl_post /api/v1/tracks/remote
