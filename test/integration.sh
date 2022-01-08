@@ -50,7 +50,7 @@ script_trap_exit() {
 	exit_code=$?
 	if [[ -f ${script_output-} ]]; then
 		rm "$script_output"
-		exec 1>&3 2>&4
+		# exec 1>&3 2>&4
 	fi
 	if [[ $exit_code -eq 0 ]]; then
 		echo -e "${GREEN}All integration tests were sucessfully!$NC"
@@ -64,7 +64,7 @@ script_init() {
 	../app/linux/studiolink --headless 1>>"$script_output" 2>&1 &
 	test_pid="$!"
 
-	exec 3>&1 4>&2 1>"$script_output" 2>&1
+	# exec 3>&1 4>&2 1>"$script_output" 2>&1
 }
 
 curl_head() {
@@ -76,7 +76,7 @@ curl_post() {
 }
 
 ws_test() {
-	websocat -E -1 "ws://${test_url}$1"
+	websocat -E -1 -v "ws://${test_url}$1"
 }
 
 # --- TESTS ---
@@ -101,7 +101,7 @@ a_user_can_not_call_unknown_cli_options() {
 }
 
 a_user_can_add_tracks() {
-	track_count=$(ws_test /ws/v1/tracks)
+	track_count=$(ws_test /ws/v1/tracks | jq ".[].type" | grep -c local)
 	[ "$track_count" == "1" ]
 	
 	curl_post /api/v1/tracks/remote
