@@ -6,7 +6,7 @@ set -o errexit  # Exit on most errors
 set -o nounset  # Disallow expansion of unset variables
 set -o errtrace # Make sure any error trap is inherited
 set -o pipefail # Use last non-zero exit code in a pipeline
-set -o xtrace   # Trace the execution of the script
+# set -o xtrace   # Trace the execution of the script
 
 IFS=$'\n\t'
 
@@ -20,7 +20,7 @@ GREEN='\033[0;32m'
 # ARGS: $1 (optional): Exit code (defaults to 1)
 # OUTS: None
 script_trap_err() {
-	local exit_code=1
+	local exit_code=$?
 
 	# Disable the error trap handler to prevent potential recursion
 	trap - ERR
@@ -29,6 +29,7 @@ script_trap_err() {
 	set +o errexit
 	set +o pipefail
 
+	echo "Error on line $(caller) with exit code: $exit_code"
 	# Validate any provided exit code
 	if [[ ${1-} =~ ^[0-9]+$ ]]; then
 		exit_code="$1"
@@ -36,8 +37,8 @@ script_trap_err() {
 
 	echo -e "${RED}${FUNCNAME[2]}$NC"
 	echo -e "${RED}${FUNCNAME[1]} - TEST FAILED!$NC"
-	#exec 1>&3 2>&4
-	#cat $script_output
+	exec 1>&3 2>&4
+	cat "$script_output"
 
 	# Exit with failure status
 	exit "$exit_code"
@@ -50,7 +51,7 @@ script_trap_exit() {
 	exit_code=$?
 	if [[ -f ${script_output-} ]]; then
 		rm "$script_output"
-		# exec 1>&3 2>&4
+		exec 1>&3 2>&4
 	fi
 	if [[ $exit_code -eq 0 ]]; then
 		echo -e "${GREEN}All integration tests were sucessfully!$NC"
@@ -64,7 +65,7 @@ script_init() {
 	../app/linux/studiolink --headless 1>>"$script_output" 2>&1 &
 	test_pid="$!"
 
-	# exec 3>&1 4>&2 1>"$script_output" 2>&1
+	exec 3>&1 4>&2 1>"$script_output" 2>&1
 }
 
 curl_head() {
