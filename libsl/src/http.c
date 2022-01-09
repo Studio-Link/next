@@ -224,7 +224,7 @@ static void http_req_handler(struct http_conn *conn,
 		sl_track_add(SL_TRACK_REMOTE);
 		re_snprintf(json_str, SL_MAX_JSON, "%H", sl_tracks_json);
 		sl_ws_send_str(WS_TRACKS, json_str);
-		
+
 		http_sreply(conn, 200, "OK", "text/html", "", 0);
 		goto out;
 	}
@@ -233,7 +233,7 @@ static void http_req_handler(struct http_conn *conn,
 	    0 == pl_strcasecmp(&msg->met, "DELETE")) {
 		pl_set_mbuf(&pl, msg->mb);
 		id = pl_i32(&pl);
-		
+
 		err = sl_track_del(id);
 		if (err) {
 			http_ereply(conn, 404, "Not found");
@@ -245,7 +245,7 @@ static void http_req_handler(struct http_conn *conn,
 		http_sreply(conn, 200, "OK", "text/html", "", 0);
 		goto out;
 	}
-	
+
 	/* Default return */
 	http_ereply(conn, 404, "Not found");
 out:

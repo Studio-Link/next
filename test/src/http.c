@@ -30,7 +30,7 @@ int test_sl_http(void)
 
 	err = sl_main_timeout(100);
 	TEST_ERR(err);
-	
+
 	err = test_err;
 	TEST_ERR(err);
 
@@ -44,7 +44,7 @@ int test_sl_http(void)
 
 	err = test_err;
 	TEST_ERR(err);
-	
+
 out:
 	mem_deref(http);
 	return err;
