@@ -2,14 +2,18 @@
 #include <baresip.h>
 #include <studiolink.h>
 
+#define SL_MAX_TRACKS 99
+
 struct sl_track {
 	struct le le;
+	int id;
 	enum sl_track_type type;
 	char name[32];
 	enum sl_track_status status;
 };
 
 static struct list tracks;
+static int last_id = -1;
 
 
 const struct list *sl_tracks(void)
@@ -23,8 +27,7 @@ int sl_tracks_json(struct re_printf *pf)
 	struct le *le;
 	struct odict *o_tracks;
 	struct odict *o_track;
-	char id_str[3]; /*max "99\0" tracks*/
-	int id = 0;
+	char id_str[8];
 	int err;
 
 	err = odict_alloc(&o_tracks, 32);
@@ -50,13 +53,12 @@ int sl_tracks_json(struct re_printf *pf)
 			odict_entry_add(o_track, "type", ODICT_STRING,
 					"remote");
 
-		err = re_snprintf(id_str, sizeof(id_str), "%d", id);
+		err = re_snprintf(id_str, sizeof(id_str), "%d", track->id);
 		if (err == -1)
 			goto max;
+
 		odict_entry_add(o_tracks, id_str, ODICT_OBJECT, o_track);
 		o_track = mem_deref(o_track);
-
-		++id;
 	}
 
 	err = json_encode_odict(pf, o_tracks);
@@ -76,14 +78,62 @@ max:
 int sl_track_add(enum sl_track_type type)
 {
 	struct sl_track *track;
+
+	if (list_count(&tracks) >= SL_MAX_TRACKS ||
+	    (last_id + 1) >= SL_MAX_TRACKS) {
+		warning("sl_track_add: max %d tracks reached\n",
+			SL_MAX_TRACKS);
+		return E2BIG;
+	}
+
 	track = mem_zalloc(sizeof(struct sl_track), NULL);
 	if (!track)
 		return ENOMEM;
 
-	track->type = type;
+	track->id     = ++last_id;
+	track->type   = type;
+	track->status = SL_TRACK_IDLE;
 	list_append(&tracks, &track->le, track);
 
 	return 0;
+}
+
+
+int sl_track_del(int id)
+{
+	struct le *le;
+
+	LIST_FOREACH(&tracks, le)
+	{
+		struct sl_track *track = le->data;
+		if (track->id == id) {
+			list_unlink(le);
+			mem_deref(track);
+			return 0;
+		}
+	}
+	return ENOENT;
+}
+
+
+enum sl_track_status sl_track_status(int id)
+{
+	struct le *le;
+
+	LIST_FOREACH(&tracks, le)
+	{
+		struct sl_track *track = le->data;
+		if (track->id == id)
+			return track->status;
+	}
+
+	return SL_TRACK_NOT_EXISTS;
+}
+
+
+int sl_track_last_id(void)
+{
+	return last_id;
 }
 
 

@@ -62,7 +62,7 @@ script_trap_exit() {
 
 script_init() {
 	readonly script_output="$(mktemp "/tmp/test".XXXXX)"
-	../app/linux/studiolink --headless 1>>"$script_output" 2>&1 &
+	../app/linux/studiolink --headless &
 	test_pid="$!"
 
 	exec 3>&1 4>&2 1>"$script_output" 2>&1
@@ -73,7 +73,15 @@ curl_head() {
 }
 
 curl_post() {
-	curl --fail -X POST "${test_url}$1"
+	curl --fail -X POST "${test_url}$1" ${2-}
+}
+
+curl_delete() {
+	curl --fail -X DELETE "${test_url}$1" ${2-}
+}
+
+curl_delete_404() {
+	curl -i -X DELETE "${test_url}$1" ${2-} | head -1 | grep 404 
 }
 
 ws_test() {
@@ -111,6 +119,19 @@ a_user_can_add_tracks() {
 	[ "$track_count" == "2" ]
 }
 
+a_user_can_delete_tracks() {
+	track_count=$(ws_test /ws/v1/tracks | jq ".[].type" | grep -c remote)
+	[ "$track_count" == "2" ]
+	
+	curl_delete /api/v1/tracks -d"1"
+	track_count=$(ws_test /ws/v1/tracks | jq ".[].type" | grep -c remote)
+	[ "$track_count" == "1" ]
+
+	# Test not found
+	curl_delete_404 /api/v1/tracks -d"999"
+
+}
+
 # --- TESTS ---
 
 # DESC: Main control flow
@@ -126,6 +147,7 @@ main() {
 	a_user_gets_404_if_page_not_exists
 	a_user_can_connect_with_websocket
 	a_user_can_add_tracks
+	a_user_can_delete_tracks
 }
 
 # ready to backup?
