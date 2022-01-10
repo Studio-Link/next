@@ -115,6 +115,9 @@ a_user_can_add_tracks() {
 	
 	curl_post /api/v1/tracks/remote
 	curl_post /api/v1/tracks/remote
+
+	ws_test /ws/v1/tracks | jq ".[].type" 
+
 	track_count=$(ws_test /ws/v1/tracks | jq ".[].type" | grep -c remote)
 	[ "$track_count" == "2" ]
 }
