@@ -5,6 +5,7 @@
     "dev": "vite",
     "dev-host": "vite --host",
     "build": "vue-tsc --noEmit && vite build",
+    "build-watch": "vite build --watch",
     "serve": "vite preview"
   },
   "dependencies": {
