@@ -91,7 +91,7 @@
 					<button
 						@click="deleteRemoteTrack()"
 						@focus="setActive()"
-						class="opacity-0 hover:opacity-60 focus:opacity-60"
+						class="opacity-30 hover:opacity-60 focus:opacity-60"
 						title="Remove track"
 					>
 						<svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor" v-if="isActive()">
