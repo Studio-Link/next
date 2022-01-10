@@ -85,7 +85,8 @@ curl_delete_test_404() {
 }
 
 ws_test() {
-	websocat -1 -E -t "ws://${test_url}$1" -
+	websocat -t "ws://${test_url}$1" writefile:/tmp/ws.txt
+	cat /tmp/ws.txt
 }
 
 # --- TESTS ---
@@ -116,7 +117,7 @@ a_user_can_add_tracks() {
 	curl_post /api/v1/tracks/remote
 	curl_post /api/v1/tracks/remote
 
-	ws_test /ws/v1/tracks
+	# ws_test /ws/v1/tracks && cat /tmp/ws.txt
 
 	track_count=$(ws_test /ws/v1/tracks | jq ".[].type" | grep -c remote)
 	[ "$track_count" == "2" ]
