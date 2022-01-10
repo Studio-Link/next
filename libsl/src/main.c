@@ -22,7 +22,7 @@ static void signal_handler(int signum)
 }
 
 
-static void usage()
+static void usage(void)
 {
 	(void)re_fprintf(stderr, "Usage: studiolink [options]\n"
 				 "options:\n"

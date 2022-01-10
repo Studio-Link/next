@@ -24,12 +24,17 @@ int test_sl_http(void)
 	err = sl_http_alloc(&http, http_resp_handler);
 	TEST_ERR(err);
 
+	/* Test index page */
 	err = sl_http_req(http, SL_HTTP_GET, "http://127.0.0.1:9999/");
 	TEST_ERR(err);
 
 	err = sl_main_timeout(100);
 	TEST_ERR(err);
 
+	err = test_err;
+	TEST_ERR(err);
+
+	/* Test 404 page */
 	err = sl_http_req(http, SL_HTTP_GET,
 			  "http://127.0.0.1:9999/not_exists");
 	TEST_ERR(err);

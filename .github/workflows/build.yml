@@ -56,14 +56,14 @@ jobs:
     - name: websocat linux
       if: ${{ runner.os == 'Linux' }}
       run: |
-        wget https://github.com/vi/websocat/releases/download/v1.9.0/websocat_linux64
-        mv websocat_linux64 /usr/local/bin/websocat
+        wget https://github.com/vi/websocat/releases/download/v1.8.0/websocat_amd64-linux
+        mv websocat_amd64-linux /usr/local/bin/websocat
         chmod +x /usr/local/bin/websocat
 
     - name: websocat macos
       if: ${{ runner.os == 'macOS' }}
       run: |
-        wget https://github.com/vi/websocat/releases/download/v1.9.0/websocat_mac
+        wget https://github.com/vi/websocat/releases/download/v1.8.0/websocat_mac
         mv websocat_mac /usr/local/bin/websocat
         chmod +x /usr/local/bin/websocat
 
