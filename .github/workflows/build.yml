@@ -63,7 +63,7 @@ jobs:
     - name: websocat macos
       if: ${{ runner.os == 'macOS' }}
       run: |
-        wget https://github.com/vi/websocat/releases/download/v1.8.1/websocat_mac
+        wget https://github.com/vi/websocat/releases/download/v1.8.0/websocat_mac
         mv websocat_mac /usr/local/bin/websocat
         chmod +x /usr/local/bin/websocat
 
