@@ -80,7 +80,7 @@ curl_delete() {
 	curl --fail -X DELETE "${test_url}$1" ${2-}
 }
 
-curl_delete_404() {
+curl_delete_test_404() {
 	curl -i -X DELETE "${test_url}$1" ${2-} | head -1 | grep 404 
 }
 
@@ -123,12 +123,11 @@ a_user_can_delete_tracks() {
 	track_count=$(ws_test /ws/v1/tracks | jq ".[].type" | grep -c remote)
 	[ "$track_count" == "2" ]
 	
-	curl_delete /api/v1/tracks -d"1"
+	curl_delete /api/v1/tracks -d"2"
 	track_count=$(ws_test /ws/v1/tracks | jq ".[].type" | grep -c remote)
 	[ "$track_count" == "1" ]
 
-	# Test not found
-	curl_delete_404 /api/v1/tracks -d"999"
+	curl_delete_test_404 /api/v1/tracks -d"999"
 
 }
 
