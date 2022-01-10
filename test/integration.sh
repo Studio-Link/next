@@ -37,8 +37,8 @@ script_trap_err() {
 
 	echo -e "${RED}${FUNCNAME[2]}$NC"
 	echo -e "${RED}${FUNCNAME[1]} - TEST FAILED!$NC"
-	exec 1>&3 2>&4
-	cat "$script_output"
+	# exec 1>&3 2>&4
+	# cat "$script_output"
 
 	# Exit with failure status
 	exit "$exit_code"
@@ -51,7 +51,7 @@ script_trap_exit() {
 	exit_code=$?
 	if [[ -f ${script_output-} ]]; then
 		rm "$script_output"
-		exec 1>&3 2>&4
+		# exec 1>&3 2>&4
 	fi
 	if [[ $exit_code -eq 0 ]]; then
 		echo -e "${GREEN}All integration tests were sucessfully!$NC"
@@ -65,7 +65,7 @@ script_init() {
 	../app/linux/studiolink --headless &
 	test_pid="$!"
 
-	exec 3>&1 4>&2 1>"$script_output" 2>&1
+	# exec 3>&1 4>&2 1>"$script_output" 2>&1
 }
 
 curl_head() {
