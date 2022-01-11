@@ -1,7 +1,7 @@
 #
 # Makefile
 #
-# Copyright (C) 2021 Studio.Link Sebastian Reimers
+# Copyright (C) 2022 Studio.Link Sebastian Reimers
 # Variables (make CC=gcc V=1 CORES=2):
 #   V		Verbose mode (example: make V=1)
 #   CORES	Override CPU Core detection
