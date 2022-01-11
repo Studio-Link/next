@@ -66,6 +66,7 @@ script_init() {
 	../app/linux/studiolink --headless &
 	test_pid="$!"
 
+	sleep 1
 	exec 3>&1 4>&2 1>"$script_output" 2>&1
 }
 

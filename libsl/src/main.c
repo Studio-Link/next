@@ -11,6 +11,16 @@ static struct http_sock *httpsock = NULL;
 static pthread_t open;
 static bool headless = false;
 
+static const char *modv[] = {
+	"turn",
+	"ice",
+	"dtls_srtp",
+	"account",
+
+	/* audio */
+	"opus",
+	"g711",
+};
 
 static void signal_handler(int signum)
 {
@@ -99,6 +109,7 @@ int sl_getopt(int argc, char *const argv[])
 int sl_init(const uint8_t *conf)
 {
 	struct config *config;
+	const char *conf_ = "opus_bitrate       64000\n";
 	int err;
 
 	/*
@@ -112,12 +123,14 @@ int sl_init(const uint8_t *conf)
 
 	(void)sys_coredump_set(true);
 
-	if (conf) {
-		err = conf_configure_buf(conf, str_len((char *)conf));
-		if (err) {
-			warning("sl_init: conf_configure failed: %m\n", err);
-			goto out;
-		}
+	if (!conf) {
+		conf = (const uint8_t *)conf_;
+	}
+
+	err = conf_configure_buf(conf, str_len((char *)conf));
+	if (err) {
+		warning("sl_init: conf_configure failed: %m\n", err);
+		goto out;
 	}
 
 	config = conf_config();
@@ -131,6 +144,22 @@ int sl_init(const uint8_t *conf)
 	if (err) {
 		warning("sl_init: baresip init failed (%m)\n", err);
 		goto out;
+	}
+
+	err = ua_init("StudioLink", true, true, true);
+	if (err) {
+		warning("sl_init: ua_init failed (%m)\n", err);
+		goto out;
+	}
+
+	for (size_t i = 0; i < ARRAY_SIZE(modv); i++) {
+
+		err = module_load(".", modv[i]);
+		if (err) {
+			warning("could not pre-load module"
+				" '%s' (%m)\n",
+				modv[i], err);
+		}
 	}
 
 	err = sl_ws_init();
