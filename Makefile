@@ -194,3 +194,8 @@ watch:
 	inotifywait -qr -e modify libsl test; \
 	make test; sleep 0.5; \
 	done
+
+.PHONY: run
+run: linux
+	app/linux/studiolink
+
