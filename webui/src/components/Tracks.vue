@@ -21,14 +21,15 @@
 					</Button>
 				</div>
 
-				<div class="flex w-4 items-end ml-0.5 mb-px">
-					<div class="w-2 bg-green-500 bg-opacity-30 rounded" style="height: 30%"></div>
-					<div class="w-px"></div>
-					<div class="w-2 bg-yellow-300 bg-opacity-30 rounded" style="height: 80%"></div>
+				<div class="flex w-5 items-end ml-0.5 opacity-60" aria-hidden="true">
+					<div id="levels" class="levels">
+						<div id="level1" class="level"></div>
+						<div id="level2" class="level"></div>
+					</div>
 				</div>
 			</div>
 		</li>
-		<RemoteTrack v-for="track in remoteTracks" :key="track.id" :pkey=track.id />
+		<RemoteTrack v-for="track in remoteTracks" :key="track.id" :pkey="track.id" />
 		<li
 			v-if="!newTrackDisabled"
 			class="col-span-1"
@@ -46,7 +47,7 @@
 					class="inline-flex items-center rounded-lg px-20 py-12 font-bold text-2xl leading-none uppercase tracking-wide focus:outline-none focus:text-sl-disabled"
 					@focus="newTrackVisible = true"
 					@focusout="newTrackVisible = false"
-					@click="newRemoteTrack();newTrackVisible = false"
+					@click="newRemoteTrack(); newTrackVisible = false"
 				>
 					<svg
 						aria-hidden="true"
@@ -82,6 +83,5 @@ function newRemoteTrack() {
 	let req = new XMLHttpRequest()
 	req.open('POST', '/api/v1/tracks/remote')
 	req.send()
-
 }
 </script>
