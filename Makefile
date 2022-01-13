@@ -15,7 +15,7 @@ VER_PRE   := alpha
 
 include versions.mk
 
-BARESIP_MODULES := account ice dtls_srtp opus g711 turn
+BARESIP_MODULES := ice dtls_srtp turn opus g711
 
 CC := clang
 

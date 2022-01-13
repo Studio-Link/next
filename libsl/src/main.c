@@ -15,7 +15,6 @@ static const char *modv[] = {
 	"turn",
 	"ice",
 	"dtls_srtp",
-	"account",
 
 	/* audio */
 	"opus",

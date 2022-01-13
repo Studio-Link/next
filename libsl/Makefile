@@ -47,19 +47,19 @@ clean:
 
 .PHONY: assets
 assets:
-	rm -Rf assets
-	mkdir -p assets
-	cd ../webui/ && xxd -i dist/index.html > ../libsl/assets/index_html.h
-	cd ../webui/ && xxd -i dist/index.js > ../libsl/assets/index_js.h
-	cd ../webui/ && xxd -i dist/vendor.js > ../libsl/assets/vendor_js.h
-	cd ../webui/ && xxd -i dist/index.css > ../libsl/assets/index_css.h
-	cd ../webui/ && xxd -i dist/roboto-mono-latin-400.woff2 \
+	@rm -Rf assets
+	@mkdir -p assets
+	@cd ../webui/ && xxd -i dist/index.html > ../libsl/assets/index_html.h
+	@cd ../webui/ && xxd -i dist/index.js > ../libsl/assets/index_js.h
+	@cd ../webui/ && xxd -i dist/vendor.js > ../libsl/assets/vendor_js.h
+	@cd ../webui/ && xxd -i dist/index.css > ../libsl/assets/index_css.h
+	@cd ../webui/ && xxd -i dist/roboto-mono-latin-400.woff2 \
 		> ../libsl/assets/roboto-mono-latin-400_woff2.h
-	cd ../webui/ && xxd -i dist/roboto-mono-latin-500.woff2 \
+	@cd ../webui/ && xxd -i dist/roboto-mono-latin-500.woff2 \
 		> ../libsl/assets/roboto-mono-latin-500_woff2.h
-	cd ../webui/ && xxd -i dist/roboto-mono-latin-600.woff2 \
+	@cd ../webui/ && xxd -i dist/roboto-mono-latin-600.woff2 \
 		> ../libsl/assets/roboto-mono-latin-600_woff2.h
-	cd ../webui/ && xxd -i dist/roboto-mono-latin-700.woff2 \
+	@cd ../webui/ && xxd -i dist/roboto-mono-latin-700.woff2 \
 		> ../libsl/assets/roboto-mono-latin-700_woff2.h
-	cd ../webui/ && xxd -i dist/logo_standalone.svg \
+	@cd ../webui/ && xxd -i dist/logo_standalone.svg \
 		> ../libsl/assets/logo_standalone_svg.h
