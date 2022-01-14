@@ -88,7 +88,7 @@ int sl_http_req(struct sl_http *http, enum sl_http_met sl_met, char *url)
 
 	err = http_reqconn_send(http->conn, &uri);
 
-	return 0;
+	return err;
 }
 
 
@@ -262,11 +262,11 @@ int sl_http_listen(struct http_sock **sock)
 		return EINVAL;
 
 	err = sa_set_str(&srv, "127.0.0.1", 9999);
-
-	info("listen webui: http://%J\n", &srv);
-	err = http_listen(sock, &srv, http_req_handler, NULL);
 	if (err)
 		return err;
 
-	return 0;
+	info("listen webui: http://%J\n", &srv);
+	err = http_listen(sock, &srv, http_req_handler, NULL);
+
+	return err;
 }

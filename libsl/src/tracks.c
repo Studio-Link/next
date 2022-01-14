@@ -93,7 +93,7 @@ static bool sort_handler(struct le *le1, struct le *le2, void *arg)
 }
 
 
-static int next_id()
+static int next_id(void)
 {
 	int id = 1;
 	struct le *le;
