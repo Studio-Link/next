@@ -118,6 +118,12 @@ static void http_sreply(struct http_conn *conn, uint16_t scode,
 		"Content-Type: %s\r\n"
 		"Content-Length: %zu\r\n"
 		"Cache-Control: no-cache, no-store, must-revalidate\r\n"
+#ifndef RELEASE
+		/* Only allow CORS on DEV Builds
+		 * @TODO add release test */
+		"Access-Control-Allow-Origin: *\r\n"
+		"Access-Control-Allow-Methods: *\r\n"
+#endif
 		"\r\n"
 		"%b",
 		ctype, mb->end, mb->buf, mb->end);
@@ -246,8 +252,17 @@ static void http_req_handler(struct http_conn *conn,
 		goto out;
 	}
 
-	/* Default return */
+#ifndef RELEASE
+	/* Default return OPTIONS - needed on dev for preflight CORS Check
+	 * @TODO: add release test */
+	if (0 == pl_strcasecmp(&msg->met, "OPTIONS")) {
+		http_sreply(conn, 200, "OK", "text/html", "", 0);
+	}
+#endif
+
+	/* Default 404 return */
 	http_ereply(conn, 404, "Not found");
+
 out:
 	mem_deref(json_str);
 }
