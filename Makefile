@@ -199,3 +199,7 @@ watch:
 run: linux
 	app/linux/studiolink
 
+.PHONY: dev
+dev: linux
+	app/linux/studiolink --headless
+
