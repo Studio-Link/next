@@ -1,34 +1,6 @@
 <template>
 	<ul class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mb-36 sm:mb-24">
-		<li class="col-span-1">
-			<h2 class="pl-1 font-bold text-sl-on_surface_2 text-sm">Local Track</h2>
-			<div class="flex mt-1">
-				<div class="flex items-center justify-center bg-sl-02dp rounded-lg shadow h-24 md:h-44 w-full">
-					<Button>
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							viewBox="0 0 20 20"
-							fill="currentColor"
-							class="h-6 mr-1"
-						>
-							<path
-								fill-rule="evenodd"
-								d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z"
-								clip-rule="evenodd"
-							/>
-						</svg>
-						Select Microphone
-					</Button>
-				</div>
-
-				<div class="flex w-5 items-end ml-0.5 opacity-60" aria-hidden="true">
-					<div id="levels" class="levels">
-						<div id="level1" class="level"></div>
-						<div id="level2" class="level"></div>
-					</div>
-				</div>
-			</div>
-		</li>
+		<LocalTrack v-for="track in localTracks" :key="track.id" :pkey="track.id" />
 		<RemoteTrack v-for="track in remoteTracks" :key="track.id" :pkey="track.id" />
 		<li
 			v-if="!newTrackDisabled"
@@ -47,7 +19,7 @@
 					class="inline-flex items-center rounded-lg px-20 py-12 font-bold text-2xl leading-none uppercase tracking-wide focus:outline-none focus:text-sl-disabled"
 					@focus="newTrackVisible = true"
 					@focusout="newTrackVisible = false"
-					@click="newRemoteTrack(); newTrackVisible = false"
+					@click="api.track_add('remote')"
 				>
 					<svg
 						aria-hidden="true"
@@ -72,16 +44,13 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import LocalTrack from './LocalTrack.vue'
 import RemoteTrack from './RemoteTrack.vue'
 import { tracks } from '../states/tracks'
+import api from '../api'
 
 const newTrackVisible = ref(false)
 const newTrackDisabled = ref(false)
+const localTracks = tracks.local_tracks
 const remoteTracks = tracks.remote_tracks
-
-function newRemoteTrack() {
-	let req = new XMLHttpRequest()
-	req.open('POST', '/api/v1/tracks/remote')
-	req.send()
-}
 </script>

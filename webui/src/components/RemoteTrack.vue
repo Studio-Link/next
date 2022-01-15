@@ -119,6 +119,7 @@
 import { ref, defineComponent } from 'vue'
 import TrackSettings from './TrackSettings.vue'
 import { tracks } from '../states/tracks'
+import api from '../api'
 
 export default defineComponent({
 	components: {
@@ -145,9 +146,10 @@ export default defineComponent({
 		}
 
 		function deleteRemoteTrack() {
-			let req = new XMLHttpRequest()
-			req.open('DELETE', '/api/v1/tracks')
-			req.send(String(props.pkey))
+			api.track_del(props.pkey)
+			/* let req = new XMLHttpRequest() */
+			/* req.open('DELETE', '/api/v1/tracks') */
+			/* req.send(String(props.pkey)) */
 		}
 
 		return {

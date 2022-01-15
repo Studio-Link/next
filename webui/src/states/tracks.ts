@@ -46,8 +46,7 @@ export const tracks: Tracks = {
 	},
 
 	websocket(ws_host: string): void {
-		// this.socket = new WebSocket('ws://' + ws_host + '/ws/v1/tracks')
-		this.socket = new WebSocket('ws://127.0.0.1:9999/ws/v1/tracks')
+		this.socket = new WebSocket('ws://' + ws_host + '/ws/v1/tracks')
 		this.socket.onerror = function() {
 			console.log('Websocket error')
 		}
