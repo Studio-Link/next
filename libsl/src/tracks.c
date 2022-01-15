@@ -4,12 +4,27 @@
 
 #define SL_MAX_TRACKS 99
 
+/* Local audio device track */
+struct local {
+	struct audio *audio;
+};
+
+/* Remote audio call track */
+struct remote {
+	struct call *call;
+};
+
 struct sl_track {
 	struct le le;
 	int id;
 	enum sl_track_type type;
-	char name[32];
+	char name[64];
 	enum sl_track_status status;
+	union
+	{
+		struct local local;
+		struct remote remote;
+	} u;
 };
 
 static struct list tracks;
@@ -145,8 +160,13 @@ int sl_track_del(int id)
 {
 	struct le *le;
 
+	/* sl_tracks not initialized */
 	if (last_id == -1)
-		ESHUTDOWN;
+		return ESHUTDOWN;
+
+	/* do not delete last local track */
+	if (id == 1)
+		return EACCES;
 
 	LIST_FOREACH(&tracks, le)
 	{

@@ -79,6 +79,10 @@ static int test_track_delete(void)
 	ASSERT_TRUE(list_count(sl_tracks()) == 1);
 	ASSERT_TRUE(sl_track_status(2) == SL_TRACK_NOT_EXISTS);
 
+	/* Test remove last local track - not allowed */
+	err = sl_track_del(1);
+	ASSERT_TRUE(err == EACCES);
+
 	err = sl_tracks_close();
 	TEST_ERR(err);
 
