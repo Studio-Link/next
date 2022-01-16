@@ -1,18 +1,21 @@
 <template>
-	<li aria-label="LocalTrack" class="col-span-1" @mouseenter="setActive()">
-		<div class="flex justify-between px-1">
+	<li aria-label="Local track" class="col-span-1" @mouseenter="setActive()">
+		<div class="flex justify-between">
 			<h2
-				class="font-semibold text-sl-disabled text-sm truncate pr-2"
+				class="ml-1 font-semibold text-sl-disabled text-sm truncate pr-2"
 			>{{ getTrackName() }} me@studio.link</h2>
 			<div class="flex">
 				<div class="font-semibold text-sm text-green-600 uppercase text-right">Online</div>
-				<div class="w-4"></div>
 			</div>
 		</div>
 
 		<div class="flex mt-1">
 			<div class="bg-sl-02dpa rounded-lg h-44 w-full shadow">
-				<div class="flex justify-end">
+				<div class="flex justify-between items-center">
+					<div
+						:class="{ 'bg-sl-disabled': isActive() }"
+						class="ml-2 text-base leading-none text-black font-bold hover:bg-gray-500 rounded-full px-2 py-1"
+					>{{ pkey }}</div>
 					<div class="flex-shrink-0 pr-2 text-right mt-1">
 						<button
 							ref="settings"
@@ -21,7 +24,7 @@
 								handler: settingsClose,
 							}"
 							aria-label="Track Settings"
-							class="w-8 h-8 inline-flex items-center justify-center text-gray-400 rounded-full bg-transparent hover:text-gray-500 focus:outline-none focus:text-sl-surface focus:bg-sl-on_surface_2 transition ease-in-out duration-150"
+							class="w-8 h-8 inline-flex items-center justify-center text-sl-disabled rounded-full bg-transparent hover:text-gray-500 focus:outline-none focus:text-sl-surface focus:bg-sl-on_surface_2 transition ease-in-out duration-150"
 							@focus="setActive()"
 							@click="settingsOpen = !settingsOpen"
 						>

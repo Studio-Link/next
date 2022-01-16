@@ -1,10 +1,9 @@
 <template>
-	<li aria-label="Empty Remote Call" class="col-span-1" @mouseenter="setActive()">
-		<div class="flex justify-between px-1">
-			<h2 class="font-semibold text-sl-disabled text-sm truncate pr-2">{{ getTrackName() }}</h2>
+	<li aria-label="Remote track" class="col-span-1" @mouseenter="setActive()">
+		<div class="flex justify-between">
+			<h2 class="ml-1 font-semibold text-sl-disabled text-sm truncate pr-2">{{ getTrackName() }}</h2>
 			<div class="flex">
-				<div class="font-semibold text-sm text-green-600 uppercase text-right">Connected</div>
-				<div class="w-4"></div>
+				<div class="font-semibold text-sm text-sl-disabled uppercase text-right"></div>
 			</div>
 			<!-- <div class="font-semibold text-sm text-yellow-500 uppercase">Calling</div> -->
 			<!-- <div class="font-semibold text-sm text-red-500 uppercase">Error</div> -->
@@ -15,7 +14,11 @@
 
 		<div class="flex mt-1">
 			<div class="bg-sl-02dpa rounded-lg h-44 w-full shadow">
-				<div class="flex justify-end">
+				<div class="flex justify-between items-center">
+					<div
+						:class="{ 'bg-sl-disabled': isActive() }"
+						class="ml-2 text-base leading-none text-black font-bold hover:bg-gray-500 rounded-full px-2 py-1"
+					>{{ pkey }}</div>
 					<div class="flex-shrink-0 pr-2 text-right mt-1">
 						<button
 							ref="settings"
@@ -24,7 +27,7 @@
 								handler: settingsClose,
 							}"
 							aria-label="Track Settings"
-							class="w-8 h-8 inline-flex items-center justify-center text-gray-400 rounded-full bg-transparent hover:text-gray-500 focus:outline-none focus:text-sl-surface focus:bg-sl-on_surface_2 transition ease-in-out duration-150"
+							class="w-8 h-8 inline-flex items-center justify-center text-sl-disabled rounded-full bg-transparent hover:text-gray-500 focus:outline-none focus:text-sl-surface focus:bg-sl-on_surface_2 transition ease-in-out duration-150"
 							@focus="setActive()"
 							@click="settingsOpen = !settingsOpen"
 						>
@@ -94,7 +97,7 @@
 						@click="deleteRemoteTrack()"
 						@focus="setActive()"
 					>
-						<svg v-if="isActive()" class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor"> 
+						<svg v-if="isActive()" class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
 							<path
 								fill-rule="evenodd"
 								d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
