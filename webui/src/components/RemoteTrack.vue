@@ -1,6 +1,6 @@
 <template>
 	<li aria-label="Remote track" class="col-span-1" @mouseenter="setActive()">
-		<div class="flex justify-between">
+		<div class="flex justify-between h-5">
 			<h2 class="ml-1 font-semibold text-sl-disabled text-sm truncate pr-2">{{ getTrackName() }}</h2>
 			<div class="flex">
 				<div class="font-semibold text-sm text-sl-disabled uppercase text-right"></div>
@@ -16,8 +16,8 @@
 			<div class="bg-sl-02dpa rounded-lg h-44 w-full shadow">
 				<div class="flex justify-between items-center">
 					<div
-						:class="{ 'bg-sl-disabled': isActive() }"
-						class="ml-2 text-base leading-none text-black font-bold hover:bg-gray-500 rounded-full px-2 py-1"
+						:class="{ 'bg-sl-disabled': isActive(), 'bg-sl-16dpa': !isActive() }"
+						class="inline-flex items-center justify-center ml-2 text-sm leading-none text-black font-bold rounded-full px-2 py-1"
 					>{{ pkey }}</div>
 					<div class="flex-shrink-0 pr-2 text-right mt-1">
 						<button
@@ -90,7 +90,7 @@
 					</div>
 				</div>
 				<div v-if="!isActive()" class="text-center mt-10 text-sl-disabled">No call</div>
-				<div class="text-right mt-1 text-xs">
+				<div class="text-right mt-0.5 mr-0.5 text-xs">
 					<button
 						class="opacity-30 hover:opacity-60 focus:opacity-60"
 						title="Remove track"

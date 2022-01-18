@@ -1,6 +1,6 @@
 <template>
 	<li aria-label="Local track" class="col-span-1" @mouseenter="setActive()">
-		<div class="flex justify-between">
+		<div class="flex justify-between h-5">
 			<h2
 				class="ml-1 font-semibold text-sl-disabled text-sm truncate pr-2"
 			>{{ getTrackName() }} me@studio.link</h2>
@@ -13,8 +13,8 @@
 			<div class="bg-sl-02dpa rounded-lg h-44 w-full shadow">
 				<div class="flex justify-between items-center">
 					<div
-						:class="{ 'bg-sl-disabled': isActive() }"
-						class="ml-2 text-base leading-none text-black font-bold hover:bg-gray-500 rounded-full px-2 py-1"
+						:class="{ 'bg-sl-disabled': isActive(), 'bg-sl-16dpa': !isActive() }"
+						class="ml-2 text-base leading-none text-black font-bold rounded-full px-2 py-1"
 					>{{ pkey }}</div>
 					<div class="flex-shrink-0 pr-2 text-right mt-1">
 						<button
