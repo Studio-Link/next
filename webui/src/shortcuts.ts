@@ -1,6 +1,11 @@
 import { tracks } from './states/tracks'
 import api from './api'
 
+function track_select(id: number) {
+	tracks.select(id)
+	document.getElementById('track' + id)?.focus()
+}
+
 document.onkeydown = (event) => {
 	//ignore global events if input field is focused
 	const inputs = document.getElementsByTagName('input');
@@ -10,47 +15,53 @@ document.onkeydown = (event) => {
 			return
 	}
 
+	// --- Track shortcuts ---
 	if (event.code == 'Digit1') {
-		tracks.select(1)
-		document.getElementById('track1')?.focus()
+		track_select(1)
 	}
 	if (event.code == 'Digit2') {
-		tracks.select(2)
-		document.getElementById('track2')?.focus()
+		track_select(2)
 	}
 	if (event.code == 'Digit3') {
-		tracks.select(3)
-		document.getElementById('track3')?.focus()
+		track_select(3)
 	}
 	if (event.code == 'Digit4') {
-		tracks.select(4)
-		document.getElementById('track4')?.focus()
+		track_select(4)
 	}
 	if (event.code == 'Digit5') {
-		tracks.select(5)
-		document.getElementById('track5')?.focus()
+		track_select(5)
 	}
 	if (event.code == 'Digit6') {
-		tracks.select(6)
-		document.getElementById('track6')?.focus()
+		track_select(6)
 	}
 	if (event.code == 'Digit7') {
-		tracks.select(7)
-		document.getElementById('track7')?.focus()
+		track_select(7)
 	}
 	if (event.code == 'Digit8') {
-		tracks.select(8)
-		document.getElementById('track8')?.focus()
+		track_select(8)
 	}
 	if (event.code == 'Digit9') {
-		tracks.select(9)
-		document.getElementById('track9')?.focus()
+		track_select(9)
 	}
 
+	// Previous Track
+	if (event.code == 'ArrowUp' || event.code == 'ArrowLeft' ||
+		event.code == 'KeyH' || event.code == 'KeyK') {
+		track_select(tracks.selected() - 1)
+	}
+
+	// Next Track
+	if (event.code == 'ArrowDown' || event.code == 'ArrowRight' ||
+		event.code == 'KeyL' || event.code == 'KeyJ') {
+		track_select(tracks.selected() + 1)
+	}
+
+	// New Track
 	if (event.code == 'KeyN') {
 		api.track_add('remote')
 	}
 
+	// Remote Track
 	if (event.code == 'KeyX') {
 		const id = tracks.selected()
 		if (id == -1 || id == 1)
