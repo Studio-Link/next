@@ -5,6 +5,7 @@ import "typeface-roboto-mono";
 import Button from "./components/Button.vue";
 import { tracks } from "./states/tracks";
 import { config } from "./config";
+import './shortcuts'
 
 tracks.websocket(config.ws_host());
 

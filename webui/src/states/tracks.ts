@@ -28,6 +28,7 @@ interface Tracks {
 	isValid(id: number): boolean
 	isSelected(id: number): boolean
 	select(id: number): void
+	selected(): number
 }
 
 export const tracks: Tracks = {
@@ -97,6 +98,9 @@ export const tracks: Tracks = {
 	},
 
 	select(id: number): void {
+		if (this.state[id] === undefined)
+			return
+
 		//Workaround for mouseenter event after focus change
 		if (this.selected_debounce) return
 		this.selected_debounce = true
@@ -110,4 +114,15 @@ export const tracks: Tracks = {
 
 		this.state[id].selected = true
 	},
+
+	selected(): number {
+		let id = -1
+		this.state.forEach((el) => {
+			if (el.selected) {
+				id = el.id
+			}
+		})
+
+		return id
+	}
 }
