@@ -13,9 +13,15 @@
 			<div class="bg-sl-02dpa rounded-lg h-44 w-full shadow">
 				<div class="flex justify-between items-center">
 					<div
-						:class="{ 'bg-sl-disabled': isActive(), 'bg-sl-16dpa': !isActive() }"
-						class="ml-2 text-base leading-none text-black font-bold rounded-full px-2 py-1"
-					>{{ pkey }}</div>
+						:id="`track${pkey}`"
+						tabindex="0"
+						:class="{ 'bg-sl-disabled': isActive(), 'bg-sl-24dpa': !isActive() }"
+						class="inline-flex items-center justify-center ml-2 text-sm leading-none text-black font-bold rounded-full px-2 py-1 focus:outline-none"
+					>
+						<span class="sr-only">Local Track</span>
+						{{ pkey }}
+						<span class="sr-only">selected</span>
+					</div>
 					<div class="flex-shrink-0 pr-2 text-right mt-1">
 						<button
 							ref="settings"
