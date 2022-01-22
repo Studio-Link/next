@@ -18,7 +18,7 @@
 					<div
 						:id="`track${pkey}`"
 						tabindex="0"
-						:class="{ 'bg-sl-disabled': isActive(), 'bg-sl-16dpa': !isActive() }"
+						:class="{ 'bg-sl-disabled': isActive(), 'bg-sl-24dpa': !isActive() }"
 						class="inline-flex items-center justify-center ml-2 text-sm leading-none text-black font-bold rounded-full px-2 py-1 focus:outline-none"
 					>
 						<span class="sr-only">Remote Track</span>
