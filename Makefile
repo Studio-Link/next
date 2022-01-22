@@ -148,11 +148,6 @@ bareinfo:
 
 .PHONY: clean
 clean:
-	$(HIDE)[ -d third_party/baresip ] && \
-		$(MAKE) -C third_party/baresip clean || true
-	$(HIDE)[ -d third_party/rem ] && \
-		$(MAKE) -C third_party/rem clean || true
-	$(HIDE)[ -d third_party/re ] && $(MAKE) -C third_party/re clean || true
 	$(HIDE)[ -d third_party/re ] && $(MAKE) -C libsl clean || true
 	$(HIDE)[ -d third_party/re ] && $(MAKE) -C test clean || true
 	$(HIDE)[ -d third_party/re ] && $(MAKE) -C app/linux clean || true
