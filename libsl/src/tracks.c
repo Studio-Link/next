@@ -75,7 +75,6 @@ int sl_tracks_json(struct re_printf *pf)
 		if (err == -1)
 			goto max;
 
-		str_ncpy(track->name, id_str, sizeof(track->name));
 		odict_entry_add(o_track, "name", ODICT_STRING, track->name);
 
 		odict_entry_add(o_tracks, id_str, ODICT_OBJECT, o_track);

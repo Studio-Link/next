@@ -23,9 +23,9 @@ static int test_track_add(void)
 	/* Get all tracks as json string */
 	err = re_snprintf(json_str, sizeof(json_str), "%H", sl_tracks_json);
 	ASSERT_TRUE(-1 != err);
-	ASSERT_TRUE(0 == str_cmp("{\"1\":{\"type\":\"local\",\"name\":\"1\"},"
+	ASSERT_TRUE(0 == str_cmp("{\"1\":{\"type\":\"local\",\"name\":\"\"},"
 				 "\"2\":{\"type\":"
-				 "\"remote\",\"name\":\"2\"}}",
+				 "\"remote\",\"name\":\"\"}}",
 				 json_str));
 	/* Validate json */
 	err = json_decode_odict(&o, 32, json_str, sizeof(json_str), 8);
