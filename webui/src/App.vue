@@ -4,7 +4,7 @@
       aria-label="Logo Reload App"
       href="javascript:window.location.reload(true)"
     >
-      <img src="/logo_standalone.svg" class="h-10" alt="Logo" />
+      <img src="/logo_standalone.svg" class="h-9 opacity-40" alt="Logo" />
     </a>
     <!-- <HeadStatus /> -->
     <Navbar />
