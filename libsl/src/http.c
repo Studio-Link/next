@@ -58,7 +58,7 @@ int sl_http_req(struct sl_http *http, enum sl_http_met sl_met, char *url)
 	struct pl met, uri;
 	int err;
 
-	if (!http | !url)
+	if (!http || !url)
 		return EINVAL;
 
 	switch (sl_met) {
