@@ -2,7 +2,7 @@
 # Makefile
 #
 # Copyright (C) 2022 Studio.Link Sebastian Reimers
-# Variables (make CC=gcc V=1 CORES=2):
+# Variables (make CC=gcc V=1):
 #   V		Verbose mode (example: make V=1)
 #   CC		Override CC (default clang)
 #
