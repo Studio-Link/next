@@ -4,7 +4,6 @@
 # Copyright (C) 2022 Studio.Link Sebastian Reimers
 # Variables (make CC=gcc V=1 CORES=2):
 #   V		Verbose mode (example: make V=1)
-#   CORES	Override CPU Core detection
 #   CC		Override CC (default clang)
 #
 
@@ -19,9 +18,7 @@ BARESIP_MODULES := ice dtls_srtp turn opus g711
 
 CC := clang
 
-CORES := $(shell nproc || sysctl -n hw.ncpu)
-
-MAKE += -j$(CORES) CC=$(CC)
+MAKE += -j CC=$(CC)
 
 ifeq ($(V),)
 HIDE=@
@@ -102,7 +99,7 @@ third_party/openssl:
 	@rm -f third_party/openssl-${OPENSSL_VERSION}.tar.gz
 	$(HIDE)cd third_party/openssl && \
 		./config no-shared && \
-		make -j$(CORES) build_libs && \
+		make -j build_libs && \
 		cp *.a ../lib && \
 		cp -a include/openssl ../include/
 
@@ -112,7 +109,7 @@ third_party/opus:
 		mv opus-${OPUS_VERSION} opus
 	$(HIDE)cd third_party/opus && \
 		./configure --with-pic && \
-		make -j$(CORES) && \
+		make -j && \
 		cp .libs/libopus.a ../lib/ && \
 		mkdir -p ../include/opus && \
 		cp include/*.h ../include/opus/
