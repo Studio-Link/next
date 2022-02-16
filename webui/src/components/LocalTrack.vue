@@ -45,7 +45,7 @@
 					</div>
 				</div>
 				<div class="flex justify-center mt-6">
-					<Button>
+					<ButtonPrimary>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							viewBox="0 0 20 20"
@@ -59,7 +59,7 @@
 							/>
 						</svg>
 						Select Microphone
-					</Button>
+					</ButtonPrimary>
 				</div>
 			</div>
 

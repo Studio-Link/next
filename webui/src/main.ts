@@ -2,7 +2,8 @@ import { createApp } from "vue";
 import App from "./App.vue";
 import "./index.css";
 import "typeface-roboto-mono";
-import Button from "./components/Button.vue";
+import ButtonPrimary from "./components/ButtonPrimary.vue";
+import ButtonSecondary from "./components/ButtonSecondary.vue";
 import { tracks } from "./states/tracks";
 import { config } from "./config";
 import './shortcuts'
@@ -44,7 +45,8 @@ app.directive("click-outside", {
     document.removeEventListener("touchstart", handleClickOutside);
   },
 });
-app.component("Button", Button);
+app.component("ButtonPrimary", ButtonPrimary);
+app.component("ButtonSecondary", ButtonSecondary);
 app.mount("#app");
 
 document.addEventListener("contextmenu", function(e) {

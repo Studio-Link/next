@@ -62,7 +62,7 @@
 						/>
 					</div>
 					<div class="mt-2 flex justify-between items-center">
-						<Button>
+						<ButtonPrimary>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								viewBox="0 0 20 20"
@@ -77,9 +77,9 @@
 								/>
 							</svg>
 							Call
-						</Button>
+						</ButtonPrimary>
 						<span class="text-sl-on_surface_2">OR</span>
-						<Button>
+						<ButtonSecondary>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								class="h-4 mr-1"
@@ -92,7 +92,7 @@
 									clip-rule="evenodd"
 								/>
 							</svg>Invite
-						</Button>
+						</ButtonSecondary>
 					</div>
 				</div>
 				<div v-if="!isActive()" class="text-center mt-10 text-sl-disabled">No call</div>
