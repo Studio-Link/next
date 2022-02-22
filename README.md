@@ -17,7 +17,7 @@ StudioLink is a SIP application to create high quality Audio over IP (AoIP) conn
 
 ## Screenshot (Preview)
 
-![Screenshot App Next-Alpha](https://raw.githubusercontent.com/Studio-Link/next/main/doc/images/screenshot_alpha.png)
+![Screenshot App Next-Alpha](https://raw.githubusercontent.com/Studio-Link/next/main/docs/images/screenshot_alpha.png)
 
 ## Usage
 
