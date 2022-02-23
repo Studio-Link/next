@@ -29,3 +29,7 @@ compile_commands.json
 /third_party
 
 /libsl/assets
+
+node_modules
+.temp
+.cache
