@@ -48,6 +48,7 @@ void sl_ws_send_str(enum ws_type ws_type, char *str);
 void sl_ws_tracks(const struct websock_hdr *hdr, struct mbuf *mb, void *arg);
 
 /* tracks.c */
+struct sl_track;
 enum sl_track_type { SL_TRACK_REMOTE, SL_TRACK_LOCAL };
 enum sl_track_status {
 	SL_TRACK_NOT_EXISTS = -1,
@@ -58,10 +59,10 @@ enum sl_track_status {
 int sl_tracks_init(void);
 int sl_tracks_close(void);
 const struct list *sl_tracks(void);
+int sl_track_next_id(void);
 int sl_track_add(enum sl_track_type type);
 int sl_track_del(int id);
 enum sl_track_status sl_track_status(int id);
-int sl_track_last_id(void);
 int sl_tracks_json(struct re_printf *pf);
 
 #ifdef __cplusplus

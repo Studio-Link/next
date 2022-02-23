@@ -27,8 +27,7 @@ struct sl_track {
 	} u;
 };
 
-static struct list tracks;
-static int last_id = -1;
+static struct list tracks = LIST_INIT;
 
 
 const struct list *sl_tracks(void)
@@ -44,9 +43,6 @@ int sl_tracks_json(struct re_printf *pf)
 	struct odict *o_track;
 	char id_str[6];
 	int err;
-
-	if (last_id == -1)
-		ESHUTDOWN;
 
 	err = odict_alloc(&o_tracks, 32);
 	if (err)
@@ -107,7 +103,7 @@ static bool sort_handler(struct le *le1, struct le *le2, void *arg)
 }
 
 
-static int next_id(void)
+int sl_track_next_id(void)
 {
 	int id = 1;
 	struct le *le;
@@ -121,8 +117,6 @@ static int next_id(void)
 		}
 		break;
 	}
-	if (id > last_id)
-		last_id = id;
 
 	return id;
 }
@@ -132,11 +126,8 @@ int sl_track_add(enum sl_track_type type)
 {
 	struct sl_track *track;
 
-	if (last_id == -1)
-		ESHUTDOWN;
-
-	if (list_count(&tracks) >= SL_MAX_TRACKS || last_id >= SL_MAX_TRACKS) {
-		warning("sl_track_add: %d/%d tracks reached\n", last_id,
+	if (list_count(&tracks) >= SL_MAX_TRACKS) {
+		warning("sl_track_add: max. %d tracks reached\n",
 			SL_MAX_TRACKS);
 		return E2BIG;
 	}
@@ -145,7 +136,7 @@ int sl_track_add(enum sl_track_type type)
 	if (!track)
 		return ENOMEM;
 
-	track->id     = next_id();
+	track->id     = sl_track_next_id();
 	track->type   = type;
 	track->status = SL_TRACK_IDLE;
 	list_append(&tracks, &track->le, track);
@@ -158,10 +149,6 @@ int sl_track_add(enum sl_track_type type)
 int sl_track_del(int id)
 {
 	struct le *le;
-
-	/* sl_tracks not initialized */
-	if (last_id == -1)
-		return ESHUTDOWN;
 
 	/* do not delete last local track */
 	if (id == 1)
@@ -184,9 +171,6 @@ enum sl_track_status sl_track_status(int id)
 {
 	struct le *le;
 
-	if (last_id == -1)
-		ESHUTDOWN;
-
 	LIST_FOREACH(&tracks, le)
 	{
 		struct sl_track *track = le->data;
@@ -198,19 +182,10 @@ enum sl_track_status sl_track_status(int id)
 }
 
 
-int sl_track_last_id(void)
-{
-	return last_id;
-}
-
-
 int sl_tracks_init(void)
 {
 	int err;
 
-	last_id = 0;
-
-	list_init(&tracks);
 	err = sl_track_add(SL_TRACK_LOCAL);
 
 	return err;
@@ -219,7 +194,6 @@ int sl_tracks_init(void)
 
 int sl_tracks_close(void)
 {
-	last_id = -1;
 	list_flush(&tracks);
 
 	return 0;
