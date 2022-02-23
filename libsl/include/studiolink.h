@@ -65,6 +65,11 @@ int sl_track_del(int id);
 enum sl_track_status sl_track_status(int id);
 int sl_tracks_json(struct re_printf *pf);
 
+/* audio.c */
+int sl_audio_init(void);
+int sl_audio_close(void);
+
+
 #ifdef __cplusplus
 }
 #endif
