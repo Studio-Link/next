@@ -41,14 +41,6 @@ static void usage(void)
 }
 
 
-/**
- * StudioLink parse CLI args
- *
- * @param argc Argument count
- * @param argv Argument array
- *
- * @return int
- */
 int sl_getopt(int argc, char *const argv[])
 {
 #ifdef HAVE_GETOPT
@@ -96,15 +88,6 @@ int sl_getopt(int argc, char *const argv[])
 }
 
 
-/**
- * Init StudioLink
- *
- * Initializes Libre, Baresip and StudioLink
- *
- * @param conf Baresip config
- *
- * @return int
- */
 int sl_init(const uint8_t *conf)
 {
 	struct config *config;
@@ -202,11 +185,6 @@ static void *open_ui(void *arg)
 }
 
 
-/**
- * StudioLink Open web user interface
- *
- * @return int
- */
 int sl_open_webui(void)
 {
 	if (headless)
@@ -216,11 +194,6 @@ int sl_open_webui(void)
 }
 
 
-/**
- * StudioLink Main function
- *
- * @return int
- */
 int sl_main(void)
 {
 	int err;
@@ -231,9 +204,6 @@ int sl_main(void)
 }
 
 
-/**
- * Close/Exit StudioLink
- */
 void sl_close(void)
 {
 	sl_ws_close();

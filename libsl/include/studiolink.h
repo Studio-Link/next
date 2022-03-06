@@ -15,15 +15,54 @@
 extern "C" {
 #endif
 
-/* main.c */
+/******************************************************************************
+ * main.c
+ */
+
+/**
+ * StudioLink parse CLI args
+ *
+ * @param argc Argument count
+ * @param argv Argument array
+ *
+ * @return int
+ */
 int sl_getopt(int argc, char *const argv[]);
+
+/**
+ * Init StudioLink
+ *
+ * Initializes Libre, Baresip and StudioLink
+ *
+ * @param conf Baresip config
+ *
+ * @return int
+ */
 int sl_init(const uint8_t *conf);
+
+/**
+ * StudioLink Open web user interface
+ *
+ * @return int
+ */
 int sl_open_webui(void);
+
+/**
+ * StudioLink Main function
+ *
+ * @return int
+ */
 int sl_main(void);
+
+/**
+ * Close/Exit StudioLink
+ */
 void sl_close(void);
 
 
-/* http.c */
+/******************************************************************************
+ * http.c
+ */
 enum sl_http_met {
 	SL_HTTP_GET,
 	SL_HTTP_POST,
@@ -36,7 +75,10 @@ int sl_http_alloc(struct sl_http **http, http_resp_h *resph);
 int sl_http_req(struct sl_http *http, enum sl_http_met sl_met, char *url);
 int sl_http_listen(struct http_sock **sock);
 
-/* ws.c */
+
+/******************************************************************************
+ * ws.c
+ */
 enum ws_type { WS_TRACKS };
 int sl_ws_init(void);
 int sl_ws_close(void);
@@ -44,10 +86,16 @@ int sl_ws_open(struct http_conn *conn, enum ws_type type,
 	       const struct http_msg *msg, websock_recv_h *recvh);
 void sl_ws_send_str(enum ws_type ws_type, char *str);
 
-/* ws_tracks.c */
+
+/******************************************************************************
+ * ws_tracks.c
+ */
 void sl_ws_tracks(const struct websock_hdr *hdr, struct mbuf *mb, void *arg);
 
-/* tracks.c */
+
+/******************************************************************************
+ * tracks.c
+ */
 struct sl_track;
 enum sl_track_type { SL_TRACK_REMOTE, SL_TRACK_LOCAL };
 enum sl_track_status {
@@ -65,7 +113,10 @@ int sl_track_del(int id);
 enum sl_track_status sl_track_status(int id);
 int sl_tracks_json(struct re_printf *pf);
 
-/* audio.c */
+
+/******************************************************************************
+ * audio.c
+ */
 int sl_audio_init(void);
 int sl_audio_close(void);
 
