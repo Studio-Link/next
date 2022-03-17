@@ -107,7 +107,7 @@ third_party/openssl:
 		cp -a include/openssl ../include/
 
 third_party/opus:
-	$(HIDE)cd third_party && && \
+	$(HIDE)cd third_party && \
 		wget ${OPUS_MIRROR}/opus-${OPUS_VERSION}.tar.gz && \
 		tar -xzf opus-${OPUS_VERSION}.tar.gz && \
 		mv opus-${OPUS_VERSION} opus
