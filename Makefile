@@ -52,6 +52,9 @@ openssl: third_party/openssl
 .PHONY: opus
 opus: third_party/opus
 
+.PHONY: portaudio
+portaudio: third_party/portaudio
+
 .PHONY: libre
 libre: third_party/re openssl
 	@rm -f third_party/re/libre.*
@@ -104,7 +107,8 @@ third_party/openssl:
 		cp -a include/openssl ../include/
 
 third_party/opus:
-	cd third_party && wget ${OPUS_MIRROR}/opus-${OPUS_VERSION}.tar.gz && \
+	$(HIDE)cd third_party && && \
+		wget ${OPUS_MIRROR}/opus-${OPUS_VERSION}.tar.gz && \
 		tar -xzf opus-${OPUS_VERSION}.tar.gz && \
 		mv opus-${OPUS_VERSION} opus
 	$(HIDE)cd third_party/opus && \
@@ -113,6 +117,18 @@ third_party/opus:
 		cp .libs/libopus.a ../lib/ && \
 		mkdir -p ../include/opus && \
 		cp include/*.h ../include/opus/
+
+third_party/portaudio:
+	$(HIDE)cd third_party && \
+		wget ${PORTAUDIO_MIRROR}/v${PORTAUDIO_VERSION}.tar.gz && \
+		tar -xzf v${PORTAUDIO_VERSION}.tar.gz && \
+		mv portaudio-${PORTAUDIO_VERSION} portaudio
+	$(HIDE)cd third_party/portaudio && \
+		./configure && \
+		make -j && \
+		cp -a lib/.libs/libportaudio.a ../lib/ && \
+		mkdir -p ../include/portaudio && \
+		cp include/*.h ../include/portaudio/
 
 third_party/re:
 	mkdir -p third_party/include/re
