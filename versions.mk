@@ -1,4 +1,4 @@
-OPENSSL_VERSION   := 3.0.1
+OPENSSL_VERSION   := 3.0.2
 OPENSSL_MIRROR    := https://www.openssl.org/source
 OPUS_VERSION      := 1.3.1
 OPUS_MIRROR       := https://archive.mozilla.org/pub/opus
