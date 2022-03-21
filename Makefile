@@ -92,7 +92,7 @@ third_party_dir:
 	mkdir -p third_party/lib
 
 .PHONY: third_party
-third_party: third_party_dir openssl opus libre librem libbaresip
+third_party: third_party_dir openssl opus portaudio libre librem libbaresip
 
 third_party/openssl:
 	$(HIDE)cd third_party && \
