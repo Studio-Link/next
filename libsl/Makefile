@@ -1,7 +1,7 @@
 #
 # Makefile
 #
-# Copyright (C) 2021 Studio.Link Sebastian Reimers
+# Copyright (C) 2021-2022 Studio.Link Sebastian Reimers
 #
 
 PROJECT      := sl
@@ -43,7 +43,7 @@ $(BUILD): Makefile assets
 
 .PHONY: clean
 clean:
-	@rm -rf $(STATIC) $(BUILD)
+	@rm -rf $(STATIC) $(BUILD) assets
 
 .PHONY: assets
 assets:

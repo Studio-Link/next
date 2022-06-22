@@ -3,6 +3,7 @@
 #include <baresip.h>
 #include <studiolink.h>
 
+/* TODO: allow multiple sl_audio objects */
 static struct sl_audio {
 	struct sl_track *track;
 	struct ausrc *ausrc;

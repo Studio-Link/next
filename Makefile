@@ -203,6 +203,7 @@ watch:
 	make test; sleep 0.5; \
 	done
 
+r: run
 .PHONY: run
 run: linux
 	app/linux/studiolink

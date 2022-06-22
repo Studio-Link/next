@@ -1,10 +1,10 @@
-#include <re.h>
-#include <baresip.h>
-#include <studiolink.h>
-
 #include <stdlib.h>
 #include <pthread.h>
 #include <getopt.h>
+
+#include <re.h>
+#include <baresip.h>
+#include <studiolink.h>
 
 
 static struct http_sock *httpsock = NULL;
@@ -58,13 +58,12 @@ int sl_getopt(int argc, char *const argv[])
 	(void)re_printf("v%s"
 			" Copyright (C) 2013 - 2022"
 			" Sebastian Reimers\n\n",
-			BARESIP_VERSION);
+			SL_VERSION);
 
 	for (;;) {
 		const int c = getopt_long(argc, argv, "hvH", options, &index);
-		if (0 > c) {
+		if (c < 0)
 			break;
-		}
 
 		switch (c) {
 
