@@ -7,6 +7,8 @@
 #include <studiolink.h>
 
 
+enum { ASYNC_WORKERS = 4 };
+
 static struct http_sock *httpsock = NULL;
 static pthread_t open;
 static bool headless = false;
@@ -101,6 +103,8 @@ int sl_init(const uint8_t *conf)
 	err = libre_init();
 	if (err)
 		return err;
+
+	re_thread_async_init(ASYNC_WORKERS);
 
 	(void)sys_coredump_set(true);
 
@@ -218,8 +222,13 @@ void sl_close(void)
 	baresip_close();
 	mod_close();
 
+	re_thread_async_close();
+
+	/* Check for open timers */
+	tmr_debug();
+
 	libre_close();
 
-	tmr_debug();
+	/* Check for memory leaks */
 	mem_debug();
 }
