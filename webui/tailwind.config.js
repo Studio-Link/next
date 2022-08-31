@@ -8,7 +8,7 @@ module.exports = {
     extend: {
       colors: {
         sl: {
-          primary: "#de7b00",
+          primary: "#DF7C00",
           primary_h: "#ff8d00",
           surface: "#121212",
           disabled: "#7B7B7B",
