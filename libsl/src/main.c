@@ -7,10 +7,9 @@
 #include <studiolink.h>
 
 
-enum { ASYNC_WORKERS = 4 };
+enum { ASYNC_WORKERS = 6 };
 
 static struct http_sock *httpsock = NULL;
-static pthread_t open;
 static bool headless = false;
 
 static const char *modv[] = {
@@ -23,10 +22,9 @@ static const char *modv[] = {
 	"g711",
 };
 
+
 static void signal_handler(int signum)
 {
-	(void)signum;
-
 	re_fprintf(stderr, "terminated on signal %d\n", signum);
 
 	re_cancel();
@@ -173,18 +171,27 @@ out:
 }
 
 
-static void *open_ui(void *arg)
+/* blocking webui */
+static int webui_open(void *arg)
 {
 	(void)arg;
 
 	/* @TODO: add google-chrome and xdg-open fallback */
 	/* @TODO: use permanent browser dir */
-	(void)system("chromium --app=http://127.0.0.1:9999 "
+	return system("chromium --app=http://127.0.0.1:9999 "
 		     "--user-data-dir=/tmp/.studio-link/browser "
 		     "--window-size=1060,768 >/dev/null 2>&1");
+}
 
-	/* @TODO: call re_cancel() (must be done from main thread) */
-	return NULL;
+
+static void webui_closed(int err, void *arg)
+{
+	(void)arg;
+
+	if (err)
+		warning("webui open failed! %m\n", err);
+
+	re_cancel();
 }
 
 
@@ -193,7 +200,8 @@ int sl_open_webui(void)
 	if (headless)
 		return 0;
 
-	return pthread_create(&open, NULL, open_ui, NULL);
+	/* will block one async thread until closed */
+	return re_thread_async(webui_open, webui_closed, NULL);
 }
 
 
