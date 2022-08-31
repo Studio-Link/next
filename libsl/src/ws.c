@@ -50,6 +50,7 @@ int sl_ws_open(struct http_conn *conn, enum ws_type type,
 out:
 	if (err)
 		mem_deref(ws_conn);
+
 	return err;
 }
 
@@ -81,14 +82,7 @@ int sl_ws_init(void)
 
 int sl_ws_close(void)
 {
-	struct le *le = list_head(&wsl);
-	struct ws_conn *ws_conn;
-
-	while (le) {
-		ws_conn = le->data;
-		le	= le->next;
-		mem_deref(ws_conn);
-	}
+	list_flush(&wsl);
 
 	if (ws)
 		ws = mem_deref(ws);
