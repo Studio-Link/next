@@ -13,6 +13,7 @@
 #include "../assets/roboto-mono-latin-600_woff2.h"
 #include "../assets/roboto-mono-latin-700_woff2.h"
 #include "../assets/logo_standalone_svg.h"
+#include "../assets/logo_solo_svg.h"
 
 #define SL_MAX_JSON (512 * 1024)
 
@@ -204,6 +205,12 @@ static void http_req_handler(struct http_conn *conn,
 		http_sreply(conn, 200, "OK", "image/svg+xml",
 			    (const char *)dist_logo_standalone_svg,
 			    dist_logo_standalone_svg_len);
+		return;
+	}
+	if (0 == pl_strcasecmp(&msg->path, "/logo_solo.svg")) {
+		http_sreply(conn, 200, "OK", "image/svg+xml",
+			    (const char *)dist_logo_solo_svg,
+			    dist_logo_solo_svg_len);
 		return;
 	}
 

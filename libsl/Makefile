@@ -63,3 +63,5 @@ assets:
 		> ../libsl/assets/roboto-mono-latin-700_woff2.h
 	@cd ../webui/ && xxd -i dist/logo_standalone.svg \
 		> ../libsl/assets/logo_standalone_svg.h
+	@cd ../webui/ && xxd -i dist/logo_solo.svg \
+		> ../libsl/assets/logo_solo_svg.h
