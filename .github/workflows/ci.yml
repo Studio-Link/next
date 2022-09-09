@@ -46,25 +46,25 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: install clang-13
+    - name: install clang-14
       if: ${{ runner.os == 'Linux' }}
       run: |
         wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
-        sudo add-apt-repository "deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-13 main"
-        sudo apt-get update && sudo apt-get install -y clang-tools-13 clang-13 clang-tidy-13
+        sudo add-apt-repository "deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-14 main"
+        sudo apt-get update && sudo apt-get install -y clang-tools-14 clang-14 clang-tidy-14
 
     - name: websocat linux
       if: ${{ runner.os == 'Linux' }}
       run: |
-        wget https://github.com/vi/websocat/releases/download/v1.8.0/websocat_amd64-linux
-        mv websocat_amd64-linux /usr/local/bin/websocat
+        wget https://github.com/vi/websocat/releases/download/v1.10.0/websocat.x86_64-unknown-linux-musl
+        mv websocat.x86_64-unknown-linux-musl /usr/local/bin/websocat
         chmod +x /usr/local/bin/websocat
 
     - name: websocat macos
       if: ${{ runner.os == 'macOS' }}
       run: |
-        wget https://github.com/vi/websocat/releases/download/v1.8.0/websocat_mac
-        mv websocat_mac /usr/local/bin/websocat
+        wget https://github.com/vi/websocat/releases/download/v1.10.0/websocat.x86_64-apple-darwin
+        mv websocat.x86_64-apple-darwin /usr/local/bin/websocat
         chmod +x /usr/local/bin/websocat
 
     - uses: actions/cache@v2
@@ -87,17 +87,17 @@ jobs:
 
     - name: make StudioLink - Linux
       if: ${{ runner.os == 'Linux' }}
-      run: make CC=clang-13 && make test
+      run: make CC=clang-14 && make test
 
     - name: clang-tidy
       if: ${{ runner.os == 'Linux' }}
       run: |
-        clang-tidy-13 -checks=cert-\*,-cert-dcl37-c,-cert-dcl51-cpp,-clang-analyzer-valist.Uninitialized libsl/src/*.c
-        clang-tidy-13 -checks=cert-\*,-cert-dcl37-c,-cert-dcl51-cpp,-clang-analyzer-valist.Uninitialized test/src/*.c
+        clang-tidy-14 -checks=cert-\*,-cert-dcl37-c,-cert-dcl51-cpp,-clang-analyzer-valist.Uninitialized libsl/src/*.c
+        clang-tidy-14 -checks=cert-\*,-cert-dcl37-c,-cert-dcl51-cpp,-clang-analyzer-valist.Uninitialized test/src/*.c
 
     - name: clang scan-build
       if: ${{ runner.os == 'Linux' }}
-      run: make clean && scan-build-13 --status-bugs make linux
+      run: make clean && scan-build-14 --status-bugs make linux
 
     - name: make StudioLink - macOS
       if: ${{ runner.os == 'macOS' }}
