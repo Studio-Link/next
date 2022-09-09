@@ -121,8 +121,8 @@ static void http_sreply(struct http_conn *conn, uint16_t scode,
 		"Cache-Control: no-cache, no-store, must-revalidate\r\n"
 		"Referrer-Policy: no-referrer\r\n"
 		"Content-Security-Policy: default-src 'self'; frame-ancestors "
-		"'self'; form-action 'self'; img-src *; style-src 'self' "
-		"'unsafe-inline';\r\n"
+		"'self'; form-action 'self'; img-src * data:;"
+		"style-src 'self' 'unsafe-inline';\r\n"
 #ifndef RELEASE
 		/* Only allow CORS on DEV Builds
 		 * @TODO add release test */
