@@ -3,7 +3,6 @@
 		<LocalTrack v-for="track in localTracks" :key="track.id" :pkey="track.id" />
 		<RemoteTrack v-for="track in remoteTracks" :key="track.id" :pkey="track.id" />
 		<li
-			v-if="!newTrackDisabled"
 			class="col-span-1"
 			@mouseenter="newTrackVisible = true"
 			@mouseleave="newTrackVisible = false"
@@ -50,7 +49,6 @@ import { tracks } from '../states/tracks'
 import api from '../api'
 
 const newTrackVisible = ref(false)
-const newTrackDisabled = ref(false)
 const localTracks = tracks.local_tracks
 const remoteTracks = tracks.remote_tracks
 </script>

@@ -1,114 +1,89 @@
 <template>
-	<li aria-label="Local track" class="col-span-1" @mouseenter="setActive()">
-		<div class="flex justify-between h-5">
-			<h2
-				class="ml-1 font-semibold text-sl-disabled text-sm truncate pr-2"
-			>{{ getTrackName() }} me@studio.link</h2>
-			<div class="flex">
-				<div class="font-semibold text-sm text-green-600 uppercase text-right">Online</div>
-			</div>
-		</div>
+    <li aria-label="Local track" class="col-span-1" @mouseenter="setActive()">
+        <div class="flex justify-between h-5">
+            <h2 class="ml-1 font-semibold text-sl-disabled text-sm truncate pr-2">{{ getTrackName() }} me@studio.link
+            </h2>
+            <div class="flex">
+                <div class="font-semibold text-sm text-green-600 uppercase text-right">Online</div>
+            </div>
+        </div>
 
-		<div class="flex mt-1">
-			<div class="bg-sl-02dpa rounded-lg h-44 w-full shadow">
-				<div class="flex justify-between items-center">
-					<div
-						:id="`track${pkey}`"
-						tabindex="0"
-						:class="{ 'bg-sl-disabled': isActive(), 'bg-sl-24dpa': !isActive() }"
-						class="inline-flex items-center justify-center ml-2 text-sm leading-none text-black font-bold rounded-full px-2 py-1 focus:outline-none"
-					>
-						<span class="sr-only">Local Track</span>
-						{{ pkey }}
-						<span class="sr-only">selected</span>
-					</div>
-					<div class="flex-shrink-0 pr-2 text-right mt-1">
-						<button
-							ref="settings"
-							v-click-outside="{
-								exclude: ['settings'],
-								handler: settingsClose,
-							}"
-							aria-label="Track Settings"
-							class="w-8 h-8 inline-flex items-center justify-center text-sl-disabled rounded-full bg-transparent hover:text-gray-500 focus:outline-none focus:text-sl-surface focus:bg-sl-on_surface_2 transition ease-in-out duration-150"
-							@focus="setActive()"
-							@click="settingsOpen = !settingsOpen"
-						>
-							<svg aria-hidden="true" class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
-								<path
-									v-if="isActive()"
-									d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"
-								/>
-							</svg>
-						</button>
-						<TrackSettings v-if="isActive()" :active="settingsOpen" />
-					</div>
-				</div>
-				<div class="flex justify-center mt-6">
-					<ButtonPrimary>
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							viewBox="0 0 20 20"
-							fill="currentColor"
-							class="h-6 mr-1"
-						>
-							<path
-								fill-rule="evenodd"
-								d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z"
-								clip-rule="evenodd"
-							/>
-						</svg>
-						Select Microphone
-					</ButtonPrimary>
-				</div>
-			</div>
+        <div class="flex mt-1">
+            <div class="bg-sl-02dpa rounded-lg h-44 w-full shadow" :class="{ 'h-56': isActive() && isExtended() }">
+                <div class=" flex justify-between items-center">
+                    <div :id="`track${pkey}`" tabindex="0"
+                        :class="{ 'bg-sl-disabled': isActive(), 'bg-sl-24dpa': !isActive() }"
+                        class="inline-flex items-center justify-center ml-2 text-sm leading-none text-black font-bold rounded-full px-2 py-1 focus:outline-none">
+                        <span class="sr-only">Local Track</span>
+                        {{ pkey }}
+                        <span class="sr-only">selected</span>
+                    </div>
+                    <div class="flex-shrink-0 pr-2 text-right mt-1">
+                        <button ref="settings" v-click-outside="{
+                            exclude: ['settings'],
+                            handler: settingsClose,
+                        }" aria-label="Track Settings"
+                            class="w-8 h-8 inline-flex items-center justify-center text-sl-disabled rounded-full bg-transparent hover:text-gray-500 focus:outline-none focus:text-sl-surface focus:bg-sl-on_surface_2 transition ease-in-out duration-150"
+                            @focus="setActive()" @click="settingsOpen = !settingsOpen">
+                            <svg aria-hidden="true" class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path v-if="isActive()"
+                                    d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
+                            </svg>
+                        </button>
+                        <TrackSettings v-if="isActive()" :active="settingsOpen" />
+                    </div>
+                </div>
+                <AudioSettings :active="isActive()" :pkey="pkey" />
 
-			<div class="flex w-5 items-end ml-0.5 opacity-60" aria-hidden="true">
-				<div id="levels" class="levels">
-					<div id="level1" class="level"></div>
-					<div id="level2" class="level"></div>
-				</div>
-			</div>
-		</div>
-	</li>
+                <svg v-if="localState() == LocalTrackStates.Ready" class="w-24 h-24 fill-neutral-700 mx-auto"
+                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                    <path
+                        d="M224 32C135.6 32 64 103.6 64 192v16c0 8.8-7.2 16-16 16s-16-7.2-16-16V192C32 86 118 0 224 0S416 86 416 192v16c0 61.9-50.1 112-112 112H240 224 208c-17.7 0-32-14.3-32-32s14.3-32 32-32h32c17.7 0 32 14.3 32 32h32c44.2 0 80-35.8 80-80V192c0-88.4-71.6-160-160-160zM96 192c0-70.7 57.3-128 128-128s128 57.3 128 128c0 13.9-2.2 27.3-6.3 39.8C337.4 246.3 321.8 256 304 256h-8.6c-11.1-19.1-31.7-32-55.4-32H208c-35.3 0-64 28.7-64 64c0 1.4 0 2.7 .1 4C114.8 268.6 96 232.5 96 192zM224 352h16 64 9.6C387.8 352 448 412.2 448 486.4c0 14.1-11.5 25.6-25.6 25.6H25.6C11.5 512 0 500.5 0 486.4C0 412.2 60.2 352 134.4 352H208h16z" />
+                </svg>
+
+            </div>
+
+            <div class="flex w-5 items-end ml-0.5 opacity-60" aria-hidden="true">
+                <div id="levels" class="levels">
+                    <div id="level1" class="level"></div>
+                    <div id="level2" class="level"></div>
+                </div>
+            </div>
+        </div>
+    </li>
 </template>
 
-<script lang="ts">
-import { ref, defineComponent } from 'vue'
+<script setup lang="ts">
+import { ref } from 'vue'
 import TrackSettings from './TrackSettings.vue'
-import { tracks } from '../states/tracks'
+import AudioSettings from './AudioSettings.vue'
+import { LocalTrackStates, tracks } from '../states/tracks'
 
-export default defineComponent({
-	components: {
-		TrackSettings,
-	},
-	props: { pkey: { type: Number, required: true } },
-	setup(props) {
-		const settingsOpen = ref(false)
+const props = defineProps({ 'pkey': { type: Number, required: true } })
 
-		function isActive() {
-			return tracks.isSelected(props.pkey)
-		}
+const settingsOpen = ref(false)
 
-		function setActive() {
-			tracks.select(props.pkey)
-		}
+function localState() {
+    return tracks.localState(props.pkey)
+}
 
-		function getTrackName() {
-			return tracks.getTrackName(props.pkey)
-		}
+function isActive() {
+    return tracks.isSelected(props.pkey)
+}
 
-		function settingsClose() {
-			settingsOpen.value = false
-		}
+function isExtended() {
+    return tracks.isExtended(props.pkey)
+}
 
-		return {
-			isActive,
-			setActive,
-			getTrackName,
-			settingsOpen,
-			settingsClose,
-		}
-	},
-})
+function setActive() {
+    tracks.select(props.pkey)
+}
+
+function getTrackName() {
+    return tracks.getTrackName(props.pkey)
+}
+
+function settingsClose() {
+    settingsOpen.value = false
+}
 </script>
