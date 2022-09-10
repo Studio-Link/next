@@ -26,7 +26,6 @@ interface Tracks {
     state: State[]
     remote_tracks: RemoteTrack[]
     local_tracks: Track[]
-    stream_tracks: Track[]
     selected_debounce: boolean
     clear_tracks(): void
     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
@@ -46,7 +45,6 @@ export const tracks: Tracks = {
     state: reactive([]),
     remote_tracks: reactive([]),
     local_tracks: reactive([]),
-    stream_tracks: reactive([]),
     selected_debounce: false,
 
     getTrackName(id: number): string {
@@ -59,7 +57,7 @@ export const tracks: Tracks = {
 
     websocket(ws_host: string): void {
         this.socket = new WebSocket('ws://' + ws_host + '/ws/v1/tracks')
-        this.socket.onerror = function () {
+        this.socket.onerror = function() {
             console.log('Websocket error')
         }
         this.socket.onmessage = (message) => {
@@ -72,20 +70,23 @@ export const tracks: Tracks = {
     clear_tracks(): void {
         this.local_tracks.length = 0
         this.remote_tracks.length = 0
-        this.stream_tracks.length = 0
     },
 
     update(tracks): void {
+        let last_key = 0
         this.clear_tracks()
         for (const key in tracks) {
             tracks[key].id = parseInt(key);
+
             if (tracks[key].type == 'remote') {
                 this.remote_tracks.push(tracks[key])
             }
+
             if (tracks[key].type == 'local') {
                 this.local_tracks.push(tracks[key])
             }
-            /* Initialize frontend states only once */
+
+            /* Initialize frontend state only once */
             if (this.state[tracks[key].id] === undefined) {
                 this.state[tracks[key].id] = {
                     id: tracks[key].id,
@@ -94,7 +95,20 @@ export const tracks: Tracks = {
                     local: LocalTrackStates.Setup,
                     name: tracks[key].name,
                 }
+                last_key = parseInt(key)
             }
+        }
+
+        /* Cleanup state for deleted tracks */
+        for (const key in this.state) {
+            if (tracks[key] === undefined) {
+                delete this.state[key]
+            }
+        }
+
+        /* select last added track */
+        if (last_key > 0) {
+            this.select(last_key)
         }
     },
 

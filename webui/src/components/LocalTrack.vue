@@ -54,13 +54,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import TrackSettings from './TrackSettings.vue'
 import AudioSettings from './AudioSettings.vue'
 import { LocalTrackStates, tracks } from '../states/tracks'
+import api from '../api'
 
 const props = defineProps({ 'pkey': { type: Number, required: true } })
-
 const settingsOpen = ref(false)
 
 function localState() {
@@ -86,4 +86,15 @@ function getTrackName() {
 function settingsClose() {
     settingsOpen.value = false
 }
+
+/* Add remote track if local track is ready and no 2nd track exists */
+watch(() => tracks.state[props.pkey].local, (state) => {
+    if (tracks.state[2] !== undefined) {
+        return
+    }
+
+    if (state == LocalTrackStates.Ready) {
+        api.track_add('remote')
+    }
+})
 </script>
