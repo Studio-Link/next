@@ -18,10 +18,8 @@
                 </main>
             </div>
         </div>
-
-
     </div>
-    <footer class="bottom-0 container fixed mb-4">
+    <footer class="bottom-0 fixed left-16 right-0">
         <div class="flex flex-wrap justify-between items-end px-2">
             <BottomActions />
             <Version />

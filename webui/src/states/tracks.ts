@@ -1,128 +1,158 @@
 import { reactive } from 'vue'
 
+export enum LocalTrackStates {
+    Setup = 1,
+    SelectAudio,
+    Ready,
+}
+
 interface Track {
-	id: number
-	name: string
+    id: number
+    name: string
 }
 
 interface State extends Track {
-	selected: boolean
+    selected: boolean
+    extended: boolean
+    local: LocalTrackStates
 }
 
 interface RemoteTrack extends Track {
-	status?: string
+    status?: string
 }
 
 interface Tracks {
-	socket?: WebSocket
-	state: State[]
-	remote_tracks: RemoteTrack[]
-	local_tracks: Track[]
-	stream_tracks: Track[]
-	selected_debounce: boolean
-	clear_tracks(): void
-	/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-	update(tracks: any): void
-	getTrackName(id: number): string
-	websocket(ws_host: string): void
-	isValid(id: number): boolean
-	isSelected(id: number): boolean
-	select(id: number): void
-	selected(): number
+    socket?: WebSocket
+    state: State[]
+    remote_tracks: RemoteTrack[]
+    local_tracks: Track[]
+    stream_tracks: Track[]
+    selected_debounce: boolean
+    clear_tracks(): void
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+    update(tracks: any): void
+    getTrackName(id: number): string
+    websocket(ws_host: string): void
+    isValid(id: number): boolean
+    isSelected(id: number): boolean
+    isExtended(id: number): boolean
+    localState(id: number): LocalTrackStates
+    select(id: number): void
+    extend(id: number, active: boolean): void
+    selected(): number
 }
 
 export const tracks: Tracks = {
-	state: reactive([]),
-	remote_tracks: reactive([]),
-	local_tracks: reactive([]),
-	stream_tracks: reactive([]),
-	selected_debounce: false,
+    state: reactive([]),
+    remote_tracks: reactive([]),
+    local_tracks: reactive([]),
+    stream_tracks: reactive([]),
+    selected_debounce: false,
 
-	getTrackName(id: number): string {
-		if (this.state[id]) {
-			return this.state[id].name
-		}
+    getTrackName(id: number): string {
+        if (this.state[id]) {
+            return this.state[id].name
+        }
 
-		return 'error'
-	},
+        return 'error'
+    },
 
-	websocket(ws_host: string): void {
-		this.socket = new WebSocket('ws://' + ws_host + '/ws/v1/tracks')
-		this.socket.onerror = function() {
-			console.log('Websocket error')
-		}
-		this.socket.onmessage = (message) => {
-			const tracks = JSON.parse(message.data)
-			this.update(tracks)
-		}
-		this.selected_debounce = false
-	},
+    websocket(ws_host: string): void {
+        this.socket = new WebSocket('ws://' + ws_host + '/ws/v1/tracks')
+        this.socket.onerror = function () {
+            console.log('Websocket error')
+        }
+        this.socket.onmessage = (message) => {
+            const tracks = JSON.parse(message.data)
+            this.update(tracks)
+        }
+        this.selected_debounce = false
+    },
 
-	clear_tracks(): void {
-		this.state.length = 0
-		this.local_tracks.length = 0
-		this.remote_tracks.length = 0
-		this.stream_tracks.length = 0
-	},
+    clear_tracks(): void {
+        this.local_tracks.length = 0
+        this.remote_tracks.length = 0
+        this.stream_tracks.length = 0
+    },
 
-	update(tracks): void {
-		this.clear_tracks()
-		for (const key in tracks) {
-			tracks[key].id = parseInt(key);
-			if (tracks[key].type == 'remote') {
-				this.remote_tracks.push(tracks[key])
-			}
-			if (tracks[key].type == 'local') {
-				this.local_tracks.push(tracks[key])
-			}
-			this.state[tracks[key].id] = {
-				id: tracks[key].id,
-				selected: false,
-				name: tracks[key].name,
-			}
-		}
-	},
+    update(tracks): void {
+        this.clear_tracks()
+        for (const key in tracks) {
+            tracks[key].id = parseInt(key);
+            if (tracks[key].type == 'remote') {
+                this.remote_tracks.push(tracks[key])
+            }
+            if (tracks[key].type == 'local') {
+                this.local_tracks.push(tracks[key])
+            }
+            /* Initialize frontend states only once */
+            if (this.state[tracks[key].id] === undefined) {
+                this.state[tracks[key].id] = {
+                    id: tracks[key].id,
+                    selected: false,
+                    extended: false,
+                    local: LocalTrackStates.Setup,
+                    name: tracks[key].name,
+                }
+            }
+        }
+    },
 
-	isValid(id: number): boolean {
-		if (this.state[id]) {
-			return true
-		}
-		return false
-	},
+    isValid(id: number): boolean {
+        if (this.state[id]) {
+            return true
+        }
+        return false
+    },
 
-	isSelected(id: number): boolean {
-		if (this.state[id]) {
-			return this.state[id].selected
-		}
-		return false
-	},
+    isSelected(id: number): boolean {
+        if (this.state[id]) {
+            return this.state[id].selected
+        }
+        return false
+    },
 
-	select(id: number): void {
-		if (this.state[id] === undefined)
-			return
+    localState(id: number): LocalTrackStates {
+        return this.state[id].local
+    },
 
-		//Workaround for mouseenter event after focus change
-		if (this.selected_debounce) return
-		this.selected_debounce = true
-		setTimeout(() => {
-			this.selected_debounce = false
-		}, 20)
+    isExtended(id: number): boolean {
+        if (this.state[id]) {
+            return this.state[id].extended
+        }
+        return false
+    },
 
-		this.state.forEach((el) => {
-			el.selected = false
-		})
+    select(id: number): void {
+        if (this.state[id] === undefined)
+            return
 
-		this.state[id].selected = true
-	},
+        //Workaround for mouseenter event after focus change
+        if (this.selected_debounce) return
+        this.selected_debounce = true
+        setTimeout(() => {
+            this.selected_debounce = false
+        }, 20)
 
-	selected(): number {
-		let id = -1
-		this.state.forEach((el) => {
-			if (el.selected) {
-				id = el.id
-			}
-		})
+        this.state.forEach((el) => {
+            el.selected = false
+        })
 
-		return id
-	}
+        this.state[id].selected = true
+    },
+
+    extend(id: number, active: boolean): void {
+        this.state[id].extended = active
+    },
+
+    selected(): number {
+        let id = -1
+        this.state.forEach((el) => {
+            if (el.selected) {
+                id = el.id
+            }
+        })
+
+        return id
+    },
 }

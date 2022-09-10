@@ -23,7 +23,7 @@
                             <div class="group-active:translate-y-px">
                                 <div
                                     class="flex items-center justify-center w-12 h-12 transition-all duration-200 overflow-hidden rounded-2xl text-white hover:bg-sl-08dpa">
-                                    <img class="h-10" src="/public/logo_solo.svg" alt="Studio Link - Default" />
+                                    <img class="h-10" src="/logo_solo.svg" alt="Studio Link - Default" />
                                     <span class="sr-only">Studio Link Default</span>
                                 </div>
                             </div>
@@ -65,7 +65,7 @@
                     </nav>
                 </div>
                 <div class="flex flex-shrink-0 pb-5">
-                    <a href="#" class="w-full flex-shrink-0">
+                    <a href="#" class="w-full flex-shrink-0" @click="oauth">
                         <img class="mx-auto block h-10 w-10 rounded-full" :src="user.imageUrl" alt="" />
                         <div class="sr-only">
                             <p>{{ user.name }}</p>
@@ -101,4 +101,11 @@ const navigation = [
     { name: 'Messages', href: '#', icon: InboxIcon },
     { name: 'Profile', href: '#', icon: UserIcon },
 ]
+
+function oauth() {
+    var uri = 'https://my.studio.link/'
+    var left = (screen.width / 2 - 400)
+    var top = (screen.height / 2 - 350)
+    window.open(uri, 'oauth window', 'resizable=yes, width=800, height=700, top=' + top + ', left=' + left)
+}
 </script>
