@@ -123,6 +123,8 @@ int sl_init(const uint8_t *conf)
 		goto out;
 	}
 
+	config->net.use_linklocal = false;
+
 	err = baresip_init(config);
 	if (err) {
 		warning("sl_init: baresip init failed (%m)\n", err);
