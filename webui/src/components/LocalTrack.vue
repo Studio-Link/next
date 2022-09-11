@@ -10,7 +10,7 @@
 
         <div class="flex mt-1">
             <div class="bg-sl-02dpa rounded-lg h-44 w-full shadow" :class="{ 'h-56': isActive() && isExtended() }">
-                <div class=" flex justify-between items-center">
+                <div class="flex justify-between items-center">
                     <div :id="`track${pkey}`" tabindex="0"
                         :class="{ 'bg-sl-disabled': isActive(), 'bg-sl-24dpa': !isActive() }"
                         class="inline-flex items-center justify-center ml-2 text-sm leading-none text-black font-bold rounded-full px-2 py-1 focus:outline-none">
@@ -18,19 +18,8 @@
                         {{ pkey }}
                         <span class="sr-only">selected</span>
                     </div>
-                    <div class="flex-shrink-0 pr-2 text-right mt-1">
-                        <button ref="settings" v-click-outside="{
-                            exclude: ['settings'],
-                            handler: settingsClose,
-                        }" aria-label="Track Settings"
-                            class="w-8 h-8 inline-flex items-center justify-center text-sl-disabled rounded-full bg-transparent hover:text-gray-500 focus:outline-none focus:text-sl-surface focus:bg-sl-on_surface_2 transition ease-in-out duration-150"
-                            @focus="setActive()" @click="settingsOpen = !settingsOpen">
-                            <svg aria-hidden="true" class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
-                                <path v-if="isActive()"
-                                    d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
-                            </svg>
-                        </button>
-                        <TrackSettings v-if="isActive()" :active="settingsOpen" />
+                    <div class="flex-shrink-0 pr-2 text-right w-8 h-8 mt-2">
+                        <LocalTrackSettings v-if="isActive()" :pkey="props.pkey" />
                     </div>
                 </div>
                 <AudioSettings :active="isActive()" :pkey="pkey" />
@@ -54,14 +43,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
-import TrackSettings from './TrackSettings.vue'
+import { watch } from 'vue'
+import LocalTrackSettings from './LocalTrackSettings.vue'
 import AudioSettings from './AudioSettings.vue'
 import { LocalTrackStates, tracks } from '../states/tracks'
 import api from '../api'
 
 const props = defineProps({ 'pkey': { type: Number, required: true } })
-const settingsOpen = ref(false)
 
 function localState() {
     return tracks.localState(props.pkey)
@@ -81,10 +69,6 @@ function setActive() {
 
 function getTrackName() {
     return tracks.getTrackName(props.pkey)
-}
-
-function settingsClose() {
-    settingsOpen.value = false
 }
 
 /* Add remote track if local track is ready and no 2nd track exists */
