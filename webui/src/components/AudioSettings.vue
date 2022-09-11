@@ -12,7 +12,7 @@
     <div v-if="localState() == LocalTrackStates.SelectAudio">
         <div class="px-2">
             <label for="microphone" class="block text-sm font-medium text-sl-on_surface_2">Microphone</label>
-            <select id="microphone" name="microphone"
+            <select id="microphone" name="microphone" autofocus
                 class="text-sl-on_surface_2 mt-1 block w-full rounded-md bg-sl-surface border-none py-2 pl-3 pr-10 text-base focus:border-sl-primary focus:outline-none focus:ring-sl-primary sm:text-sm">
                 <option>Default Microphone</option>
                 <option>Focusrite 2i2 Studio</option>
