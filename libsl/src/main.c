@@ -182,7 +182,7 @@ static int webui_open(void *arg)
 	/* @TODO: use permanent browser dir */
 	return system("chromium --app=http://127.0.0.1:9999 "
 		     "--user-data-dir=/tmp/.studio-link/browser "
-		     "--window-size=1060,768 >/dev/null 2>&1");
+		     "--window-size=1060,800 >/dev/null 2>&1");
 }
 
 
