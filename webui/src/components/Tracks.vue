@@ -1,5 +1,5 @@
 <template>
-    <ul class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mb-36 sm:mb-24">
+    <ul class="grid grid-cols-1 gap-x-5 gap-y-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         <LocalTrack v-for="track in localTracks" :key="track.id" :pkey="track.id" />
         <RemoteTrack v-for="track in remoteTracks" :key="track.id" :pkey="track.id" />
         <li class="col-span-1" @mouseenter="newTrackVisible = true" @mouseleave="newTrackVisible = false">
