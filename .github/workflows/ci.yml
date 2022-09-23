@@ -46,12 +46,12 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: install clang-14
+    - name: install clang-14 and ninja
       if: ${{ runner.os == 'Linux' }}
       run: |
         wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
         sudo add-apt-repository "deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-14 main"
-        sudo apt-get update && sudo apt-get install -y clang-tools-14 clang-14 clang-tidy-14
+        sudo apt-get update && sudo apt-get install -y clang-tools-14 clang-14 clang-tidy-14 ninja
 
     - name: websocat linux
       if: ${{ runner.os == 'Linux' }}
