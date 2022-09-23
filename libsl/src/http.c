@@ -4,16 +4,16 @@
 
 #include <stdlib.h>
 
-#include "../assets/index_html.h"
-#include "../assets/index_js.h"
-#include "../assets/vendor_js.h"
-#include "../assets/index_css.h"
-#include "../assets/roboto-mono-latin-400_woff2.h"
-#include "../assets/roboto-mono-latin-500_woff2.h"
-#include "../assets/roboto-mono-latin-600_woff2.h"
-#include "../assets/roboto-mono-latin-700_woff2.h"
-#include "../assets/logo_standalone_svg.h"
-#include "../assets/logo_solo_svg.h"
+#include "index.html.h"
+#include "index.js.h"
+#include "vendor.js.h"
+#include "index.css.h"
+#include "roboto-mono-latin-400.woff2.h"
+#include "roboto-mono-latin-500.woff2.h"
+#include "roboto-mono-latin-600.woff2.h"
+#include "roboto-mono-latin-700.woff2.h"
+#include "logo_standalone.svg.h"
+#include "logo_solo.svg.h"
 
 #define SL_MAX_JSON (512 * 1024)
 

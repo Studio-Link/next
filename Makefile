@@ -25,6 +25,11 @@ HIDE=@
 MAKE += --no-print-directory
 endif
 
+.PHONY: cmake
+cmake:
+	cmake -B build -GNinja
+	cmake --build build -j
+
 ##############################################################################
 #
 # Main
