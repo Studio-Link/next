@@ -42,7 +42,7 @@ jobs:
       matrix:
         os: [ubuntu-18.04, macos-latest]
     env:
-      MACOSX_DEPLOYMENT_TARGET: "10.10"
+      MACOSX_DEPLOYMENT_TARGET: "10.12"
     steps:
     - uses: actions/checkout@v2
 
@@ -51,7 +51,12 @@ jobs:
       run: |
         wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
         sudo add-apt-repository "deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-14 main"
-        sudo apt-get update && sudo apt-get install -y clang-tools-14 clang-14 clang-tidy-14 ninja
+        sudo apt-get update && sudo apt-get install -y clang-tools-14 clang-14 clang-tidy-14
+
+    - name: install ninja
+      if: ${{ runner.os == 'macOS' }}
+      run: |
+        brew install ninja
 
     - name: websocat linux
       if: ${{ runner.os == 'Linux' }}
