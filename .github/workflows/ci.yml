@@ -136,7 +136,7 @@ jobs:
         queries: security-and-quality
 
     - run: |
-        make libsl.a
+        make
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v2
