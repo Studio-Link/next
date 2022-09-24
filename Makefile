@@ -151,4 +151,3 @@ run: all
 .PHONY: dev
 dev: all
 	build/app/linux/studiolink --headless
-

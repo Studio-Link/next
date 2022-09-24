@@ -7,4 +7,4 @@ PORTAUDIO_MIRROR  := https://github.com/PortAudio/portaudio/archive/refs/tags
 LIBRE_VERSION     := main
 LIBREM_VERSION    := main
 BARESIP_VERSION   := main
-CACHE_VERSION     := 0.0.3 # github cache invalidation workaround
+CACHE_VERSION     := 0.0.4 # github cache invalidation workaround
