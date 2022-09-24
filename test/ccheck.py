@@ -15,10 +15,6 @@
 #    Sebastian Reimers
 #
 #
-# TODO:
-# - optimize regex functions
-# - count max y lines
-#
 
 import sys, os, re, fnmatch, getopt
 
@@ -53,13 +49,12 @@ class ccheck:
         for e in self.extensions:
             self.files[e] = []
 
-        # todo: global config
         self.common_checks = [self.check_whitespace, self.check_termination,
                               self.check_hex_lowercase, self.check_pre_incr,
                               self.check_file_unix]
         self.funcmap = {
             'c':    [self.check_brackets, self.check_c_preprocessor,
-                     self.check_indent_tab],
+                     self.check_indent_tab, self.check_c11_err_handling],
             'h':    [self.check_brackets, self.check_indent_tab],
             'cpp':  [self.check_brackets, self.check_indent_tab],
             'mk':   [self.check_indent_tab],
@@ -195,6 +190,18 @@ class ccheck:
 
 
     #
+    # check for wrong C11 return checks
+    #
+    def check_c11_err_handling(self, line, len):
+
+        if re.search('err.*=.*(mtx_|thrd_|cnd_|tss_)', line):
+            if re.search('(success|busy|error|nomem|timedout)', line):
+                return
+            self.error("Wrong C11 return check,"
+                    " use e.g. 'err = mtx_init(m,t) != thrd_success;'")
+
+
+    #
     # check that C comments are not used
     #
     def check_c_comments(self, line, len):
@@ -228,10 +235,6 @@ class ccheck:
             self.error("line is too wide (" + str(l) + " - max " \
                        + str(max_x) + ")");
 
-        #    TODO:
-        #    if ($line > $max_y) {
-        #      self.error("is too big ($lines lines - max $max_y)\n");
-
 
     #
     # check that hexadecimal numbers are lowercase
@@ -248,7 +251,7 @@ class ccheck:
     #
     # check for correct brackets usage in C/C++
     #
-    # TODO: this is too slow, optimize
+    # XXX: this is too slow, optimize
     #
     def check_brackets(self, line, len):
 
@@ -317,11 +320,11 @@ class ccheck:
 
         self.cur_filename = filename
 
+        self.cur_lineno = 0
         while 1:
             lines = f.readlines(100000)
             if not lines:
                 break
-            self.cur_lineno = 0
             for line in lines:
                 self.cur_lineno += 1
                 self.process_line(line, funcs, ext)
