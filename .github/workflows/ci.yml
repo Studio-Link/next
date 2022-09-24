@@ -42,16 +42,21 @@ jobs:
       matrix:
         os: [ubuntu-18.04, macos-latest]
     env:
-      MACOSX_DEPLOYMENT_TARGET: "10.10"
+      MACOSX_DEPLOYMENT_TARGET: "10.12"
     steps:
     - uses: actions/checkout@v2
 
-    - name: install clang-14
+    - name: install clang-14 and ninja
       if: ${{ runner.os == 'Linux' }}
       run: |
         wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
         sudo add-apt-repository "deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-14 main"
-        sudo apt-get update && sudo apt-get install -y clang-tools-14 clang-14 clang-tidy-14
+        sudo apt-get update && sudo apt-get install -y clang-tools-14 clang-14 clang-tidy-14 ninja-build
+
+    - name: install ninja
+      if: ${{ runner.os == 'macOS' }}
+      run: |
+        brew install ninja
 
     - name: websocat linux
       if: ${{ runner.os == 'Linux' }}
@@ -79,12 +84,6 @@ jobs:
     - name: unzip webui
       run: rm -Rf webui && unzip webui.zip
 
-    - name: make info
-      run: |
-        echo "OS: ${{ matrix.os }}"
-        echo "--- make info ---"
-        make info
-
     - name: make StudioLink - Linux
       if: ${{ runner.os == 'Linux' }}
       run: make CC=clang-14 && make test
@@ -92,12 +91,12 @@ jobs:
     - name: clang-tidy
       if: ${{ runner.os == 'Linux' }}
       run: |
-        clang-tidy-14 -checks=cert-\*,-cert-dcl37-c,-cert-dcl51-cpp,-clang-analyzer-valist.Uninitialized libsl/src/*.c
-        clang-tidy-14 -checks=cert-\*,-cert-dcl37-c,-cert-dcl51-cpp,-clang-analyzer-valist.Uninitialized test/src/*.c
+        clang-tidy-14 -p build -checks=cert-\*,-cert-dcl37-c,-cert-dcl51-cpp,-clang-analyzer-valist.Uninitialized libsl/src/*.c
+        clang-tidy-14 -p build -checks=cert-\*,-cert-dcl37-c,-cert-dcl51-cpp,-clang-analyzer-valist.Uninitialized test/src/*.c
 
     - name: clang scan-build
       if: ${{ runner.os == 'Linux' }}
-      run: make clean && scan-build-14 --status-bugs make linux
+      run: make clean && scan-build-14 --status-bugs make
 
     - name: make StudioLink - macOS
       if: ${{ runner.os == 'macOS' }}
@@ -111,6 +110,10 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
+    
+    - name: install and ninja
+      run: |
+        sudo apt-get update && sudo apt-get install -y ninja-build
 
     - uses: actions/cache@v2
       with:
@@ -130,10 +133,10 @@ jobs:
       uses: github/codeql-action/init@v2
       with:
         languages: cpp
-        queries: security-and-quality
+        queries: security-extended
 
     - run: |
-        make libsl.a
+        make
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v2

@@ -7,14 +7,7 @@
 #   CC		Override CC (default clang)
 #
 
-VER_MAJOR := 22
-VER_MINOR := 1
-VER_PATCH := 0
-VER_PRE   := alpha
-
 include versions.mk
-
-BARESIP_MODULES := ice dtls_srtp turn opus g711
 
 CC := clang
 
@@ -30,16 +23,10 @@ endif
 # Main
 #
 
-default: third_party libsl.a
-
-.PHONY: libsl.a
-libsl.a:
-	$(HIDE)$(MAKE) -C libsl $@
-	$(HIDE)-$(MAKE) -C libsl compile_commands.json &
-
-.PHONY: info
-info: third_party_dir third_party/re
-	$(MAKE) -C libsl $@
+.PHONY: all
+all: third_party external
+	[ -d build ] || cmake -B build -GNinja
+	cmake --build build -j
 
 ##############################################################################
 #
@@ -55,44 +42,14 @@ opus: third_party/opus
 .PHONY: portaudio
 portaudio: third_party/portaudio
 
-.PHONY: libre
-libre: third_party/re openssl
-	@rm -f third_party/re/libre.*
-	$(MAKE) -C third_party/re SYSROOT_ALT=../. libre.a
-	-$(MAKE) -C third_party/re SYSROOT_ALT=../. compile_commands.json
-	cp -a third_party/re/libre.a third_party/lib/
-	$(HIDE) install -m 0644 \
-		$(shell find third_party/re/include -name "*.h") \
-		third_party/include/re
-
-.PHONY: librem
-librem: third_party/rem libre
-	@rm -f third_party/rem/librem.*
-	$(MAKE) -C third_party/rem SYSROOT_ALT=../. librem.a
-	-$(MAKE) -C third_party/rem SYSROOT_ALT=../. compile_commands.json
-	cp -a third_party/rem/librem.a third_party/lib/
-	$(HIDE) install -m 0644 \
-		$(shell find third_party/rem/include -name "*.h") \
-		third_party/include/rem
-
-.PHONY: libbaresip
-libbaresip: third_party/baresip opus libre librem
-	@rm -f third_party/baresip/libbaresip.* \
-		third_party/baresip/src/static.c
-	$(MAKE) -C third_party/baresip SYSROOT_ALT=../. STATIC=1 \
-		MODULES="$(BARESIP_MODULES)" \
-		libbaresip.a
-	-$(MAKE) -C third_party/baresip SYSROOT_ALT=../. compile_commands.json
-	cp -a third_party/baresip/libbaresip.a third_party/lib/
-	cp -a third_party/baresip/include/baresip.h third_party/include/
-
 .PHONY: third_party_dir
 third_party_dir:
 	mkdir -p third_party/include
 	mkdir -p third_party/lib
+	mkdir -p external
 
 .PHONY: third_party
-third_party: third_party_dir openssl opus portaudio libre librem libbaresip
+third_party: third_party_dir openssl opus portaudio
 
 third_party/openssl:
 	$(HIDE)cd third_party && \
@@ -130,29 +87,24 @@ third_party/portaudio:
 		mkdir -p ../include/portaudio && \
 		cp include/*.h ../include/portaudio/
 
-third_party/re:
-	mkdir -p third_party/include/re
-	$(shell [ ! -d third_party/re ] && \
-		git -C third_party clone https://github.com/baresip/re.git)
-	git -C third_party/re checkout $(LIBRE_VERSION)
+external: external/re external/rem external/baresip
 
-third_party/rem:
-	mkdir -p third_party/include/rem
-	$(shell [ ! -d third_party/rem ] && \
-		git -C third_party clone https://github.com/baresip/rem.git)
-	git -C third_party/rem checkout $(LIBREM_VERSION)
+external/re:
+	$(shell [ ! -d external/re ] && \
+		git -C external clone https://github.com/baresip/re.git)
+	git -C external/re checkout $(LIBRE_VERSION)
 
-third_party/baresip:
-	$(shell [ ! -d third_party/baresip ] && \
-		git -C third_party clone \
+external/rem:
+	$(shell [ ! -d external/rem ] && \
+		git -C external clone https://github.com/baresip/rem.git)
+	git -C external/rem checkout $(LIBREM_VERSION)
+
+external/baresip:
+	$(shell [ ! -d external/baresip ] && \
+		git -C external clone \
 		https://github.com/baresip/baresip.git)
-	git -C third_party/baresip checkout $(BARESIP_VERSION)
+	git -C external/baresip checkout $(BARESIP_VERSION)
 
-.PHONY: bareinfo
-bareinfo:
-	$(MAKE) -C third_party/baresip SYSROOT_ALT=../. \
-		STATIC=1 MODULES="$(BARESIP_MODULES)" \
-		bareinfo
 
 ##############################################################################
 #
@@ -161,18 +113,11 @@ bareinfo:
 
 .PHONY: clean
 clean:
-	$(HIDE)[ -d third_party/re ] && $(MAKE) -C libsl clean || true
-	$(HIDE)[ -d third_party/re ] && $(MAKE) -C test clean || true
-	$(HIDE)[ -d third_party/re ] && $(MAKE) -C app/linux clean || true
+	$(HIDE)rm -Rf build
 
 .PHONY: cleaner
 cleaner: clean
-	$(HIDE)rm -Rf third_party/re
-	$(HIDE)rm -Rf third_party/rem
-	$(HIDE)rm -Rf third_party/baresip
-	$(HIDE)rm -Rf third_party/include/re
-	$(HIDE)rm -Rf third_party/include/rem
-	$(HIDE)rm -Rf third_party/include/baresip.h
+	$(HIDE)rm -Rf external
 
 .PHONY: distclean
 distclean: clean
@@ -180,21 +125,16 @@ distclean: clean
 
 .PHONY: ccheck
 ccheck:
-	test/ccheck.py libsl Makefile test
+	test/ccheck.py libsl Makefile test app
 
 .PHONY: tree
 tree:
 	tree -L 4 -I "third_party|node_modules|build*" -d .
 
 .PHONY: test
-test: libsl.a linux
-	$(HIDE)$(MAKE) -C test
-	$(HIDE)-$(MAKE) -C test compile_commands.json &
-	$(HIDE)test/sltest
-	$(HIDE)$(MAKE) -C test integration
-
-linux: libsl.a
-	$(HIDE)$(MAKE) -C app/linux
+test: all
+	build/test/test
+	test/integration.sh
 
 .PHONY: watch
 watch:
@@ -205,10 +145,10 @@ watch:
 
 r: run
 .PHONY: run
-run: linux
-	app/linux/studiolink
+run: all
+	build/app/linux/studiolink
 
 .PHONY: dev
-dev: linux
-	app/linux/studiolink --headless
+dev: all
+	build/app/linux/studiolink --headless
 
