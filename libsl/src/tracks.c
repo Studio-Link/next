@@ -178,7 +178,7 @@ enum sl_track_status sl_track_status(int id)
 			return track->status;
 	}
 
-	return SL_TRACK_NOT_EXISTS;
+	return SL_TRACK_INVALID;
 }
 
 

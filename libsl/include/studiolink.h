@@ -101,7 +101,7 @@ void sl_ws_tracks(const struct websock_hdr *hdr, struct mbuf *mb, void *arg);
 struct sl_track;
 enum sl_track_type { SL_TRACK_REMOTE, SL_TRACK_LOCAL };
 enum sl_track_status {
-	SL_TRACK_NOT_EXISTS = -1,
+	SL_TRACK_INVALID = -1,
 	SL_TRACK_IDLE,
 	SL_TRACK_CONNECTED,
 	SL_TRACK_CLOSED
