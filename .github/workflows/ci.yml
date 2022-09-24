@@ -51,7 +51,7 @@ jobs:
       run: |
         wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
         sudo add-apt-repository "deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-14 main"
-        sudo apt-get update && sudo apt-get install -y clang-tools-14 clang-14 clang-tidy-14
+        sudo apt-get update && sudo apt-get install -y clang-tools-14 clang-14 clang-tidy-14 ninja-build
 
     - name: install ninja
       if: ${{ runner.os == 'macOS' }}
@@ -116,6 +116,10 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
+    
+    - name: install and ninja
+      run: |
+        sudo apt-get update && sudo apt-get install -y ninja-build
 
     - uses: actions/cache@v2
       with:
