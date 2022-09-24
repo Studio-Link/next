@@ -84,12 +84,6 @@ jobs:
     - name: unzip webui
       run: rm -Rf webui && unzip webui.zip
 
-    - name: make info
-      run: |
-        echo "OS: ${{ matrix.os }}"
-        echo "--- make info ---"
-        make info
-
     - name: make StudioLink - Linux
       if: ${{ runner.os == 'Linux' }}
       run: make CC=clang-14 && make test
