@@ -1,4 +1,5 @@
 build-*
+/build
 /app/linux/studiolink
 /test/sltest
 .vscode
@@ -26,6 +27,7 @@ compile_commands.json
 /rem
 /baresip
 
+/external
 /third_party
 
 /libsl/assets

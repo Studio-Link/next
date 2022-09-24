@@ -57,7 +57,7 @@ endif()
 #
 
 # target environment on the build host system
-set(CMAKE_FIND_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/third_party)
+set(CMAKE_FIND_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/third_party ${CMAKE_CURRENT_SOURCE_DIR}/external)
 
 # modify default behavior of FIND_XXX() commands
 set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
@@ -71,9 +71,9 @@ set(STATIC ON CACHE BOOL "")
 set(MODULES ice dtls_srtp turn opus g711)
 
 # Baresip dependencies
-add_subdirectory(third_party/re)
-add_subdirectory(third_party/rem)
-add_subdirectory(third_party/baresip)
+add_subdirectory(external/re)
+add_subdirectory(external/rem)
+add_subdirectory(external/baresip)
 
 # Studio Link 
 add_subdirectory(libsl)

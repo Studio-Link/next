@@ -24,13 +24,9 @@ endif
 #
 
 .PHONY: all
-all: third_party
+all: third_party external
 	[ -d build ] || cmake -B build -GNinja
 	cmake --build build -j
-
-.PHONY: info
-info: third_party_dir third_party/re
-	$(MAKE) -C libsl $@
 
 ##############################################################################
 #
@@ -50,6 +46,7 @@ portaudio: third_party/portaudio
 third_party_dir:
 	mkdir -p third_party/include
 	mkdir -p third_party/lib
+	mkdir -p external
 
 .PHONY: third_party
 third_party: third_party_dir openssl opus portaudio
@@ -90,23 +87,23 @@ third_party/portaudio:
 		mkdir -p ../include/portaudio && \
 		cp include/*.h ../include/portaudio/
 
-third_party/re:
-	mkdir -p third_party/include/re
-	$(shell [ ! -d third_party/re ] && \
-		git -C third_party clone https://github.com/baresip/re.git)
-	git -C third_party/re checkout $(LIBRE_VERSION)
+external: external/re external/rem external/baresip
 
-third_party/rem:
-	mkdir -p third_party/include/rem
-	$(shell [ ! -d third_party/rem ] && \
-		git -C third_party clone https://github.com/baresip/rem.git)
-	git -C third_party/rem checkout $(LIBREM_VERSION)
+external/re:
+	$(shell [ ! -d external/re ] && \
+		git -C external clone https://github.com/baresip/re.git)
+	git -C external/re checkout $(LIBRE_VERSION)
 
-third_party/baresip:
-	$(shell [ ! -d third_party/baresip ] && \
-		git -C third_party clone \
+external/rem:
+	$(shell [ ! -d external/rem ] && \
+		git -C external clone https://github.com/baresip/rem.git)
+	git -C external/rem checkout $(LIBREM_VERSION)
+
+external/baresip:
+	$(shell [ ! -d external/baresip ] && \
+		git -C external clone \
 		https://github.com/baresip/baresip.git)
-	git -C third_party/baresip checkout $(BARESIP_VERSION)
+	git -C external/baresip checkout $(BARESIP_VERSION)
 
 
 ##############################################################################
@@ -120,9 +117,7 @@ clean:
 
 .PHONY: cleaner
 cleaner: clean
-	$(HIDE)rm -Rf third_party/re
-	$(HIDE)rm -Rf third_party/rem
-	$(HIDE)rm -Rf third_party/baresip
+	$(HIDE)rm -Rf external
 
 .PHONY: distclean
 distclean: clean
