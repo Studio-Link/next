@@ -132,11 +132,9 @@ tree:
 	tree -L 4 -I "third_party|node_modules|build*" -d .
 
 .PHONY: test
-test: libsl.a linux
-	$(HIDE)$(MAKE) -C test
-	$(HIDE)-$(MAKE) -C test compile_commands.json &
-	$(HIDE)test/sltest
-	$(HIDE)$(MAKE) -C test integration
+test: all
+	build/test/test
+	test/integration.sh
 
 .PHONY: watch
 watch:

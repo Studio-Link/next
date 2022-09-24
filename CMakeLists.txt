@@ -77,4 +77,5 @@ add_subdirectory(external/baresip)
 
 # Studio Link 
 add_subdirectory(libsl)
+add_subdirectory(test)
 add_subdirectory(app/linux)
