@@ -96,7 +96,7 @@ jobs:
 
     - name: clang scan-build
       if: ${{ runner.os == 'Linux' }}
-      run: make clean && scan-build-14 --status-bugs make linux
+      run: make clean && scan-build-14 --status-bugs make
 
     - name: make StudioLink - macOS
       if: ${{ runner.os == 'macOS' }}
