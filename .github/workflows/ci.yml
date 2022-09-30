@@ -56,7 +56,7 @@ jobs:
     - name: install ninja
       if: ${{ runner.os == 'macOS' }}
       run: |
-        brew install ninja
+        brew install ninja automake
 
     - name: websocat linux
       if: ${{ runner.os == 'Linux' }}
