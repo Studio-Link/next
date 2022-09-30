@@ -42,6 +42,9 @@ opus: third_party/opus
 .PHONY: portaudio
 portaudio: third_party/portaudio
 
+.PHONY: samplerate
+samplerate: third_party/libsamplerate
+
 .PHONY: third_party_dir
 third_party_dir:
 	mkdir -p third_party/include
@@ -49,7 +52,7 @@ third_party_dir:
 	mkdir -p external
 
 .PHONY: third_party
-third_party: third_party_dir openssl opus portaudio
+third_party: third_party_dir openssl opus samplerate portaudio
 
 third_party/openssl:
 	$(HIDE)cd third_party && \
@@ -87,6 +90,16 @@ third_party/portaudio:
 		mkdir -p ../include/portaudio && \
 		cp include/*.h ../include/portaudio/
 
+third_party/libsamplerate:
+	$(HIDE)cd third_party && \
+		git clone ${SAMPLERATE_MIRROR}/libsamplerate.git && \
+		cd libsamplerate && \
+		./autogen.sh && \
+		./configure --enable-static && \
+		make && \
+		cp src/.libs/libsamplerate.a ../lib/ && \
+		cp include/samplerate.h ../include/
+
 external: external/re external/rem external/baresip
 
 external/re:
@@ -120,7 +133,7 @@ cleaner: clean
 	$(HIDE)rm -Rf external
 
 .PHONY: distclean
-distclean: clean
+distclean: clean cleaner
 	$(HIDE)rm -Rf third_party
 
 .PHONY: ccheck
@@ -129,7 +142,7 @@ ccheck:
 
 .PHONY: tree
 tree:
-	tree -L 4 -I "third_party|node_modules|build*" -d .
+	tree -L 4 -I "third_party|node_modules|build*|external" -d .
 
 .PHONY: test
 test: all

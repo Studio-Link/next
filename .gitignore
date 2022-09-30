@@ -30,8 +30,6 @@ compile_commands.json
 /external
 /third_party
 
-/libsl/assets
-
 node_modules
 .temp
 .cache
