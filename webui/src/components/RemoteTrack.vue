@@ -1,5 +1,5 @@
 <template>
-    <li aria-label="Remote track" class="col-span-1" @mouseenter="setActive()">
+    <li aria-label="Remote track" class="col-span-1" @mouseenter="setActive()" @touchstart.passive="setActive()">
         <div class="flex justify-between h-5">
             <h2 class="ml-1 font-semibold text-sl-disabled text-sm truncate pr-2">{{ getTrackName() }}</h2>
             <div class="flex">
