@@ -8,7 +8,7 @@
 #
 # Project and Versioning
 #
-project(sl VERSION 0.0.1 LANGUAGES C)
+project(sl LANGUAGES C)
 
 ##############################################################################
 #
@@ -27,8 +27,6 @@ set(SRCS
 set(HEADERS
   include/studiolink.h
 )
-
-find_package(re CONFIG REQUIRED HINTS ${CMAKE_CURRENT_SOURCE_DIR}/../external/re/cmake)
 
 
 ##############################################################################

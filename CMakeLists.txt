@@ -13,7 +13,7 @@ cmake_minimum_required(VERSION 3.18)
 
 set(CMAKE_C_COMPILER clang)
 
-project(studiolink VERSION 0.0.1 LANGUAGES C)
+project(studiolink VERSION 22.09.0 LANGUAGES C)
 
 
 ##############################################################################
@@ -24,6 +24,7 @@ project(studiolink VERSION 0.0.1 LANGUAGES C)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_EXTENSIONS OFF)
+set(CMAKE_BUILD_TYPE Debug)
 
 if(MSVC)
   add_compile_options("/W3")
@@ -57,7 +58,10 @@ endif()
 #
 
 # target environment on the build host system
-set(CMAKE_FIND_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/third_party ${CMAKE_CURRENT_SOURCE_DIR}/external)
+set(CMAKE_FIND_ROOT_PATH
+  ${CMAKE_CURRENT_SOURCE_DIR}/third_party
+  ${CMAKE_CURRENT_SOURCE_DIR}/external
+)
 
 # modify default behavior of FIND_XXX() commands
 set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
@@ -75,7 +79,12 @@ add_subdirectory(external/re)
 add_subdirectory(external/rem)
 add_subdirectory(external/baresip)
 
-# Studio Link 
+find_package(re CONFIG REQUIRED
+  HINTS ${CMAKE_CURRENT_SOURCE_DIR}/../external/re/cmake)
+
+add_compile_definitions(SL_VERSION="${PROJECT_VERSION}")
+
+# Studio Link
 add_subdirectory(libsl)
 add_subdirectory(test)
 add_subdirectory(app/linux)
