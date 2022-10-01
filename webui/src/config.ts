@@ -3,6 +3,7 @@ export const config = {
 		if (process.env.NODE_ENV == 'production') {
 			return location.host;
 		}
-		return "127.0.0.1:9999";
+        /* Development */
+		return location.hostname + ":9999";
 	}
 }
