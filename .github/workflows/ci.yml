@@ -10,9 +10,9 @@ jobs:
   webui:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Use Node.js
-      uses: actions/setup-node@v2
+      uses: actions/setup-node@v3
       with:
         node-version: '16'
         cache: 'npm'
@@ -21,7 +21,7 @@ jobs:
       run: |
         cd webui && npm install && npm run build && cd ..
         zip -r webui.zip webui/dist
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v3
       with:
         name: webui
         path: webui.zip
@@ -30,7 +30,7 @@ jobs:
   ccheck:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: ccheck
       run: |
         make ccheck
@@ -40,11 +40,11 @@ jobs:
     needs: webui
     strategy:
       matrix:
-        os: [ubuntu-18.04, macos-latest]
+        os: [ubuntu-20.04, macos-latest]
     env:
       MACOSX_DEPLOYMENT_TARGET: "10.12"
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: install clang-14 and ninja
       if: ${{ runner.os == 'Linux' }}
@@ -72,12 +72,12 @@ jobs:
         mv websocat.x86_64-apple-darwin /usr/local/bin/websocat
         chmod +x /usr/local/bin/websocat
 
-    - uses: actions/cache@v2
+    - uses: actions/cache@v3
       with:
         path: third_party
         key: ${{ runner.os }}-${{ hashFiles('versions.mk') }}
 
-    - uses: actions/download-artifact@v2
+    - uses: actions/download-artifact@v3
       with:
         name: webui
 
@@ -109,18 +109,18 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
     
     - name: install and ninja
       run: |
         sudo apt-get update && sudo apt-get install -y ninja-build
 
-    - uses: actions/cache@v2
+    - uses: actions/cache@v3
       with:
         path: third_party
         key: ${{ runner.os }}-gcc-${{ hashFiles('versions.mk') }}
 
-    - uses: actions/download-artifact@v2
+    - uses: actions/download-artifact@v3
       with:
         name: webui
 
