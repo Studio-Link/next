@@ -6,7 +6,7 @@
 
 /* Local audio device track */
 struct local {
-	struct audio *audio;
+	struct slaudio *slaudio;
 };
 
 /* Remote audio call track */
@@ -29,6 +29,9 @@ struct sl_track {
 
 static struct list tracks = LIST_INIT;
 
+/* TODO: refactor allow multiple local tracks */
+static struct sl_track *local_track = NULL;
+
 
 const struct list *sl_tracks(void)
 {
@@ -43,6 +46,9 @@ int sl_tracks_json(struct re_printf *pf)
 	struct odict *o_track;
 	char id_str[6];
 	int err;
+
+	if (!pf)
+		return EINVAL;
 
 	err = odict_alloc(&o_tracks, 32);
 	if (err)
@@ -122,9 +128,24 @@ int sl_track_next_id(void)
 }
 
 
-int sl_track_add(enum sl_track_type type)
+static void track_destructor(void *data)
+{
+	struct sl_track *track = data;
+
+	if (track->type == SL_TRACK_LOCAL)
+		mem_deref(track->u.local.slaudio);
+
+	if (track->type == SL_TRACK_REMOTE)
+		sl_audio_del_remote_track(track);
+}
+
+
+int sl_track_add(struct sl_track **trackp, enum sl_track_type type)
 {
 	struct sl_track *track;
+
+	if (!trackp)
+		return EINVAL;
 
 	if (list_count(&tracks) >= SL_MAX_TRACKS) {
 		warning("sl_track_add: max. %d tracks reached\n",
@@ -132,15 +153,21 @@ int sl_track_add(enum sl_track_type type)
 		return E2BIG;
 	}
 
-	track = mem_zalloc(sizeof(struct sl_track), NULL);
+	track = mem_zalloc(sizeof(struct sl_track), track_destructor);
 	if (!track)
 		return ENOMEM;
 
 	track->id     = sl_track_next_id();
 	track->type   = type;
 	track->status = SL_TRACK_IDLE;
+
 	list_append(&tracks, &track->le, track);
 	list_sort(&tracks, sort_handler, NULL);
+
+	if (local_track)
+		sl_audio_add_remote_track(local_track->u.local.slaudio, track);
+
+	*trackp = track;
 
 	return 0;
 }
@@ -186,15 +213,22 @@ int sl_tracks_init(void)
 {
 	int err;
 
-	err = sl_track_add(SL_TRACK_LOCAL);
+	err = sl_track_add(&local_track, SL_TRACK_LOCAL);
+	if (err)
+		return err;
 
-	return err;
+	err = sl_audio_alloc(&local_track->u.local.slaudio, local_track);
+	if (err)
+		return err;
+
+	return 0;
 }
 
 
 int sl_tracks_close(void)
 {
 	list_flush(&tracks);
+	local_track = NULL;
 
 	return 0;
 }

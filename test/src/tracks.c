@@ -8,13 +8,14 @@ static int test_track_add(void)
 {
 	char json_str[8192] = {0};
 	struct odict *o	    = NULL;
+	struct sl_track *track;
 	int err;
 
 	err = sl_tracks_init();
 	TEST_ERR(err);
 
 	/* Create new remote track */
-	err = sl_track_add(SL_TRACK_REMOTE);
+	err = sl_track_add(&track, SL_TRACK_REMOTE);
 	TEST_ERR(err);
 	ASSERT_EQ(3, sl_track_next_id());
 	ASSERT_EQ(SL_TRACK_IDLE, sl_track_status(2));
@@ -34,12 +35,12 @@ static int test_track_add(void)
 
 	/* Add max >99 tracks */
 	for (int i = 0; i < 97; i++) {
-		err = sl_track_add(SL_TRACK_REMOTE);
+		err = sl_track_add(&track, SL_TRACK_REMOTE);
 		TEST_ERR(err);
 		ASSERT_EQ((i + 4), sl_track_next_id());
 	}
 	ASSERT_TRUE(list_count(sl_tracks()) == 99);
-	err = sl_track_add(SL_TRACK_REMOTE);
+	err = sl_track_add(&track, SL_TRACK_REMOTE);
 	ASSERT_EQ(E2BIG, err);
 
 	/* Test delete and re-add after max tracks reached */
@@ -48,10 +49,10 @@ static int test_track_add(void)
 
 	ASSERT_EQ(18, sl_track_next_id());
 
-	err = sl_track_add(SL_TRACK_REMOTE);
+	err = sl_track_add(&track, SL_TRACK_REMOTE);
 	TEST_ERR(err);
 
-	err = sl_track_add(SL_TRACK_REMOTE);
+	err = sl_track_add(&track, SL_TRACK_REMOTE);
 	ASSERT_EQ(E2BIG, err);
 
 	/* Validate json */
@@ -71,6 +72,7 @@ out:
 
 static int test_track_delete(void)
 {
+	struct sl_track *track;
 	int err;
 
 	err = sl_tracks_init();
@@ -79,7 +81,7 @@ static int test_track_delete(void)
 	ASSERT_TRUE(sl_track_status(2) == SL_TRACK_INVALID);
 
 	/* Create new remote track */
-	err = sl_track_add(SL_TRACK_REMOTE);
+	err = sl_track_add(&track, SL_TRACK_REMOTE);
 	TEST_ERR(err);
 	ASSERT_TRUE(sl_track_status(2) == SL_TRACK_IDLE);
 

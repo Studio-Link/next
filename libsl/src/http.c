@@ -145,6 +145,7 @@ static void http_req_handler(struct http_conn *conn,
 	char *json_str;
 	int id;
 	struct pl pl;
+	struct sl_track *track;
 	int err;
 	(void)arg;
 
@@ -238,7 +239,7 @@ static void http_req_handler(struct http_conn *conn,
 	 */
 	if (0 == pl_strcasecmp(&msg->path, "/api/v1/tracks/remote") &&
 	    0 == pl_strcasecmp(&msg->met, "POST")) {
-		sl_track_add(SL_TRACK_REMOTE);
+		sl_track_add(&track, SL_TRACK_REMOTE);
 		re_snprintf(json_str, SL_MAX_JSON, "%H", sl_tracks_json);
 		sl_ws_send_str(WS_TRACKS, json_str);
 
