@@ -59,6 +59,9 @@ void sl_ws_send_str(enum ws_type type, char *str)
 {
 	struct le *le;
 
+	if (!str)
+		return;
+
 	LIST_FOREACH(&wsl, le)
 	{
 		struct ws_conn *ws_conn = le->data;
