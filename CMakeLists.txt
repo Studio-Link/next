@@ -65,8 +65,11 @@ set(CMAKE_FIND_ROOT_PATH
 
 # modify default behavior of FIND_XXX() commands
 set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
-set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
-set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+
+if(${CMAKE_BUILD_TYPE} MATCHES "[Rr]el")
+  set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+  set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+endif()
 
 set(RE_LIBRARY re CACHE STRING "")
 set(REM_LIBRARY rem CACHE STRING "")
@@ -79,12 +82,12 @@ add_subdirectory(external/re)
 add_subdirectory(external/rem)
 add_subdirectory(external/baresip)
 
+# Studio Link
 find_package(re CONFIG REQUIRED
   HINTS ${CMAKE_CURRENT_SOURCE_DIR}/../external/re/cmake)
 
 add_compile_definitions(SL_VERSION="${PROJECT_VERSION}")
 
-# Studio Link
 add_subdirectory(libsl)
 add_subdirectory(test)
 add_subdirectory(app/linux)
