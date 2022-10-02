@@ -45,6 +45,9 @@ portaudio: third_party/portaudio
 .PHONY: samplerate
 samplerate: third_party/libsamplerate
 
+.PHONY: lmdb
+samplerate: third_party/lmdb
+
 .PHONY: third_party_dir
 third_party_dir:
 	mkdir -p third_party/include
@@ -52,7 +55,7 @@ third_party_dir:
 	mkdir -p external
 
 .PHONY: third_party
-third_party: third_party_dir openssl opus samplerate portaudio
+third_party: third_party_dir openssl opus samplerate portaudio lmdb
 
 third_party/openssl:
 	$(HIDE)cd third_party && \
@@ -96,9 +99,17 @@ third_party/libsamplerate:
 		cd libsamplerate && \
 		./autogen.sh && \
 		./configure --enable-static && \
-		make && \
+		make -j && \
 		cp src/.libs/libsamplerate.a ../lib/ && \
 		cp include/samplerate.h ../include/
+
+third_party/lmdb:
+	$(HIDE)cd third_party && \
+		git clone https://github.com/LMDB/lmdb && \
+		cd lmdb/libraries/liblmdb && \
+		make -j && \
+		cp liblmdb.a ../../../lib/ && \
+		cp lmdb.h ../../../include/
 
 external: external/re external/rem external/baresip
 
