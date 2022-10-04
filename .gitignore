@@ -21,6 +21,8 @@ compile_commands.json
 *.dylib
 *.h.gch
 
+.gdb_history
+
 /webui_old
 
 /re

@@ -288,7 +288,11 @@ int sl_http_listen(struct http_sock **sock)
 	if (!sock)
 		return EINVAL;
 
+#ifdef RELEASE
 	err = sa_set_str(&srv, "127.0.0.1", 9999);
+#else
+	err = sa_set_str(&srv, "0.0.0.0", 9999);
+#endif
 	if (err)
 		return err;
 

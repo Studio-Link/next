@@ -25,8 +25,8 @@ endif
 
 .PHONY: all
 all: third_party external
-	[ -d build ] || cmake -B build -GNinja
-	cmake --build build -j
+	$(HIDE)[ -d build ] || cmake -B build -GNinja -DCMAKE_BUILD_TYPE=Debug
+	$(HIDE)cmake --build build -j
 
 ##############################################################################
 #
@@ -52,7 +52,6 @@ samplerate: third_party/lmdb
 third_party_dir:
 	mkdir -p third_party/include
 	mkdir -p third_party/lib
-	mkdir -p external
 
 .PHONY: third_party
 third_party: third_party_dir openssl opus samplerate portaudio lmdb
@@ -111,7 +110,11 @@ third_party/lmdb:
 		cp liblmdb.a ../../../lib/ && \
 		cp lmdb.h ../../../include/
 
-external: external/re external/rem external/baresip
+.PHONY: external_dir
+external_dir:
+	mkdir -p external
+
+external: external_dir external/re external/rem external/baresip
 
 external/re:
 	$(shell [ ! -d external/re ] && \
@@ -176,3 +179,10 @@ run: all
 .PHONY: dev
 dev: all
 	build/app/linux/studiolink --headless
+
+.PHONY: release
+release:
+	make cleaner
+	make external
+	cmake -B build -GNinja -DCMAKE_BUILD_TYPE=Release
+	make all
