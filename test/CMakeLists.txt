@@ -16,8 +16,9 @@ project(test VERSION 0.0.1 LANGUAGES C)
 #
 
 set(SRCS
-  src/main.c
+  src/db.c
   src/http.c
+  src/main.c
   src/tracks.c
   src/mock/mock_auplay.c
   src/mock/mock_ausrc.c
@@ -29,5 +30,5 @@ set(SRCS
 #
 
 add_executable(${PROJECT_NAME} ${SRCS})
-target_link_libraries(${PROJECT_NAME} PUBLIC sl baresip rem re)
+target_link_libraries(${PROJECT_NAME} PRIVATE sl)
 target_compile_definitions(${PROJECT_NAME} PRIVATE ${RE_DEFINITIONS})

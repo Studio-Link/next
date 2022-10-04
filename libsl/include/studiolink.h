@@ -150,6 +150,20 @@ void sl_meter_close(void);
 void sl_meter_process(unsigned int ch, float *in, unsigned long nframes);
 
 
+/******************************************************************************
+ * db.c
+ */
+struct sldb {
+	size_t sz;
+	void *data;
+};
+
+int sl_db_init(void);
+void sl_db_close(void);
+int sl_db_get(struct sldb *key, struct sldb *val);
+int sl_db_set(struct sldb *key, struct sldb *val);
+
+
 #ifdef __cplusplus
 }
 #endif
