@@ -49,7 +49,7 @@ portaudio: third_party/portaudio
 samplerate: third_party/libsamplerate
 
 .PHONY: lmdb
-samplerate: third_party/lmdb
+lmdb: third_party/lmdb
 
 .PHONY: third_party_dir
 third_party_dir:

@@ -15,6 +15,7 @@ struct test {
 #define TEST(a) {a, #a}
 
 static const struct test tests[] = {
+	TEST(test_sl_db),
 	TEST(test_sl_http),
 	TEST(test_tracks),
 };

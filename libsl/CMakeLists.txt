@@ -18,6 +18,7 @@ project(sl LANGUAGES C)
 set(SRCS
   src/audio.c
   src/http/client.c
+  src/db.c
   src/http/server.c
   src/main.c
   src/meters.c
@@ -68,7 +69,6 @@ ENDFOREACH()
 #
 
 add_library(${PROJECT_NAME} STATIC ${SRCS} ${HEADERS} ${COMPILED_RESOURCES})
-target_link_libraries(${PROJECT_NAME} PUBLIC baresip rem re)
-target_compile_definitions(${PROJECT_NAME} PUBLIC ${RE_DEFINITIONS})
+target_link_libraries(${PROJECT_NAME} PUBLIC baresip rem re lmdb)
 target_include_directories(${PROJECT_NAME} PUBLIC include PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 target_compile_definitions(${PROJECT_NAME} PRIVATE ${RE_DEFINITIONS})
