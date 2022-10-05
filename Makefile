@@ -186,3 +186,11 @@ release:
 	make external
 	cmake -B build -GNinja -DCMAKE_BUILD_TYPE=Release
 	make all
+
+.PHONY: linux_debug
+linux_debug: all
+	readelf -d build/app/linux/studiolink | grep NEEDED
+
+.PHONY: macos_debug
+macos_debug: all
+	otool -L build/app/macos/studiolink
