@@ -54,6 +54,11 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y clang-tools-14 clang-14 clang-tidy-14 ninja-build cppcheck
 
+    - name: install sound libs
+      if: ${{ runner.os == 'Linux' }}
+      run: |
+        sudo apt-get install -y libasound2-dev libjack-jackd2-dev libpulse-dev libpulse0
+
     - name: install ninja
       if: ${{ runner.os == 'macOS' }}
       run: |

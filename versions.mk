@@ -8,4 +8,4 @@ SAMPLERATE_MIRROR := https://github.com/studio-link-3rdparty
 LIBRE_VERSION     := main
 LIBREM_VERSION    := main
 BARESIP_VERSION   := main
-CACHE_VERSION     := 0.0.5 # github cache invalidation workaround
+CACHE_VERSION     := 6 # github cache invalidation workaround
