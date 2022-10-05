@@ -121,6 +121,11 @@ jobs:
       run: |
         sudo apt-get update && sudo apt-get install -y ninja-build
 
+    - name: install sound libs
+      if: ${{ runner.os == 'Linux' }}
+      run: |
+        sudo apt-get install -y libasound2-dev libjack-jackd2-dev libpulse-dev libpulse0
+
     - uses: actions/cache@v3
       with:
         path: third_party
