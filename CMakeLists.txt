@@ -9,7 +9,7 @@
 # Project and Versioning
 #
 
-cmake_minimum_required(VERSION 3.18)
+cmake_minimum_required(VERSION 3.10)
 
 set(CMAKE_C_COMPILER clang)
 
@@ -65,7 +65,7 @@ set(CMAKE_FIND_ROOT_PATH
 # modify default behavior of FIND_XXX() commands
 set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 
-if(${CMAKE_BUILD_TYPE} MATCHES "[Rr]el")
+if(${CMAKE_BUILD_TYPE} MATCHES "[Rr]el" AND NOT UNIX)
   set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
   set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 endif()
@@ -74,7 +74,11 @@ set(RE_LIBRARY re CACHE STRING "")
 set(REM_LIBRARY rem CACHE STRING "")
 
 set(STATIC ON CACHE BOOL "")
-set(MODULES ice dtls_srtp turn opus g711)
+set(MODULES auconv auresamp ice dtls_srtp turn opus g711 portaudio)
+
+if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+  list(APPEND MODULES alsa jack)
+endif()
 
 # Baresip dependencies
 add_subdirectory(external/re)
