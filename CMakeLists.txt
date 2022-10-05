@@ -80,6 +80,10 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
   list(APPEND MODULES alsa jack)
 endif()
 
+if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+  list(APPEND MODULES coreaudio)
+endif()
+
 # Baresip dependencies
 add_subdirectory(external/re)
 add_subdirectory(external/rem)
