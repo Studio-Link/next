@@ -10,17 +10,18 @@
 enum { ASYNC_WORKERS = 6 };
 
 static struct http_sock *httpsock = NULL;
-static bool headless = false;
+static bool headless		  = false;
 
-static const char *modv[] = {
-	"turn",
-	"ice",
-	"dtls_srtp",
+static const char *modv[] = {"turn", "ice", "dtls_srtp",
 
-	/* audio */
-	"opus",
-	"g711",
-};
+			     /* audio codecs */
+			     "opus", "g711",
+
+			     /* audio filter */
+			     "auconv", "auresamp",
+
+			     /* audio drivers */
+			     "portaudio"};
 
 
 static void signal_handler(int signum)
@@ -165,6 +166,12 @@ int sl_init(const uint8_t *conf)
 		goto out;
 	}
 
+	err = sl_audio_init();
+	if (err) {
+		warning("sl_init: audio init failed (%m)\n", err);
+		goto out;
+	}
+
 out:
 	if (err)
 		sl_close();
@@ -181,8 +188,8 @@ static int webui_open(void *arg)
 	/* @TODO: add google-chrome and xdg-open fallback */
 	/* @TODO: use permanent browser dir */
 	return system("chromium --app=http://127.0.0.1:9999 "
-		     "--user-data-dir=/tmp/.studio-link/browser "
-		     "--window-size=1060,800 >/dev/null 2>&1");
+		      "--user-data-dir=/tmp/.studio-link/browser "
+		      "--window-size=1060,800 >/dev/null 2>&1");
 }
 
 
@@ -223,6 +230,7 @@ void sl_close(void)
 	mem_deref(httpsock);
 
 	sl_tracks_close();
+	sl_audio_close();
 
 	ua_stop_all(true);
 	ua_close();

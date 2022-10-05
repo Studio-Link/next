@@ -248,5 +248,8 @@ int sl_audio_init(void)
 
 int sl_audio_close(void)
 {
+	ausrc  = mem_deref(ausrc);
+	auplay = mem_deref(auplay);
+
 	return 0;
 }
