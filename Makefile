@@ -89,8 +89,7 @@ third_party/portaudio:
 		./configure && \
 		make -j && \
 		cp -a lib/.libs/libportaudio.a ../lib/ && \
-		mkdir -p ../include/portaudio && \
-		cp include/*.h ../include/portaudio/
+		cp include/*.h ../include/
 
 third_party/libsamplerate:
 	$(HIDE)cd third_party && \
