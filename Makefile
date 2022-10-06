@@ -82,10 +82,8 @@ third_party/opus:
 
 third_party/portaudio:
 	$(HIDE)cd third_party && \
-		wget ${PORTAUDIO_MIRROR}/v${PORTAUDIO_VERSION}.tar.gz && \
-		tar -xzf v${PORTAUDIO_VERSION}.tar.gz && \
-		mv portaudio-${PORTAUDIO_VERSION} portaudio
-	$(HIDE)cd third_party/portaudio && \
+		git clone ${PORTAUDIO_MIRROR}/portaudio.git && \
+	    cd portaudio && \
 		./configure && \
 		make -j && \
 		cp -a lib/.libs/libportaudio.a ../lib/ && \
