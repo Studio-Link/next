@@ -77,7 +77,7 @@ set(STATIC ON CACHE BOOL "")
 set(MODULES auconv auresamp ice dtls_srtp turn opus g711 portaudio)
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-  list(APPEND MODULES alsa jack)
+  list(APPEND MODULES alsa jack pulse_async)
 endif()
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")

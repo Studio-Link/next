@@ -21,7 +21,7 @@ static const char *modv[] = {"turn", "ice", "dtls_srtp",
 			     "auconv", "auresamp",
 
 			     /* audio drivers */
-			     "portaudio"};
+			     "portaudio", "pulse_async"};
 
 
 static void signal_handler(int signum)
