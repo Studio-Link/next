@@ -158,7 +158,7 @@ tree:
 .PHONY: test
 test: all
 	cppcheck libsl app test
-	build/test/test
+	gdb -batch -ex "run" -ex "bt" build/test/test
 	test/integration.sh
 
 .PHONY: test_debug
