@@ -44,7 +44,8 @@ int sl_tracks_json(struct re_printf *pf)
 	struct le *le;
 	struct odict *o_tracks;
 	struct odict *o_track;
-	char id_str[6];
+	struct odict *o_slaudio;
+	char id[ITOA_BUFSZ];
 	int err;
 
 	if (!pf)
@@ -65,33 +66,32 @@ int sl_tracks_json(struct re_printf *pf)
 			return ENOMEM;
 
 
-		if (track->type == SL_TRACK_LOCAL)
+		if (track->type == SL_TRACK_LOCAL) {
 			odict_entry_add(o_track, "type", ODICT_STRING,
 					"local");
+
+			err = slaudio_odict(&o_slaudio,
+					    track->u.local.slaudio);
+			if (err)
+				return err;
+
+			odict_entry_add(o_track, "audio", ODICT_OBJECT,
+					o_slaudio);
+		}
 
 		if (track->type == SL_TRACK_REMOTE)
 			odict_entry_add(o_track, "type", ODICT_STRING,
 					"remote");
 
-		err = re_snprintf(id_str, sizeof(id_str), "%d", track->id);
-		if (err == -1)
-			goto max;
-
 		odict_entry_add(o_track, "name", ODICT_STRING, track->name);
-
-		odict_entry_add(o_tracks, id_str, ODICT_OBJECT, o_track);
+		odict_entry_add(o_tracks, str_itoa(track->id, id, 10),
+				ODICT_OBJECT, o_track);
 		o_track = mem_deref(o_track);
 	}
 
 	err = json_encode_odict(pf, o_tracks);
 	mem_deref(o_tracks);
-
-	return err;
-
-max:
-	json_encode_odict(pf, o_tracks);
-	mem_deref(o_tracks);
-	mem_deref(o_track);
+	o_slaudio = mem_deref(o_slaudio);
 
 	return err;
 }

@@ -11,6 +11,10 @@
 #ifndef STUDIOLINK_H__
 #define STUDIOLINK_H__
 
+#include <re.h>
+#include <rem.h>
+#include <baresip.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -123,6 +127,7 @@ int sl_audio_close(void);
 int sl_audio_add_remote_track(struct slaudio *audio, struct sl_track *track);
 int sl_audio_del_remote_track(struct sl_track *track);
 int sl_audio_alloc(struct slaudio **audiop, struct sl_track *track);
+int slaudio_odict(struct odict **o, struct slaudio *a);
 
 
 #ifdef __cplusplus

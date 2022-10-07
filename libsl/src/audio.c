@@ -1,16 +1,16 @@
-#include <re.h>
-#include <rem.h>
-#include <baresip.h>
 #include <studiolink.h>
 
 
-struct slaudio_device {
+struct slaudio {
 	struct le le;
-	int idx;
-	char *name;
-	uint16_t in_channels;
-	uint16_t out_channels;
-	uint32_t srate;
+	struct sl_track *local_track;
+	struct list remotel;
+	const struct list *devl_src;
+	const struct list *devl_play;
+	struct auplay_st *auplay_st;
+	struct ausrc_st *ausrc_st;
+	struct ausrc_prm ausrc_prm;
+	struct auplay_prm auplay_prm;
 };
 
 struct remote_track {
@@ -18,15 +18,6 @@ struct remote_track {
 	struct sl_track *track;
 	struct ausrc_st *ausrc_st;
 	struct auplay_st *auplay_st;
-};
-
-struct slaudio {
-	struct le le;
-	struct sl_track *local_track;
-	struct list remotel;
-	struct list devicel; /**< slaudio_device list */
-	struct slaudio_device *src;
-	struct slaudio_device *play;
 };
 
 struct ausrc_st {
@@ -53,6 +44,46 @@ struct auplay_st {
 static struct ausrc *ausrc;
 static struct auplay *auplay;
 static struct list local_tracks = LIST_INIT;
+
+
+int slaudio_odict(struct odict **o, struct slaudio *a)
+{
+	struct le *le;
+	uint32_t i = 0;
+	struct odict *o_slaudio;
+	struct odict *o_entry;
+	char id[ITOA_BUFSZ];
+	int err;
+
+	if (!a || !o)
+		return EINVAL;
+
+	err = odict_alloc(&o_slaudio, 32);
+	if (err)
+		return ENOMEM;
+
+	LIST_FOREACH(a->devl_play, le)
+	{
+		struct mediadev *dev = le->data;
+
+		err = odict_alloc(&o_entry, 32);
+		if (err) {
+			mem_deref(o_slaudio);
+			return ENOMEM;
+		}
+
+		odict_entry_add(o_entry, "idx", ODICT_INT, dev->info.dev_idx);
+		odict_entry_add(o_entry, "name", ODICT_STRING, dev->name);
+		odict_entry_add(o_slaudio, str_itoa(i++, id, 10), ODICT_OBJECT,
+				o_entry);
+
+		o_entry = mem_deref(o_entry);
+	}
+
+	*o = o_slaudio;
+
+	return 0;
+}
 
 
 static int src_alloc(struct ausrc_st **stp, const struct ausrc *as,
@@ -211,27 +242,81 @@ static void slaudio_destructor(void *data)
 
 	list_unlink(&audio->le);
 	list_flush(&audio->remotel);
+	mem_deref(audio->auplay_st);
+	mem_deref(audio->ausrc_st);
+}
+
+
+static void auplay_write_handler(struct auframe *af, void *arg)
+{
+	(void)af;
+	(void)arg;
+}
+
+
+static void ausrc_read_handler(struct auframe *af, void *arg)
+{
+	(void)af;
+	(void)arg;
 }
 
 
 int sl_audio_alloc(struct slaudio **audiop, struct sl_track *track)
 {
-	struct slaudio *audio;
+	struct slaudio *a;
+	const struct auplay *play;
+	const struct ausrc *src;
+	int err;
 
 	if (!audiop || !track)
 		return EINVAL;
 
-	audio = mem_zalloc(sizeof(*audio), slaudio_destructor);
-	if (!audio)
+	a = mem_zalloc(sizeof(*a), slaudio_destructor);
+	if (!a)
 		return ENOMEM;
 
-	audio->local_track = track;
+	a->local_track = track;
 
-	list_append(&local_tracks, &audio->le, audio);
+	list_append(&local_tracks, &a->le, a);
 
-	*audiop = audio;
+	a->auplay_prm.srate = 48000;
+	a->auplay_prm.ch    = 2;
+	a->auplay_prm.ptime = 20;
+	a->auplay_prm.fmt   = AUFMT_S16LE;
 
-	return 0;
+	a->ausrc_prm.srate = 48000;
+	a->ausrc_prm.ch	   = 2;
+	a->ausrc_prm.ptime = 20;
+	a->ausrc_prm.fmt   = AUFMT_S16LE;
+
+
+	err = auplay_alloc(&a->auplay_st, baresip_auplayl(), "portaudio",
+			   &a->auplay_prm, NULL, auplay_write_handler, NULL);
+	if (err) {
+		warning("slaudio: start_player failed: %m\n", err);
+		goto out;
+	}
+	err = ausrc_alloc(&a->ausrc_st, baresip_ausrcl(), "portaudio",
+			  &a->ausrc_prm, NULL, ausrc_read_handler, NULL, NULL);
+	if (err) {
+		warning("slaudio: start_src failed: %m\n", err);
+		goto out;
+	}
+
+	play = auplay_find(baresip_auplayl(), "portaudio");
+	src  = ausrc_find(baresip_ausrcl(), "portaudio");
+
+	a->devl_play = &play->dev_list;
+	a->devl_src  = &src->dev_list;
+
+	*audiop = a;
+	info("slaudio: portaudio started\n");
+
+out:
+	if (err)
+		*audiop = mem_deref(a);
+
+	return err;
 }
 
 
