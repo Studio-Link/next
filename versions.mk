@@ -7,5 +7,5 @@ PORTAUDIO_MIRROR  := https://github.com/studio-link-3rdparty
 SAMPLERATE_MIRROR := https://github.com/studio-link-3rdparty
 LIBRE_VERSION     := main
 LIBREM_VERSION    := main
-BARESIP_VERSION   := portaudio_info
+BARESIP_VERSION   := main
 CACHE_VERSION     := 7 # github cache invalidation workaround

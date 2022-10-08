@@ -72,7 +72,7 @@ int slaudio_odict(struct odict **o, struct slaudio *a)
 			return ENOMEM;
 		}
 
-		odict_entry_add(o_entry, "idx", ODICT_INT, dev->info.dev_idx);
+		odict_entry_add(o_entry, "idx", ODICT_INT, dev->device_index);
 		odict_entry_add(o_entry, "name", ODICT_STRING, dev->name);
 		odict_entry_add(o_slaudio, str_itoa(i++, id, 10), ODICT_OBJECT,
 				o_entry);
@@ -242,6 +242,7 @@ static void slaudio_destructor(void *data)
 
 	list_unlink(&audio->le);
 	list_flush(&audio->remotel);
+
 	mem_deref(audio->auplay_st);
 	mem_deref(audio->ausrc_st);
 }
