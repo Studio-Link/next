@@ -227,7 +227,7 @@ int sl_main(void)
 void sl_close(void)
 {
 	sl_ws_close();
-	mem_deref(httpsock);
+	httpsock = mem_deref(httpsock);
 
 	sl_tracks_close();
 	sl_audio_close();
