@@ -92,7 +92,7 @@ jobs:
 
     - name: make StudioLink - Linux
       if: ${{ runner.os == 'Linux' }}
-      run: make CC=clang-14 && make test
+      run: make CC=clang-14 CI=1 && make test
 
     - name: clang-tidy
       if: ${{ runner.os == 'Linux' }}
@@ -106,7 +106,7 @@ jobs:
 
     - name: make StudioLink - macOS
       if: ${{ runner.os == 'macOS' }}
-      run: make && make test
+      run: make CI=1 && make test
 
   analyze:
     name: CodeQL Analyze

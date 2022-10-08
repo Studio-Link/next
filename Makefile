@@ -5,11 +5,14 @@
 # Variables (make CC=gcc V=1):
 #   V		Verbose mode (example: make V=1)
 #   CC		Override CC (default clang)
+#   CI      Set CI=1 for CI pipeline
 #
 
 include versions.mk
 
 CC := clang
+
+CI := 0
 
 MAKE += -j CC=$(CC)
 
