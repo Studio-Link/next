@@ -191,3 +191,38 @@ linux_debug: all
 .PHONY: macos_debug
 macos_debug: all
 	otool -L build/app/macos/studiolink
+
+.PHONY: asan
+asan:
+	make cleaner
+	make external
+	cmake -B build -GNinja -DCMAKE_BUILD_TYPE=Debug \
+		-DCMAKE_C_FLAGS="-fsanitize=undefined,address \
+		-fno-omit-frame-pointer" \
+		-DHAVE_THREADS=
+	make all
+
+.PHONY: tsan
+tsan:
+	make cleaner
+	make external
+	cmake -B build -GNinja -DCMAKE_BUILD_TYPE=Debug \
+		-DCMAKE_C_FLAGS="-fsanitize=undefined,thread \
+		-fno-omit-frame-pointer" \
+		-DHAVE_THREADS=
+	make all
+
+.PHONY: msan
+msan:
+	make cleaner
+	make external
+	cd third_party/openssl && \
+		make clean && \
+		CC=$(CC) ./config no-shared enable-msan && \
+		make -j build_libs && \
+		cp *.a ../lib && \
+		cp -a include/openssl ../include/
+	cmake -B build -GNinja -DCMAKE_BUILD_TYPE=Debug \
+	-DCMAKE_C_FLAGS="-fsanitize=undefined,memory -fno-omit-frame-pointer" \
+	-DHAVE_THREADS=
+	make all
