@@ -63,7 +63,7 @@ third_party/openssl:
 		mv openssl-${OPENSSL_VERSION} openssl
 	@rm -f third_party/openssl-${OPENSSL_VERSION}.tar.gz
 	$(HIDE)cd third_party/openssl && \
-		./config no-shared && \
+		CC=$(CC) ./config no-shared && \
 		make -j build_libs && \
 		cp *.a ../lib && \
 		cp -a include/openssl ../include/
@@ -74,7 +74,7 @@ third_party/opus:
 		tar -xzf opus-${OPUS_VERSION}.tar.gz && \
 		mv opus-${OPUS_VERSION} opus
 	$(HIDE)cd third_party/opus && \
-		./configure --with-pic && \
+		CC=$(CC) ./configure --with-pic && \
 		make -j && \
 		cp .libs/libopus.a ../lib/ && \
 		mkdir -p ../include/opus && \
@@ -84,9 +84,9 @@ third_party/portaudio:
 	$(HIDE)cd third_party && \
 		git clone ${PORTAUDIO_MIRROR}/portaudio.git && \
 	    cd portaudio && \
-		./configure && \
-		make -j && \
-		cp -a lib/.libs/libportaudio.a ../lib/ && \
+		CC=$(CC) cmake -B build -DBUILD_SHARED_LIBS=0 && \
+		cmake --build build -j && \
+		cp -a build/libportaudio.a ../lib/ && \
 		cp include/*.h ../include/
 
 third_party/libsamplerate:
@@ -94,7 +94,7 @@ third_party/libsamplerate:
 		git clone ${SAMPLERATE_MIRROR}/libsamplerate.git && \
 		cd libsamplerate && \
 		./autogen.sh && \
-		./configure --enable-static && \
+		CC=$(CC) ./configure --enable-static && \
 		make -j && \
 		cp src/.libs/libsamplerate.a ../lib/ && \
 		cp include/samplerate.h ../include/
@@ -103,7 +103,7 @@ third_party/lmdb:
 	$(HIDE)cd third_party && \
 		git clone https://github.com/LMDB/lmdb && \
 		cd lmdb/libraries/liblmdb && \
-		make -j && \
+		make CC=$(CC) -j && \
 		cp liblmdb.a ../../../lib/ && \
 		cp lmdb.h ../../../include/
 
@@ -160,6 +160,10 @@ test: all
 	cppcheck libsl app test
 	build/test/test
 	test/integration.sh
+
+.PHONY: test_debug
+test_debug: all
+	gdb -batch -ex "run" -ex "bt" build/test/test
 
 .PHONY: watch
 watch:
