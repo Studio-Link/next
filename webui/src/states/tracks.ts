@@ -17,6 +17,15 @@ interface State extends Track {
     local: LocalTrackStates
 }
 
+interface AudioDevice {
+    idx: number
+    name: string
+}
+
+interface LocalTrack extends Track {
+    audio: AudioDevice[]
+}
+
 interface RemoteTrack extends Track {
     status?: string
 }
@@ -24,8 +33,8 @@ interface RemoteTrack extends Track {
 interface Tracks {
     socket?: WebSocket
     state: State[]
+    local_tracks: LocalTrack[]
     remote_tracks: RemoteTrack[]
-    local_tracks: Track[]
     selected_debounce: boolean
     clear_tracks(): void
     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
@@ -62,6 +71,7 @@ export const tracks: Tracks = {
         }
         this.socket.onmessage = (message) => {
             const tracks = JSON.parse(message.data)
+            // console.log(tracks)
             this.update(tracks)
         }
         this.selected_debounce = false
@@ -75,15 +85,17 @@ export const tracks: Tracks = {
     update(tracks): void {
         let last_key = 0
         this.clear_tracks()
+
         for (const key in tracks) {
-            tracks[key].id = parseInt(key);
+            tracks[key].id = parseInt(key)
+
+            if (tracks[key].type == 'local') {
+                console.log(tracks[key])
+                this.local_tracks.push(tracks[key])
+            }
 
             if (tracks[key].type == 'remote') {
                 this.remote_tracks.push(tracks[key])
-            }
-
-            if (tracks[key].type == 'local') {
-                this.local_tracks.push(tracks[key])
             }
 
             /* Initialize frontend state only once */

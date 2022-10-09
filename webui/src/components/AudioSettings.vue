@@ -14,20 +14,20 @@
             <label for="microphone" class="block text-sm font-medium text-sl-on_surface_2">Microphone</label>
             <select id="microphone" name="microphone" autofocus
                 class="text-sl-on_surface_2 mt-1 block w-full rounded-md bg-sl-surface border-none py-2 pl-3 pr-10 text-base focus:border-sl-primary focus:outline-none focus:ring-sl-primary sm:text-sm">
-                <option>Default Microphone</option>
-                <option>Focusrite 2i2 Studio</option>
+
+                <option v-for="option in tracks.local_tracks[0].audio" :key="option.idx" :value="option.idx">
+                    {{option.name}}</option>
             </select>
         </div>
         <div class="px-2 mt-2">
             <label for="speaker" class="block text-sm font-medium text-sl-on_surface_2">Speaker</label>
             <select id="speaker" name="speaker"
                 class="text-sl-on_surface_2 mt-1 block w-full rounded-md bg-sl-surface border-none py-2 pl-3 pr-10 text-base focus:border-sl-primary focus:outline-none focus:ring-sl-primary sm:text-sm">
-                <option>Default Speaker</option>
-                <option>Focusrite 2i2 Studio</option>
+                <option v-for="option in tracks.local_tracks[0].audio" :key="option.idx" :value="option.idx">
+                    {{option.name}}</option>
             </select>
         </div>
-        <ButtonPrimary @click="setLocalState(LocalTrackStates.Ready); setExtended(false)"
-            :class="{ 'visible': active, 'invisible': !active }" class="mt-3 ml-2">
+        <ButtonPrimary @click="save()" :class="{ 'visible': active, 'invisible': !active }" class="mt-3 ml-2">
             Save
         </ButtonPrimary>
     </div>
@@ -36,6 +36,8 @@
 
 <script setup lang="ts">
 import { tracks, LocalTrackStates } from '../states/tracks'
+import api from '../api'
+
 const props = defineProps({ 'active': Boolean, 'pkey': { type: Number, required: true } })
 
 function localState() {
@@ -49,4 +51,11 @@ function setLocalState(state: LocalTrackStates) {
 function setExtended(active: boolean) {
     tracks.extend(props.pkey, active)
 }
+
+function save() {
+    setLocalState(LocalTrackStates.Ready)
+    setExtended(false)
+    api.audio_src_dev(1, 1)
+}
+
 </script>
