@@ -85,7 +85,7 @@ int main(void)
 	conf = conf_config();
 
 	re_snprintf(conf->audio.play_mod, sizeof(conf->audio.play_mod),
-		    "mock-auplay2");
+		    "mock-auplay");
 
 	re_snprintf(conf->audio.src_mod, sizeof(conf->audio.src_mod),
 		    "mock-auplay");
