@@ -75,9 +75,9 @@ int main(void)
 	struct ausrc *src   = NULL;
 	int err;
 
-	(void)sys_coredump_set(true);
-
 	log_enable_info(false);
+
+	warning("hello world\n");
 
 	err = sl_baresip_init(NULL);
 	TEST_ERR(err);
