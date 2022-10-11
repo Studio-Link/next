@@ -217,9 +217,7 @@ int sl_tracks_init(void)
 	if (err)
 		return err;
 
-	err = sl_audio_alloc(&local_track->u.local.slaudio, local_track);
-	if (err)
-		return err;
+	(void)sl_audio_alloc(&local_track->u.local.slaudio, local_track);
 
 	return 0;
 }

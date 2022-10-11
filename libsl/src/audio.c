@@ -262,12 +262,44 @@ static void ausrc_read_handler(struct auframe *af, void *arg)
 }
 
 
+static void driver_alloc(struct slaudio *a)
+{
+	const struct auplay *play;
+	const struct ausrc *src;
+	struct config *conf;
+	int err;
+
+	conf = conf_config();
+
+	err = auplay_alloc(&a->auplay_st, baresip_auplayl(),
+			   conf->audio.play_mod, &a->auplay_prm, NULL,
+			   auplay_write_handler, NULL);
+	if (err) {
+		warning("slaudio: start_player failed: %m\n", err);
+		return;
+	}
+
+	err = ausrc_alloc(&a->ausrc_st, baresip_ausrcl(), conf->audio.src_mod,
+			  &a->ausrc_prm, NULL, ausrc_read_handler, NULL, NULL);
+	if (err) {
+		warning("slaudio: start_src failed: %m\n", err);
+		return;
+	}
+
+	play = auplay_find(baresip_auplayl(), conf->audio.play_mod);
+	src  = ausrc_find(baresip_ausrcl(), conf->audio.src_mod);
+
+	a->devl_play = &play->dev_list;
+	a->devl_src  = &src->dev_list;
+
+	info("slaudio: %s/%s started\n", conf->audio.play_mod,
+	     conf->audio.src_mod);
+}
+
+
 int sl_audio_alloc(struct slaudio **audiop, struct sl_track *track)
 {
 	struct slaudio *a;
-	const struct auplay *play;
-	const struct ausrc *src;
-	int err;
 
 	if (!audiop || !track)
 		return EINVAL;
@@ -290,34 +322,11 @@ int sl_audio_alloc(struct slaudio **audiop, struct sl_track *track)
 	a->ausrc_prm.ptime = 20;
 	a->ausrc_prm.fmt   = AUFMT_S16LE;
 
-
-	err = auplay_alloc(&a->auplay_st, baresip_auplayl(), "portaudio",
-			   &a->auplay_prm, NULL, auplay_write_handler, NULL);
-	if (err) {
-		warning("slaudio: start_player failed: %m\n", err);
-		goto out;
-	}
-	err = ausrc_alloc(&a->ausrc_st, baresip_ausrcl(), "portaudio",
-			  &a->ausrc_prm, NULL, ausrc_read_handler, NULL, NULL);
-	if (err) {
-		warning("slaudio: start_src failed: %m\n", err);
-		goto out;
-	}
-
-	play = auplay_find(baresip_auplayl(), "portaudio");
-	src  = ausrc_find(baresip_ausrcl(), "portaudio");
-
-	a->devl_play = &play->dev_list;
-	a->devl_src  = &src->dev_list;
+	driver_alloc(a);
 
 	*audiop = a;
-	info("slaudio: portaudio started\n");
 
-out:
-	if (err)
-		*audiop = mem_deref(a);
-
-	return err;
+	return 0;
 }
 
 

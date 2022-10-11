@@ -34,15 +34,22 @@ extern "C" {
 int sl_getopt(int argc, char *const argv[]);
 
 /**
- * Init StudioLink
+ * Init StudioLink dependencies
  *
- * Initializes Libre, Baresip and StudioLink
+ * Initializes Libre and Baresip
  *
  * @param conf Baresip config
  *
  * @return int
  */
-int sl_init(const uint8_t *conf);
+int sl_baresip_init(const uint8_t *conf);
+
+/**
+ * Init StudioLink
+ *
+ * @return int
+ */
+int sl_init(void);
 
 /**
  * StudioLink Open web user interface
