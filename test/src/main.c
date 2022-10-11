@@ -69,14 +69,33 @@ static int run_tests(void)
 
 int main(void)
 {
+	struct config *conf;
+	size_t ntests	    = ARRAY_SIZE(tests);
+	struct auplay *play = NULL;
+	struct ausrc *src   = NULL;
 	int err;
-	size_t ntests = ARRAY_SIZE(tests);
 
 	(void)sys_coredump_set(true);
 
 	log_enable_info(false);
 
-	err = sl_init(NULL);
+	err = sl_baresip_init(NULL);
+	TEST_ERR(err);
+
+	conf = conf_config();
+
+	re_snprintf(conf->audio.play_mod, sizeof(conf->audio.play_mod),
+		    "mock-auplay2");
+
+	re_snprintf(conf->audio.src_mod, sizeof(conf->audio.src_mod),
+		    "mock-auplay");
+
+	err = mock_auplay_register(&play, baresip_auplayl(), NULL, NULL);
+	TEST_ERR(err);
+	err = mock_ausrc_register(&src, baresip_ausrcl(), NULL, NULL);
+	TEST_ERR(err);
+
+	err = sl_init();
 	TEST_ERR(err);
 
 	err = run_tests();
@@ -91,6 +110,9 @@ out:
 		warning("test failed (%m)\n", err);
 		re_printf("%H\n", re_debug, 0);
 	}
+
+	mem_deref(play);
+	mem_deref(src);
 
 	sl_close();
 

@@ -19,6 +19,8 @@ set(SRCS
   src/main.c
   src/http.c
   src/tracks.c
+  src/mock/mock_auplay.c
+  src/mock/mock_ausrc.c
 )
 
 ##############################################################################
