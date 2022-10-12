@@ -12,16 +12,17 @@ enum { ASYNC_WORKERS = 6 };
 static struct http_sock *httpsock = NULL;
 static bool headless		  = false;
 
-static const char *modv[] = {"turn", "ice", "dtls_srtp",
+static const char *modv[] = {
+	"turn", "ice", "dtls_srtp",
 
-			     /* audio codecs */
-			     "opus", "g711",
+	/* audio codecs */
+	"opus", "g711",
 
-			     /* audio filter */
-			     "auconv", "auresamp",
+	/* audio filter */
+	"auconv", "auresamp",
 
-			     /* audio drivers */
-			     "pulse_async"};
+	/* audio drivers */
+};
 
 
 static void signal_handler(int signum)
@@ -117,7 +118,7 @@ int sl_baresip_init(const uint8_t *conf)
 		goto out;
 	}
 
-	config = conf_config();
+	config			  = conf_config();
 	config->net.use_linklocal = false;
 
 	err = baresip_init(config);
