@@ -92,7 +92,7 @@ jobs:
 
     - name: make StudioLink - Linux
       if: ${{ runner.os == 'Linux' }}
-      run: make CC=clang-14 CI=1 && make test_debug
+      run: make CC=clang-14 CI=1 && make test
 
     - name: clang-tidy
       if: ${{ runner.os == 'Linux' }}
