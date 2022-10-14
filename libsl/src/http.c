@@ -247,21 +247,35 @@ static void http_req_handler(struct http_conn *conn,
 		goto out;
 	}
 
-	if (0 == pl_strcasecmp(&msg->path, "/api/v1/audio/src") &&
+	if (0 == pl_strcasecmp(&msg->path, "/api/v1/audio/device") &&
 	    0 == pl_strcasecmp(&msg->met, "PUT")) {
 		struct pl pltrack = PL_INIT;
+		struct pl pl_mic, pl_speaker;
 		struct slaudio *audio;
 		uint32_t track_id;
+		int mic_id, speaker_id;
 		pl_set_mbuf(&pl, msg->mb);
-		id = pl_i32(&pl);
 
-		re_regex(msg->prm.p, msg->prm.l, "track=[0-9]+", &pltrack);
+		err = re_regex(pl.p, pl.l, "[0-9]+;[0-9]+", &pl_mic,
+			       &pl_speaker);
+		if (err)
+			goto err;
+
+		mic_id	   = pl_i32(&pl_mic);
+		speaker_id = pl_i32(&pl_speaker);
+
+
+		err = re_regex(msg->prm.p, msg->prm.l, "track=[0-9]+",
+			       &pltrack);
+		if (err)
+			goto err;
+
 		track_id = pl_u32(&pltrack);
 
 		track = sl_track_by_id(track_id);
 		audio = sl_track_audio(track);
 
-		err = sl_audio_set_src(audio, id);
+		err = sl_audio_set_device(audio, speaker_id, mic_id);
 		if (err) {
 			http_ereply(conn, 404, "Not found");
 			goto out;
@@ -271,29 +285,6 @@ static void http_req_handler(struct http_conn *conn,
 		goto out;
 	}
 
-	if (0 == pl_strcasecmp(&msg->path, "/api/v1/audio/play") &&
-	    0 == pl_strcasecmp(&msg->met, "PUT")) {
-		struct pl pltrack = PL_INIT;
-		struct slaudio *audio;
-		uint32_t track_id;
-		pl_set_mbuf(&pl, msg->mb);
-		id = pl_i32(&pl);
-
-		re_regex(msg->prm.p, msg->prm.l, "track=[0-9]+", &pltrack);
-		track_id = pl_u32(&pltrack);
-
-		track = sl_track_by_id(track_id);
-		audio = sl_track_audio(track);
-
-		err = sl_audio_set_play(audio, id);
-		if (err) {
-			http_ereply(conn, 404, "Not found");
-			goto out;
-		}
-
-		http_sreply(conn, 200, "OK", "text/html", "", 0);
-		goto out;
-	}
 
 	if (0 == pl_strcasecmp(&msg->path, "/api/v1/tracks") &&
 	    0 == pl_strcasecmp(&msg->met, "DELETE")) {
@@ -325,6 +316,12 @@ static void http_req_handler(struct http_conn *conn,
 
 out:
 	mem_deref(json_str);
+
+	return;
+
+err:
+	mem_deref(json_str);
+	http_ereply(conn, 500, "Error");
 }
 
 

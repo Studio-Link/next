@@ -16,11 +16,7 @@ export default {
         api_request('DELETE', '/tracks', String(id));
     },
 
-    audio_src_dev(track: number, device: number) {
-        api_request('PUT', '/audio/src?track=' + String(track), String(device));
+    audio_device(track: number, mic: number, speaker: number) {
+        api_request('PUT', '/audio/device?track=' + String(track), String(mic) + ";" + String(speaker));
     },
-
-    audio_play_dev(track: number, device: number) {
-        api_request('PUT', '/audio/play?track=' + String(track), String(device));
-    }
 }

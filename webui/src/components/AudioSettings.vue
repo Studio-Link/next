@@ -64,8 +64,7 @@ function setExtended(active: boolean) {
 function save() {
     setLocalState(LocalTrackStates.Ready)
     setExtended(false)
-    api.audio_src_dev(1, mic.value)
-    api.audio_play_dev(1, speaker.value)
+    api.audio_device(1, mic.value, speaker.value)
 }
 
 

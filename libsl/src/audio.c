@@ -284,23 +284,71 @@ int sl_audio_add_remote_track(struct slaudio *audio, struct sl_track *track)
 }
 
 
-int sl_audio_set_src(struct slaudio *audio, int idx)
+static void auplay_write_handler(struct auframe *af, void *arg)
 {
-	if (!audio || idx < 0)
-		return EINVAL;
-
-	audio->src.selected = idx;
-
-	return 0;
+	(void)af;
+	(void)arg;
 }
 
 
-int sl_audio_set_play(struct slaudio *audio, int idx)
+static void ausrc_read_handler(struct auframe *af, void *arg)
 {
-	if (!audio || idx < 0)
+	(void)af;
+	(void)arg;
+}
+
+
+static int driver_start(struct slaudio *a)
+{
+	char index[ITOA_BUFSZ];
+	struct config *conf;
+	int err;
+
+	conf = conf_config();
+
+	if (!conf)
 		return EINVAL;
 
-	audio->play.selected = idx;
+	if (a->auplay_st)
+		a->auplay_st = mem_deref(a->auplay_st);
+
+	if (a->ausrc_st)
+		a->ausrc_st = mem_deref(a->ausrc_st);
+
+	err = auplay_alloc(&a->auplay_st, baresip_auplayl(),
+			   conf->audio.play_mod, &a->auplay_prm,
+			   str_itoa(a->play.selected, index, 10),
+			   auplay_write_handler, NULL);
+	if (err) {
+		warning("slaudio: start_player failed: %m\n", err);
+		return err;
+	}
+
+	err = ausrc_alloc(&a->ausrc_st, baresip_ausrcl(), conf->audio.src_mod,
+			  &a->ausrc_prm, str_itoa(a->src.selected, index, 10),
+			  ausrc_read_handler, NULL, NULL);
+	if (err) {
+		warning("slaudio: start_src failed: %m\n", err);
+		return err;
+	}
+
+	info("slaudio: driver started\n");
+
+	return err;
+}
+
+
+int sl_audio_set_device(struct slaudio *audio, int play_idx, int src_idx)
+{
+	if (!audio || play_idx < 0 || src_idx < 0)
+		return EINVAL;
+
+	audio->play.selected = play_idx;
+	audio->src.selected  = src_idx;
+
+	info("slaudio: set device %d/%d\n", play_idx, src_idx);
+
+	driver_start(audio);
 
 	return 0;
 }
@@ -318,20 +366,6 @@ static void slaudio_destructor(void *data)
 }
 
 
-static void auplay_write_handler(struct auframe *af, void *arg)
-{
-	(void)af;
-	(void)arg;
-}
-
-
-static void ausrc_read_handler(struct auframe *af, void *arg)
-{
-	(void)af;
-	(void)arg;
-}
-
-
 static void driver_alloc(struct slaudio *a)
 {
 	const struct auplay *play;
@@ -341,26 +375,9 @@ static void driver_alloc(struct slaudio *a)
 
 	conf = conf_config();
 
-	if (!a)
+	if (!a || !conf)
 		return;
 
-#if 0
-	err = auplay_alloc(&a->auplay_st, baresip_auplayl(),
-			   conf->audio.play_mod, &a->auplay_prm,
-			   conf->audio.play_dev, auplay_write_handler, NULL);
-	if (err) {
-		warning("slaudio: start_player failed: %m\n", err);
-		return;
-	}
-
-	err = ausrc_alloc(&a->ausrc_st, baresip_ausrcl(), conf->audio.src_mod,
-			  &a->ausrc_prm, conf->audio.src_dev,
-			  ausrc_read_handler, NULL, NULL);
-	if (err) {
-		warning("slaudio: start_src failed: %m\n", err);
-		return;
-	}
-#endif
 
 	play = auplay_find(baresip_auplayl(), conf->audio.play_mod);
 	if (!play)
