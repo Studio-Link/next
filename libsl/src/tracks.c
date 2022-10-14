@@ -44,7 +44,7 @@ int sl_tracks_json(struct re_printf *pf)
 	struct le *le;
 	struct odict *o_tracks;
 	struct odict *o_track;
-	char id_str[6];
+	char id[ITOA_BUFSZ];
 	int err;
 
 	if (!pf)
@@ -65,33 +65,33 @@ int sl_tracks_json(struct re_printf *pf)
 			return ENOMEM;
 
 
-		if (track->type == SL_TRACK_LOCAL)
+		if (track->type == SL_TRACK_LOCAL) {
+			struct odict *o_slaudio;
 			odict_entry_add(o_track, "type", ODICT_STRING,
 					"local");
+
+			err = slaudio_odict(&o_slaudio,
+					    track->u.local.slaudio);
+			if (err)
+				return err;
+
+			odict_entry_add(o_track, "audio", ODICT_OBJECT,
+					o_slaudio);
+			o_slaudio = mem_deref(o_slaudio);
+		}
 
 		if (track->type == SL_TRACK_REMOTE)
 			odict_entry_add(o_track, "type", ODICT_STRING,
 					"remote");
 
-		err = re_snprintf(id_str, sizeof(id_str), "%d", track->id);
-		if (err == -1)
-			goto max;
-
 		odict_entry_add(o_track, "name", ODICT_STRING, track->name);
-
-		odict_entry_add(o_tracks, id_str, ODICT_OBJECT, o_track);
+		odict_entry_add(o_tracks, str_itoa(track->id, id, 10),
+				ODICT_OBJECT, o_track);
 		o_track = mem_deref(o_track);
 	}
 
 	err = json_encode_odict(pf, o_tracks);
 	mem_deref(o_tracks);
-
-	return err;
-
-max:
-	json_encode_odict(pf, o_tracks);
-	mem_deref(o_tracks);
-	mem_deref(o_track);
 
 	return err;
 }
@@ -194,6 +194,21 @@ int sl_track_del(int id)
 }
 
 
+struct sl_track *sl_track_by_id(int id)
+{
+	struct le *le;
+
+	LIST_FOREACH(&tracks, le)
+	{
+		struct sl_track *track = le->data;
+		if (track->id == id) {
+			return track;
+		}
+	}
+	return NULL;
+}
+
+
 enum sl_track_status sl_track_status(int id)
 {
 	struct le *le;
@@ -209,6 +224,18 @@ enum sl_track_status sl_track_status(int id)
 }
 
 
+struct slaudio *sl_track_audio(struct sl_track *track)
+{
+	if (!track)
+		return NULL;
+
+	if (track->type != SL_TRACK_LOCAL)
+		return NULL;
+
+	return track->u.local.slaudio;
+}
+
+
 int sl_tracks_init(void)
 {
 	int err;
@@ -217,9 +244,7 @@ int sl_tracks_init(void)
 	if (err)
 		return err;
 
-	err = sl_audio_alloc(&local_track->u.local.slaudio, local_track);
-	if (err)
-		return err;
+	(void)sl_audio_alloc(&local_track->u.local.slaudio, local_track);
 
 	return 0;
 }

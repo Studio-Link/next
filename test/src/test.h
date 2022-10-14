@@ -25,6 +25,13 @@
 		goto out;                                                     \
 	}
 
+typedef void (mock_sample_h)(const void *sampv, size_t sampc, void *arg);
+
+int mock_auplay_register(struct auplay **auplayp, struct list *auplayl,
+			 mock_sample_h *sampleh, void *arg);
+int mock_ausrc_register(struct ausrc **ausrcp, struct list *ausrcl,
+			 mock_sample_h *sampleh, void *arg);
+
 /* functions */
 int sl_main_timeout(uint32_t timeout_ms);
 

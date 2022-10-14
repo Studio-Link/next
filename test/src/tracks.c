@@ -1,5 +1,3 @@
-#include <re.h>
-#include <baresip.h>
 #include <studiolink.h>
 
 #include "test.h"
@@ -8,6 +6,7 @@ static int test_track_add(void)
 {
 	char json_str[8192] = {0};
 	struct odict *o	    = NULL;
+	const struct odict_entry *o_entry = NULL;
 	struct sl_track *track;
 	int err;
 
@@ -24,14 +23,20 @@ static int test_track_add(void)
 	/* Get all tracks as json string */
 	err = re_snprintf(json_str, sizeof(json_str), "%H", sl_tracks_json);
 	ASSERT_TRUE(-1 != err);
-	ASSERT_TRUE(0 == str_cmp("{\"1\":{\"type\":\"local\",\"name\":\"\"},"
-				 "\"2\":{\"type\":"
-				 "\"remote\",\"name\":\"\"}}",
-				 json_str));
+
 	/* Validate json */
 	err = json_decode_odict(&o, 32, json_str, sizeof(json_str), 8);
 	TEST_ERR(err);
+
+	/* Check local track exist */
+	o_entry = odict_lookup(o, "1");
 	mem_deref(o);
+
+	if (!o_entry)
+		err = EINVAL;
+
+	TEST_ERR(err);
+
 
 	/* Add max >99 tracks */
 	for (int i = 0; i < 97; i++) {

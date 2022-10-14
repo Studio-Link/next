@@ -21,7 +21,7 @@ static const char *modv[] = {"turn", "ice", "dtls_srtp",
 			     "auconv", "auresamp",
 
 			     /* audio drivers */
-			     "portaudio", "pulse_async"};
+			     "portaudio"};
 
 
 static void signal_handler(int signum)
@@ -88,7 +88,7 @@ int sl_getopt(int argc, char *const argv[])
 }
 
 
-int sl_init(const uint8_t *conf)
+int sl_baresip_init(const uint8_t *conf)
 {
 	struct config *config;
 	const char *conf_ = "opus_bitrate       64000\n";
@@ -117,13 +117,7 @@ int sl_init(const uint8_t *conf)
 		goto out;
 	}
 
-	config = conf_config();
-	if (!config) {
-		err = ENOENT;
-		warning("sl_init: conf_config failed");
-		goto out;
-	}
-
+	config			  = conf_config();
 	config->net.use_linklocal = false;
 
 	err = baresip_init(config);
@@ -147,6 +141,19 @@ int sl_init(const uint8_t *conf)
 				modv[i], err);
 		}
 	}
+
+out:
+	if (err)
+		sl_close();
+
+	return err;
+}
+
+
+int sl_init(void)
+
+{
+	int err;
 
 	err = sl_ws_init();
 	if (err) {
@@ -227,7 +234,7 @@ int sl_main(void)
 void sl_close(void)
 {
 	sl_ws_close();
-	mem_deref(httpsock);
+	httpsock = mem_deref(httpsock);
 
 	sl_tracks_close();
 	sl_audio_close();

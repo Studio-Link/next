@@ -52,7 +52,7 @@ jobs:
         wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
         sudo add-apt-repository "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-14 main"
         sudo apt-get update
-        sudo apt-get install -y clang-tools-14 clang-14 clang-tidy-14 ninja-build cppcheck
+        sudo apt-get install -y clang-tools-14 clang-14 clang-tidy-14 ninja-build cppcheck gdb
 
     - name: install sound libs
       if: ${{ runner.os == 'Linux' }}
@@ -92,7 +92,7 @@ jobs:
 
     - name: make StudioLink - Linux
       if: ${{ runner.os == 'Linux' }}
-      run: make CC=clang-14 && make test
+      run: make CC=clang-14 CI=1 && make test
 
     - name: clang-tidy
       if: ${{ runner.os == 'Linux' }}
@@ -106,7 +106,7 @@ jobs:
 
     - name: make StudioLink - macOS
       if: ${{ runner.os == 'macOS' }}
-      run: make && make test
+      run: make CI=1 && make test
 
   analyze:
     name: CodeQL Analyze
