@@ -17,10 +17,10 @@ export default {
     },
 
     audio_src_dev(track: number, device: number) {
-        api_request('PUT', '/audio/src/' + String(track), String(device));
+        api_request('PUT', '/audio/src?track=' + String(track), String(device));
     },
 
     audio_play_dev(track: number, device: number) {
-        api_request('PUT', '/audio/play/' + String(track), String(device));
+        api_request('PUT', '/audio/play?track=' + String(track), String(device));
     }
 }

@@ -123,6 +123,8 @@ int sl_track_add(struct sl_track **trackp, enum sl_track_type type);
 int sl_track_del(int id);
 enum sl_track_status sl_track_status(int id);
 int sl_tracks_json(struct re_printf *pf);
+struct sl_track *sl_track_by_id(int id);
+struct slaudio *sl_track_audio(struct sl_track *track);
 
 
 /******************************************************************************
@@ -135,6 +137,8 @@ int sl_audio_add_remote_track(struct slaudio *audio, struct sl_track *track);
 int sl_audio_del_remote_track(struct sl_track *track);
 int sl_audio_alloc(struct slaudio **audiop, struct sl_track *track);
 int slaudio_odict(struct odict **o, struct slaudio *a);
+int sl_audio_set_src(struct slaudio *audio, int idx);
+int sl_audio_set_play(struct slaudio *audio, int idx);
 
 
 #ifdef __cplusplus

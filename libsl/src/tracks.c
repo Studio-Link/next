@@ -194,6 +194,21 @@ int sl_track_del(int id)
 }
 
 
+struct sl_track *sl_track_by_id(int id)
+{
+	struct le *le;
+
+	LIST_FOREACH(&tracks, le)
+	{
+		struct sl_track *track = le->data;
+		if (track->id == id) {
+			return track;
+		}
+	}
+	return NULL;
+}
+
+
 enum sl_track_status sl_track_status(int id)
 {
 	struct le *le;
@@ -206,6 +221,18 @@ enum sl_track_status sl_track_status(int id)
 	}
 
 	return SL_TRACK_INVALID;
+}
+
+
+struct slaudio *sl_track_audio(struct sl_track *track)
+{
+	if (!track)
+		return NULL;
+
+	if (track->type != SL_TRACK_LOCAL)
+		return NULL;
+
+	return track->u.local.slaudio;
 }
 
 

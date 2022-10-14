@@ -12,17 +12,16 @@ enum { ASYNC_WORKERS = 6 };
 static struct http_sock *httpsock = NULL;
 static bool headless		  = false;
 
-static const char *modv[] = {
-	"turn", "ice", "dtls_srtp",
+static const char *modv[] = {"turn", "ice", "dtls_srtp",
 
-	/* audio codecs */
-	"opus", "g711",
+			     /* audio codecs */
+			     "opus", "g711",
 
-	/* audio filter */
-	"auconv", "auresamp",
+			     /* audio filter */
+			     "auconv", "auresamp",
 
-	/* audio drivers */
-};
+			     /* audio drivers */
+			     "portaudio"};
 
 
 static void signal_handler(int signum)

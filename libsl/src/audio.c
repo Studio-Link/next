@@ -5,12 +5,14 @@ struct slaudio {
 	struct le le;
 	struct sl_track *local_track;
 	struct list remotel;
-	const struct list *devl_src;
-	const struct list *devl_play;
 	struct auplay_st *auplay_st;
 	struct ausrc_st *ausrc_st;
 	struct ausrc_prm ausrc_prm;
 	struct auplay_prm auplay_prm;
+	struct {
+		const struct list *devl;
+		int selected;
+	} play, src;
 };
 
 struct remote_track {
@@ -51,6 +53,8 @@ int slaudio_odict(struct odict **o, struct slaudio *a)
 	struct le *le;
 	uint32_t i = 0;
 	struct odict *o_slaudio;
+	struct odict *o_slaudio_src;
+	struct odict *o_slaudio_play;
 	struct odict *o_entry;
 	char id[ITOA_BUFSZ];
 	int err;
@@ -62,7 +66,15 @@ int slaudio_odict(struct odict **o, struct slaudio *a)
 	if (err)
 		return ENOMEM;
 
-	LIST_FOREACH(a->devl_play, le)
+	err = odict_alloc(&o_slaudio_src, 32);
+	if (err)
+		return ENOMEM;
+
+	err = odict_alloc(&o_slaudio_play, 32);
+	if (err)
+		return ENOMEM;
+
+	LIST_FOREACH(a->src.devl, le)
 	{
 		struct mediadev *dev = le->data;
 
@@ -74,11 +86,47 @@ int slaudio_odict(struct odict **o, struct slaudio *a)
 
 		odict_entry_add(o_entry, "idx", ODICT_INT, dev->device_index);
 		odict_entry_add(o_entry, "name", ODICT_STRING, dev->name);
-		odict_entry_add(o_slaudio, str_itoa(i++, id, 10), ODICT_OBJECT,
-				o_entry);
+		odict_entry_add(o_slaudio_src, str_itoa(i++, id, 10),
+				ODICT_OBJECT, o_entry);
 
 		o_entry = mem_deref(o_entry);
 	}
+
+	i = 0;
+	LIST_FOREACH(a->play.devl, le)
+	{
+		struct mediadev *dev = le->data;
+
+		err = odict_alloc(&o_entry, 32);
+		if (err) {
+			mem_deref(o_slaudio);
+			return ENOMEM;
+		}
+
+		odict_entry_add(o_entry, "idx", ODICT_INT, dev->device_index);
+		odict_entry_add(o_entry, "name", ODICT_STRING, dev->name);
+		odict_entry_add(o_slaudio_play, str_itoa(i++, id, 10),
+				ODICT_OBJECT, o_entry);
+
+		o_entry = mem_deref(o_entry);
+	}
+
+	odict_entry_add(o_slaudio, "src", ODICT_OBJECT, o_slaudio_src);
+	odict_entry_add(o_slaudio, "play", ODICT_OBJECT, o_slaudio_play);
+
+	o_slaudio_src  = mem_deref(o_slaudio_src);
+	o_slaudio_play = mem_deref(o_slaudio_play);
+
+	err = odict_alloc(&o_slaudio_src, 32);
+	err |= odict_alloc(&o_slaudio_play, 32);
+	if (err)
+		return ENOMEM;
+
+	odict_entry_add(o_slaudio, "src_dev", ODICT_INT, a->src.selected);
+	odict_entry_add(o_slaudio, "play_dev", ODICT_INT, a->play.selected);
+
+	mem_deref(o_slaudio_src);
+	mem_deref(o_slaudio_play);
 
 	*o = o_slaudio;
 
@@ -236,6 +284,28 @@ int sl_audio_add_remote_track(struct slaudio *audio, struct sl_track *track)
 }
 
 
+int sl_audio_set_src(struct slaudio *audio, int idx)
+{
+	if (!audio || idx < 0)
+		return EINVAL;
+
+	audio->src.selected = idx;
+
+	return 0;
+}
+
+
+int sl_audio_set_play(struct slaudio *audio, int idx)
+{
+	if (!audio || idx < 0)
+		return EINVAL;
+
+	audio->play.selected = idx;
+
+	return 0;
+}
+
+
 static void slaudio_destructor(void *data)
 {
 	struct slaudio *audio = data;
@@ -267,32 +337,65 @@ static void driver_alloc(struct slaudio *a)
 	const struct auplay *play;
 	const struct ausrc *src;
 	struct config *conf;
-	int err;
+	struct le *le;
 
 	conf = conf_config();
 
+	if (!a)
+		return;
+
+#if 0
 	err = auplay_alloc(&a->auplay_st, baresip_auplayl(),
-			   conf->audio.play_mod, &a->auplay_prm, NULL,
-			   auplay_write_handler, NULL);
+			   conf->audio.play_mod, &a->auplay_prm,
+			   conf->audio.play_dev, auplay_write_handler, NULL);
 	if (err) {
 		warning("slaudio: start_player failed: %m\n", err);
 		return;
 	}
 
 	err = ausrc_alloc(&a->ausrc_st, baresip_ausrcl(), conf->audio.src_mod,
-			  &a->ausrc_prm, NULL, ausrc_read_handler, NULL, NULL);
+			  &a->ausrc_prm, conf->audio.src_dev,
+			  ausrc_read_handler, NULL, NULL);
 	if (err) {
 		warning("slaudio: start_src failed: %m\n", err);
 		return;
 	}
+#endif
 
 	play = auplay_find(baresip_auplayl(), conf->audio.play_mod);
-	src  = ausrc_find(baresip_ausrcl(), conf->audio.src_mod);
+	if (!play)
+		return;
+	a->play.devl = &play->dev_list;
 
-	a->devl_play = &play->dev_list;
-	a->devl_src  = &src->dev_list;
+	src = ausrc_find(baresip_ausrcl(), conf->audio.src_mod);
+	if (!src)
+		return;
+	a->src.devl = &src->dev_list;
 
-	info("slaudio: %s/%s started\n", conf->audio.play_mod,
+
+	LIST_FOREACH(a->src.devl, le)
+	{
+		struct mediadev *dev = le->data;
+
+		if (!dev->src.is_default)
+			continue;
+
+		a->src.selected = dev->device_index;
+		break;
+	}
+
+	LIST_FOREACH(a->play.devl, le)
+	{
+		struct mediadev *dev = le->data;
+
+		if (!dev->play.is_default)
+			continue;
+
+		a->play.selected = dev->device_index;
+		break;
+	}
+
+	info("slaudio: %s/%s allocated\n", conf->audio.play_mod,
 	     conf->audio.src_mod);
 }
 

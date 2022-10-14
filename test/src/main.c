@@ -75,7 +75,7 @@ int main(void)
 	struct ausrc *src   = NULL;
 	int err;
 
-	log_enable_info(true);
+	log_enable_debug(true);
 
 	err = sl_baresip_init(NULL);
 	TEST_ERR(err);

@@ -22,8 +22,15 @@ interface AudioDevice {
     name: string
 }
 
+interface AudioList {
+    src: AudioDevice[]
+    play: AudioDevice[]
+    src_dev: number
+    play_dev: number
+}
+
 interface LocalTrack extends Track {
-    audio: AudioDevice[]
+    audio: AudioList
 }
 
 interface RemoteTrack extends Track {

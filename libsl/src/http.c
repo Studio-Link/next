@@ -146,7 +146,7 @@ static void http_req_handler(struct http_conn *conn,
 	int id;
 	struct pl pl;
 	struct sl_track *track;
-	int err;
+	int err = 0;
 	(void)arg;
 
 
@@ -242,6 +242,54 @@ static void http_req_handler(struct http_conn *conn,
 		sl_track_add(&track, SL_TRACK_REMOTE);
 		re_snprintf(json_str, SL_MAX_JSON, "%H", sl_tracks_json);
 		sl_ws_send_str(WS_TRACKS, json_str);
+
+		http_sreply(conn, 200, "OK", "text/html", "", 0);
+		goto out;
+	}
+
+	if (0 == pl_strcasecmp(&msg->path, "/api/v1/audio/src") &&
+	    0 == pl_strcasecmp(&msg->met, "PUT")) {
+		struct pl pltrack = PL_INIT;
+		struct slaudio *audio;
+		uint32_t track_id;
+		pl_set_mbuf(&pl, msg->mb);
+		id = pl_i32(&pl);
+
+		re_regex(msg->prm.p, msg->prm.l, "track=[0-9]+", &pltrack);
+		track_id = pl_u32(&pltrack);
+
+		track = sl_track_by_id(track_id);
+		audio = sl_track_audio(track);
+
+		err = sl_audio_set_src(audio, id);
+		if (err) {
+			http_ereply(conn, 404, "Not found");
+			goto out;
+		}
+
+		http_sreply(conn, 200, "OK", "text/html", "", 0);
+		goto out;
+	}
+
+	if (0 == pl_strcasecmp(&msg->path, "/api/v1/audio/play") &&
+	    0 == pl_strcasecmp(&msg->met, "PUT")) {
+		struct pl pltrack = PL_INIT;
+		struct slaudio *audio;
+		uint32_t track_id;
+		pl_set_mbuf(&pl, msg->mb);
+		id = pl_i32(&pl);
+
+		re_regex(msg->prm.p, msg->prm.l, "track=[0-9]+", &pltrack);
+		track_id = pl_u32(&pltrack);
+
+		track = sl_track_by_id(track_id);
+		audio = sl_track_audio(track);
+
+		err = sl_audio_set_play(audio, id);
+		if (err) {
+			http_ereply(conn, 404, "Not found");
+			goto out;
+		}
 
 		http_sreply(conn, 200, "OK", "text/html", "", 0);
 		goto out;
