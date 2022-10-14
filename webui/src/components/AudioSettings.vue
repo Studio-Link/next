@@ -27,7 +27,7 @@
                     {{option.name}}</option>
             </select>
         </div>
-        <ButtonPrimary @click="save()" :class="{ 'visible': active, 'invisible': !active }" class="mt-3 ml-2">
+        <ButtonPrimary @click="save()" class="mt-3 ml-2">
             Save
         </ButtonPrimary>
     </div>
