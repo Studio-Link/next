@@ -13,7 +13,7 @@ cmake_minimum_required(VERSION 3.10)
 
 set(CMAKE_C_COMPILER clang)
 
-project(studiolink VERSION 22.09.0 LANGUAGES C)
+project(studiolink VERSION 22.10.0 LANGUAGES C)
 
 
 ##############################################################################
