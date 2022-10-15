@@ -57,7 +57,7 @@ static void write_ws(void)
 static void tmr_handler(void *arg)
 {
 	(void)arg;
-	tmr_start(&tmr, 150, tmr_handler, NULL);
+	tmr_start(&tmr, 100, tmr_handler, NULL);
 
 	mtx_lock(mutex);
 	memcpy(sent_peaks, peaks, sizeof(peaks));
