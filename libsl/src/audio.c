@@ -62,7 +62,7 @@ static int device_play_by_index(struct slaudio *a, int index, char **device)
 		}
 	}
 
-	return ENOKEY;
+	return ENODATA;
 }
 
 
@@ -81,7 +81,7 @@ static int device_src_by_index(struct slaudio *a, int index, char **device)
 		}
 	}
 
-	return ENOKEY;
+	return ENODATA;
 }
 
 
@@ -330,8 +330,16 @@ static void auplay_write_handler(struct auframe *af, void *arg)
 
 static void ausrc_read_handler(struct auframe *af, void *arg)
 {
-	(void)af;
+	float sampv[4096];
 	(void)arg;
+
+	if (af->fmt != AUFMT_S16LE) {
+		warning("ausrc wrong format\n");
+		return;
+	}
+
+	auconv_from_s16(AUFMT_FLOAT, sampv, af->sampv, af->sampc);
+	sl_meter_process(0, sampv, af->sampc / 2);
 }
 
 

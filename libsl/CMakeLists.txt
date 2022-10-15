@@ -19,9 +19,9 @@ set(SRCS
   src/audio.c
   src/http.c
   src/main.c
+  src/meters.c
   src/tracks.c
   src/ws.c
-  src/ws_tracks.c
 )
 
 set(HEADERS

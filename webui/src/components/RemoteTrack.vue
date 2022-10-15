@@ -71,8 +71,8 @@
 
             <div class="flex w-5 items-end ml-0.5 opacity-60" aria-hidden="true">
                 <div id="levels" class="levels">
-                    <div id="level1" class="level"></div>
-                    <div id="level2" class="level"></div>
+                    <div :id="'level'+(pkey+pkey-1)" class="level"></div>
+                    <div :id="'level'+(pkey+pkey)" class="level"></div>
                 </div>
             </div>
         </div>

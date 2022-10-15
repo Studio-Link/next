@@ -90,18 +90,13 @@ int sl_http_listen(struct http_sock **sock);
 /******************************************************************************
  * ws.c
  */
-enum ws_type { WS_TRACKS };
+enum ws_type { WS_TRACKS, WS_METERS };
 int sl_ws_init(void);
 int sl_ws_close(void);
 int sl_ws_open(struct http_conn *conn, enum ws_type type,
 	       const struct http_msg *msg, websock_recv_h *recvh);
 void sl_ws_send_str(enum ws_type ws_type, char *str);
-
-
-/******************************************************************************
- * ws_tracks.c
- */
-void sl_ws_tracks(const struct websock_hdr *hdr, struct mbuf *mb, void *arg);
+void sl_ws_dummyh(const struct websock_hdr *hdr, struct mbuf *mb, void *arg);
 
 
 /******************************************************************************
@@ -138,6 +133,15 @@ int sl_audio_del_remote_track(struct sl_track *track);
 int sl_audio_alloc(struct slaudio **audiop, struct sl_track *track);
 int slaudio_odict(struct odict **o, struct slaudio *a);
 int sl_audio_set_device(struct slaudio *audio, int play_idx, int src_idx);
+
+
+/******************************************************************************
+ * meter.c
+ */
+
+void sl_meter_init(void);
+void sl_meter_close(void);
+void sl_meter_process(unsigned int ch, float *in, unsigned long nframes);
 
 
 #ifdef __cplusplus

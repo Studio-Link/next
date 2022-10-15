@@ -173,6 +173,8 @@ int sl_init(void)
 		goto out;
 	}
 
+	sl_meter_init();
+
 	err = sl_audio_init();
 	if (err) {
 		warning("sl_init: audio init failed (%m)\n", err);
@@ -237,6 +239,7 @@ void sl_close(void)
 	httpsock = mem_deref(httpsock);
 
 	sl_tracks_close();
+	sl_meter_close();
 	sl_audio_close();
 
 	ua_stop_all(true);

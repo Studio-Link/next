@@ -5,10 +5,12 @@ import "typeface-roboto-mono";
 import ButtonPrimary from "./components/ButtonPrimary.vue";
 import ButtonSecondary from "./components/ButtonSecondary.vue";
 import { tracks } from "./states/tracks";
+import { meters } from "./states/meters";
 import { config } from "./config";
 import './shortcuts'
 
 tracks.websocket(config.ws_host());
+meters.websocket(config.ws_host());
 
 const app = createApp(App);
 app.component("ButtonPrimary", ButtonPrimary);

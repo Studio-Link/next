@@ -11,6 +11,14 @@ struct ws_conn {
 };
 
 
+void sl_ws_dummyh(const struct websock_hdr *hdr, struct mbuf *mb, void *arg)
+{
+	(void)hdr;
+	(void)mb;
+	(void)arg;
+}
+
+
 static void conn_destroy(void *arg)
 {
 	struct ws_conn *ws_conn = arg;
