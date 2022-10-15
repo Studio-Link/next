@@ -48,6 +48,43 @@ static struct auplay *auplay;
 static struct list local_tracks = LIST_INIT;
 
 
+static int device_play_by_index(struct slaudio *a, int index, char **device)
+{
+	struct le *le;
+
+	LIST_FOREACH(a->play.devl, le)
+	{
+		struct mediadev *dev = le->data;
+
+		if (dev->device_index == index) {
+			str_dup(device, dev->name);
+			return 0;
+		}
+	}
+
+	return ENOKEY;
+}
+
+
+static int device_src_by_index(struct slaudio *a, int index, char **device)
+{
+	struct le *le;
+
+	LIST_FOREACH(a->src.devl, le)
+	{
+		struct mediadev *dev = le->data;
+
+		if (dev->device_index == index) {
+			*device = dev->name;
+			str_dup(device, dev->name);
+			return 0;
+		}
+	}
+
+	return ENOKEY;
+}
+
+
 int slaudio_odict(struct odict **o, struct slaudio *a)
 {
 	struct le *le;
@@ -340,15 +377,25 @@ static int driver_start(struct slaudio *a)
 
 int sl_audio_set_device(struct slaudio *audio, int play_idx, int src_idx)
 {
+	char *play_dev = NULL;
+	char *src_dev  = NULL;
+
 	if (!audio || play_idx < 0 || src_idx < 0)
 		return EINVAL;
 
 	audio->play.selected = play_idx;
 	audio->src.selected  = src_idx;
 
-	info("slaudio: set device %d/%d\n", play_idx, src_idx);
+	device_play_by_index(audio, play_idx, &play_dev);
+	device_src_by_index(audio, src_idx, &src_dev);
+
+	info("slaudio: set device speaker: %s\n", play_dev);
+	info("slaudio: set device mic: %s\n", src_dev);
 
 	driver_start(audio);
+
+	mem_deref(play_dev);
+	mem_deref(src_dev);
 
 	return 0;
 }
