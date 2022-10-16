@@ -17,7 +17,8 @@ project(sl LANGUAGES C)
 
 set(SRCS
   src/audio.c
-  src/http.c
+  src/http/client.c
+  src/http/server.c
   src/main.c
   src/meters.c
   src/tracks.c

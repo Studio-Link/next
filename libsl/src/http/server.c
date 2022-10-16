@@ -1,5 +1,3 @@
-#include <re.h>
-#include <baresip.h>
 #include <studiolink.h>
 
 #include <stdlib.h>
@@ -16,81 +14,6 @@
 #include "logo_solo.svg.h"
 
 #define SL_MAX_JSON (512 * 1024)
-
-struct sl_http {
-	struct http_cli *client;
-	struct http_reqconn *conn;
-};
-
-
-static void destroy(void *arg)
-{
-	struct sl_http *p = arg;
-	mem_deref(p->client);
-	mem_deref(p->conn);
-}
-
-
-int sl_http_alloc(struct sl_http **http, http_resp_h *resph)
-{
-	int err;
-	struct sl_http *p;
-
-	p = mem_zalloc(sizeof(struct sl_http), destroy);
-	if (!p)
-		return ENOMEM;
-
-	err = http_client_alloc(&p->client, net_dnsc(baresip_network()));
-	if (err)
-		return err;
-
-	err = http_reqconn_alloc(&p->conn, p->client, resph, NULL, NULL);
-	if (err)
-		return err;
-
-	*http = p;
-
-	return err;
-}
-
-
-int sl_http_req(struct sl_http *http, enum sl_http_met sl_met, char *url)
-{
-	struct pl met, uri;
-	int err;
-
-	if (!http || !url)
-		return EINVAL;
-
-	switch (sl_met) {
-	case SL_HTTP_GET:
-		pl_set_str(&met, "GET");
-		break;
-	case SL_HTTP_POST:
-		pl_set_str(&met, "POST");
-		break;
-	case SL_HTTP_PUT:
-		pl_set_str(&met, "PUT");
-		break;
-	case SL_HTTP_PATCH:
-		pl_set_str(&met, "PATCH");
-		break;
-	case SL_HTTP_DELETE:
-		pl_set_str(&met, "DELETE");
-		break;
-	}
-
-	pl_set_str(&uri, url);
-
-
-	err = http_reqconn_set_method(http->conn, &met);
-	if (err)
-		return err;
-
-	err = http_reqconn_send(http->conn, &uri);
-
-	return err;
-}
 
 
 static void http_sreply(struct http_conn *conn, uint16_t scode,
