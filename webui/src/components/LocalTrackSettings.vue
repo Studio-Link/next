@@ -34,7 +34,6 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps } from 'vue'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 import { EllipsisVerticalIcon } from '@heroicons/vue/20/solid'
 import { LocalTrackStates, tracks } from '../states/tracks'

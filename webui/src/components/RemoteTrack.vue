@@ -80,7 +80,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, defineProps } from 'vue'
+import { ref, onMounted } from 'vue'
 import RemoteTrackSettings from './RemoteTrackSettings.vue'
 import { tracks } from '../states/tracks'
 import api from '../api'
