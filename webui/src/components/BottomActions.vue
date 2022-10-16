@@ -10,11 +10,6 @@
             @click="record = !record">
             Record
         </button>
-        <button :class="[chat ? 'bg-green-900 hover:bg-green-800' : 'bg-sl-08dp hover:bg-neutral-700']"
-            class="rounded-full h-20 w-20 flex items-center justify-center shadow uppercase font-semibold"
-            @click="chat = !chat">
-            Chat
-        </button>
     </div>
 </template>
 
