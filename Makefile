@@ -199,6 +199,12 @@ linux_debug: all
 macos_debug: all
 	otool -L build/app/macos/studiolink
 
+
+##############################################################################
+#
+# Sanitizers
+#
+
 .PHONY: run_san
 run_san:
 	TSAN_OPTIONS="suppressions=tsan.supp" make run
