@@ -10,6 +10,8 @@
 #
 project(sl LANGUAGES C)
 
+find_package(LMDB REQUIRED)
+
 ##############################################################################
 #
 # Source/Header section
@@ -69,6 +71,6 @@ ENDFOREACH()
 #
 
 add_library(${PROJECT_NAME} STATIC ${SRCS} ${HEADERS} ${COMPILED_RESOURCES})
-target_link_libraries(${PROJECT_NAME} PUBLIC baresip rem re lmdb)
+target_link_libraries(${PROJECT_NAME} PUBLIC baresip rem re ${LMDB_LIBRARIES})
 target_include_directories(${PROJECT_NAME} PUBLIC include PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 target_compile_definitions(${PROJECT_NAME} PRIVATE ${RE_DEFINITIONS})
