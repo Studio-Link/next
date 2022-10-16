@@ -211,7 +211,7 @@ run_san:
 
 .PHONY: asan
 asan:
-	make cleaner
+	make clean
 	make external
 	cmake -B build -GNinja -DCMAKE_BUILD_TYPE=Debug \
 		-DCMAKE_C_FLAGS="-fsanitize=undefined,address \
@@ -221,7 +221,7 @@ asan:
 
 .PHONY: tsan
 tsan:
-	make cleaner
+	make clean
 	make external
 	cmake -B build -GNinja -DCMAKE_BUILD_TYPE=Debug \
 		-DCMAKE_C_FLAGS="-fsanitize=undefined,thread \
@@ -231,7 +231,7 @@ tsan:
 
 .PHONY: msan
 msan:
-	make cleaner
+	make clean
 	make external
 	cd third_party/openssl && \
 		make clean && \
