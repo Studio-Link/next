@@ -52,7 +52,7 @@ out:
 const char *sl_conf_uuid(void)
 {
 	char path[FS_PATH_MAX];
-	FILE *f;
+	FILE *f = NULL;
 	int err = 0;
 
 	re_snprintf(path, sizeof(path), "%s/uuid", sl_conf_path());
@@ -64,11 +64,9 @@ const char *sl_conf_uuid(void)
 		goto out;
 	}
 
-	f = fopen(path, "w");
-	if (!f) {
-		err = errno;
+	err = fs_fopen(&f, path, "w");
+	if (err)
 		goto out;
-	}
 
 	info("sl_conf_uuid: generate new uuid\n");
 
