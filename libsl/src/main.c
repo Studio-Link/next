@@ -1,16 +1,12 @@
 #include <stdlib.h>
-#include <pthread.h>
 #include <getopt.h>
-
-#include <re.h>
-#include <baresip.h>
 #include <studiolink.h>
-
 
 enum { ASYNC_WORKERS = 6 };
 
-static struct http_sock *httpsock = NULL;
-static bool headless		  = false;
+static struct http_sock *httpsock  = NULL;
+static bool headless		   = false;
+
 
 static const char *modv[] = {"turn", "ice", "dtls_srtp",
 
@@ -119,6 +115,8 @@ int sl_baresip_init(const uint8_t *conf)
 
 	config			  = conf_config();
 	config->net.use_linklocal = false;
+
+	str_ncpy(config->sip.uuid, sl_conf_uuid(), sizeof(config->sip.uuid));
 
 	err = baresip_init(config);
 	if (err) {

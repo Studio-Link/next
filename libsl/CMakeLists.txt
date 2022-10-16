@@ -19,8 +19,9 @@ find_package(LMDB REQUIRED)
 
 set(SRCS
   src/audio.c
-  src/http/client.c
+  src/conf.c
   src/db.c
+  src/http/client.c
   src/http/server.c
   src/main.c
   src/meters.c

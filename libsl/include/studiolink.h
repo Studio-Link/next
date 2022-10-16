@@ -33,6 +33,9 @@ extern "C" {
  */
 int sl_getopt(int argc, char *const argv[]);
 
+const char *sl_conf_path(void);
+const char *sl_conf_uuid(void);
+
 /**
  * Init StudioLink dependencies
  *
