@@ -51,13 +51,16 @@ samplerate: third_party/libsamplerate
 .PHONY: lmdb
 lmdb: third_party/lmdb
 
+.PHONY: cacert
+cacert: third_party/cacert.pem
+
 .PHONY: third_party_dir
 third_party_dir:
 	mkdir -p third_party/include
 	mkdir -p third_party/lib
 
 .PHONY: third_party
-third_party: third_party_dir openssl opus samplerate portaudio lmdb
+third_party: third_party_dir openssl opus samplerate portaudio lmdb cacert
 
 third_party/openssl:
 	$(HIDE)cd third_party && \
@@ -109,6 +112,9 @@ third_party/lmdb:
 		make CC=$(CC) -j && \
 		cp liblmdb.a ../../../lib/ && \
 		cp lmdb.h ../../../include/
+
+third_party/cacert.pem:
+	wget https://curl.se/ca/cacert.pem -O third_party/cacert.pem
 
 .PHONY: external_dir
 external_dir:

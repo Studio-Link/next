@@ -18,6 +18,7 @@ find_package(LMDB REQUIRED)
 #
 
 set(SRCS
+  src/account.c
   src/audio.c
   src/conf.c
   src/db.c
@@ -64,6 +65,15 @@ FOREACH(INPUT_FILE ${COMPILED_RESOURCES})
         COMMENT "Compiling ${INPUT_FILE} to binary")
     LIST(APPEND COMPILED_RESOURCES ${OUTPUT_FILE})
 ENDFOREACH()
+
+SET(OUTPUT_FILE cacert.h)
+ADD_CUSTOM_COMMAND(
+    OUTPUT ${OUTPUT_FILE}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../third_party 
+    COMMAND ${RESOURCE_COMPILER} -i cacert.pem ${CMAKE_CURRENT_BINARY_DIR}/${OUTPUT_FILE}
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/../third_party/cacert.pem
+    COMMENT "Compiling cacert.pem to binary")
+LIST(APPEND COMPILED_RESOURCES ${OUTPUT_FILE})
 
 
 ##############################################################################

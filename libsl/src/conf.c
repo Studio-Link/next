@@ -1,18 +1,5 @@
 #include <studiolink.h>
-
-#if defined(WIN32)
-#define DIR_SEP "\\"
-#else
-#define DIR_SEP "/"
-#endif
-
-#if defined(PATH_MAX)
-#define FS_PATH_MAX PATH_MAX
-#elif defined(_POSIX_PATH_MAX)
-#define FS_PATH_MAX _POSIX_PATH_MAX
-#else
-#define FS_PATH_MAX 512
-#endif
+#include <cacert.h>
 
 enum { UUID_LEN = 37 };
 static char conf_path[FS_PATH_MAX] = {0};
@@ -96,4 +83,25 @@ out:
 	info("sl_conf_uuid: '%s'\n", uuid);
 
 	return uuid;
+}
+
+
+int sl_conf_cacert(void)
+{
+	char file[FS_PATH_MAX];
+	FILE *f = NULL;
+	int err = 0;
+
+	re_snprintf(file, sizeof(file), "%s/cacert.pem", sl_conf_path());
+	err = fs_fopen(&f, file, "w");
+	if (err)
+		return err;
+
+	if (fwrite(cacert_pem, cacert_pem_len, 1, f) < 1)
+		err = ENFILE;
+
+	if (f)
+		fclose(f);
+
+	return err;
 }

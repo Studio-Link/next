@@ -4,8 +4,8 @@
 
 enum { ASYNC_WORKERS = 6 };
 
-static struct http_sock *httpsock  = NULL;
-static bool headless		   = false;
+static struct http_sock *httpsock = NULL;
+static bool headless		  = false;
 
 
 static const char *modv[] = {"turn", "ice", "dtls_srtp",
@@ -90,6 +90,10 @@ int sl_baresip_init(const uint8_t *conf)
 	const char *conf_ = "opus_bitrate       64000\n";
 	int err;
 
+	config = conf_config();
+	if (!config)
+		return EINVAL;
+
 	/*
 	 * turn off buffering on stdout
 	 */
@@ -113,7 +117,6 @@ int sl_baresip_init(const uint8_t *conf)
 		goto out;
 	}
 
-	config			  = conf_config();
 	config->net.use_linklocal = false;
 
 	str_ncpy(config->sip.uuid, sl_conf_uuid(), sizeof(config->sip.uuid));
@@ -153,9 +156,21 @@ int sl_init(void)
 {
 	int err;
 
+	err = sl_conf_cacert();
+	if (err) {
+		warning("sl_init: cacert write failed (%m)\n", err);
+		goto out;
+	}
+
 	err = sl_ws_init();
 	if (err) {
 		warning("sl_init: ws init failed (%m)\n", err);
+		goto out;
+	}
+
+	err = sl_account_init();
+	if (err) {
+		warning("sl_init: account init failed (%m)\n", err);
 		goto out;
 	}
 
@@ -239,6 +254,7 @@ void sl_close(void)
 	sl_tracks_close();
 	sl_meter_close();
 	sl_audio_close();
+	sl_account_close();
 
 	ua_stop_all(true);
 	ua_close();

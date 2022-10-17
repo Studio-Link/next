@@ -19,6 +19,14 @@
 extern "C" {
 #endif
 
+#if defined(WIN32)
+#define DIR_SEP "\\"
+#else
+#define DIR_SEP "/"
+#endif
+
+#define FS_PATH_MAX 512
+
 /******************************************************************************
  * main.c
  */
@@ -35,6 +43,7 @@ int sl_getopt(int argc, char *const argv[]);
 
 const char *sl_conf_path(void);
 const char *sl_conf_uuid(void);
+int sl_conf_cacert(void);
 
 /**
  * Init StudioLink dependencies
@@ -165,6 +174,13 @@ int sl_db_init(void);
 void sl_db_close(void);
 int sl_db_get(struct sldb *key, struct sldb *val);
 int sl_db_set(struct sldb *key, struct sldb *val);
+
+
+/******************************************************************************
+ * account.c
+ */
+int sl_account_init(void);
+int sl_account_close(void);
 
 
 #ifdef __cplusplus
