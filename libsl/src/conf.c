@@ -31,6 +31,11 @@ const char *sl_conf_path(void)
 		return NULL;
 	}
 
+	err = fs_mkdir(conf_path, 0700);
+	if (err) {
+		warning("sl_conf_path: fs_mkdir err %m\n", err);
+	}
+
 out:
 	return conf_path;
 }
