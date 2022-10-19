@@ -1,9 +1,17 @@
-#include <studiolink.h>
 #include <cacert.h>
+#include <studiolink.h>
 
 enum { UUID_LEN = 37 };
 static char conf_path[FS_PATH_MAX] = {0};
 static char uuid[UUID_LEN];
+
+static struct sl_config slconf = {NULL};
+
+
+struct sl_config *sl_conf(void)
+{
+	return &slconf;
+}
 
 
 /**
@@ -109,4 +117,14 @@ int sl_conf_cacert(void)
 		fclose(f);
 
 	return err;
+}
+
+
+int sl_conf_init(void)
+{
+	slconf.baresip = conf_config();
+	if (!slconf.baresip)
+		return EINVAL;
+
+	return 0;
 }

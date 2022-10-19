@@ -27,6 +27,22 @@ extern "C" {
 
 #define FS_PATH_MAX 512
 
+
+/******************************************************************************
+ * conf.c
+ */
+
+struct sl_config {
+	struct config *baresip;
+};
+
+const char *sl_conf_path(void);
+const char *sl_conf_uuid(void);
+int sl_conf_cacert(void);
+struct sl_config *sl_conf(void);
+int sl_conf_init(void);
+
+
 /******************************************************************************
  * main.c
  */
@@ -41,9 +57,6 @@ extern "C" {
  */
 int sl_getopt(int argc, char *const argv[]);
 
-const char *sl_conf_path(void);
-const char *sl_conf_uuid(void);
-int sl_conf_cacert(void);
 
 /**
  * Init StudioLink dependencies

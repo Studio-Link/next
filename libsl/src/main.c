@@ -86,14 +86,18 @@ int sl_getopt(int argc, char *const argv[])
 
 int sl_baresip_init(const uint8_t *conf)
 {
-	struct config *config;
+	struct sl_config *slconf;
 	const char *conf_ = "opus_bitrate       64000\n"
 			    "sip_verify_server yes\n";
 	int err;
 
-	config = conf_config();
-	if (!config)
-		return EINVAL;
+	err = sl_conf_init();
+	if (err) {
+		warning("sl_conf_init: failed: %m\n", err);
+		return err;
+	}
+
+	slconf = sl_conf();
 
 	/*
 	 * turn off buffering on stdout
@@ -114,26 +118,28 @@ int sl_baresip_init(const uint8_t *conf)
 
 	err = conf_configure_buf(conf, str_len((char *)conf));
 	if (err) {
-		warning("sl_init: conf_configure failed: %m\n", err);
+		warning("sl_baresip_init: conf_configure failed: %m\n", err);
 		goto out;
 	}
 
-	config->net.use_linklocal = false;
+	slconf->baresip->net.use_linklocal = false;
 
-	re_snprintf(config->sip.cafile, sizeof(config->sip.cafile),
-		    "%s/cacert.pem", sl_conf_path());
+	re_snprintf(slconf->baresip->sip.cafile,
+		    sizeof(slconf->baresip->sip.cafile), "%s/cacert.pem",
+		    sl_conf_path());
 
-	str_ncpy(config->sip.uuid, sl_conf_uuid(), sizeof(config->sip.uuid));
+	str_ncpy(slconf->baresip->sip.uuid, sl_conf_uuid(),
+		 sizeof(slconf->baresip->sip.uuid));
 
-	err = baresip_init(config);
+	err = baresip_init(slconf->baresip);
 	if (err) {
-		warning("sl_init: baresip init failed (%m)\n", err);
+		warning("sl_baresip_init: baresip_init failed (%m)\n", err);
 		goto out;
 	}
 
 	err = ua_init("StudioLink", true, true, true);
 	if (err) {
-		warning("sl_init: ua_init failed (%m)\n", err);
+		warning("sl_baresip_init: ua_init failed (%m)\n", err);
 		goto out;
 	}
 
