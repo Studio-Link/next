@@ -30,12 +30,12 @@
                     <label :for="pkey.toString()" class="block text-sm font-medium leading-5 text-sl-on_surface_2">Enter
                         Partner ID</label>
                     <div class="mt-1 relative rounded-md shadow-sm">
-                        <input :id="pkey.toString()" ref="slid" type="text"
+                        <input :id="pkey.toString()" v-model="peer" ref="slid" type="text"
                             class="form-input block w-full sm:text-sm sm:leading-5 text-sl-on_surface_1 bg-sl-surface mb-2 border-none focus:ring-sl-primary rounded-lg"
                             placeholder="xyz@studio.link" />
                     </div>
                     <div class="mt-2 flex justify-between items-center">
-                        <ButtonPrimary>
+                        <ButtonPrimary @click="api.dial(pkey, peer)">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
                                 class="h-4 mr-1">
                                 <path
@@ -88,6 +88,8 @@ import api from '../api'
 const props = defineProps({ 'pkey': { type: Number, required: true } })
 
 const tid = ref<HTMLDivElement>()
+
+const peer = ref("");
 
 onMounted(() => {
     tid.value?.focus()

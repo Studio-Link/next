@@ -8,6 +8,10 @@ function api_request(met: string, url: string, data: string | null) {
 }
 
 export default {
+    dial(track: number, peer: string) {
+        api_request('POST', '/dial?track=' + String(track), peer);
+    },
+
     track_add(type: string) {
         api_request('POST', '/tracks/' + type, null);
     },

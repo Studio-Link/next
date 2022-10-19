@@ -176,6 +176,39 @@ static void http_req_handler(struct http_conn *conn,
 		goto out;
 	}
 
+	if (0 == pl_strcasecmp(&msg->path, "/api/v1/dial") &&
+	    0 == pl_strcasecmp(&msg->met, "POST")) {
+		struct pl pltrack = PL_INIT;
+		char *peer;
+
+		pl_set_mbuf(&pl, msg->mb);
+
+		if (pl.l > 64 || pl.l < 1)
+			goto err;
+
+		err = re_regex(msg->prm.p, msg->prm.l, "track=[0-9]+",
+			       &pltrack);
+		if (err)
+			goto err;
+
+		err = pl_strdup(&peer, &pl);
+
+		info("dial %r on track %r\n", &pl, &pltrack);
+
+		err = ua_connect(sl_account_ua(), NULL, NULL, peer,
+				 VIDMODE_OFF);
+		if (err)
+			goto err;
+
+		re_snprintf(json_str, SL_MAX_JSON, "%H", sl_tracks_json);
+		sl_ws_send_str(WS_TRACKS, json_str);
+
+		http_sreply(conn, 200, "OK", "text/html", "", 0);
+
+		mem_deref(peer);
+		goto out;
+	}
+
 	if (0 == pl_strcasecmp(&msg->path, "/api/v1/audio/device") &&
 	    0 == pl_strcasecmp(&msg->met, "PUT")) {
 		struct pl pltrack = PL_INIT;

@@ -199,6 +199,7 @@ int sl_db_set(struct sldb *key, struct sldb *val);
  */
 int sl_account_init(void);
 int sl_account_close(void);
+struct ua *sl_account_ua(void);
 
 
 #ifdef __cplusplus
