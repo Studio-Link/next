@@ -32,7 +32,8 @@ int sl_httpc_alloc(struct sl_httpc **http, http_resp_h *resph)
 	if (err)
 		goto out;
 
-	re_snprintf(file, sizeof(file), "%s/cacert.pem", sl_conf_path());
+	re_snprintf(file, sizeof(file), "%s" DIR_SEP "cacert.pem",
+		    sl_conf_path());
 
 	err = http_client_add_ca(p->client, file);
 	if (err)

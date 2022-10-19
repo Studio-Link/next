@@ -6,10 +6,7 @@ static char conf_path[FS_PATH_MAX] = {0};
 static char uuid[UUID_LEN];
 
 static struct sl_config slconf = {
-	.baresip = NULL,
-	.play.mod = "portaudio",
-	.src.mod = "portaudio"
-};
+	.baresip = NULL, .play.mod = "portaudio", .src.mod = "portaudio"};
 
 
 struct sl_config *sl_conf(void)
@@ -59,7 +56,7 @@ const char *sl_conf_uuid(void)
 	FILE *f = NULL;
 	int err = 0;
 
-	re_snprintf(path, sizeof(path), "%s/uuid", sl_conf_path());
+	re_snprintf(path, sizeof(path), "%s" DIR_SEP "uuid", sl_conf_path());
 
 	f = fopen(path, "r");
 	if (f) {
@@ -109,7 +106,8 @@ int sl_conf_cacert(void)
 	FILE *f = NULL;
 	int err = 0;
 
-	re_snprintf(file, sizeof(file), "%s/cacert.pem", sl_conf_path());
+	re_snprintf(file, sizeof(file), "%s" DIR_SEP "cacert.pem",
+		    sl_conf_path());
 	err = fs_fopen(&f, file, "w");
 	if (err)
 		return err;

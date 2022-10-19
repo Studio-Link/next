@@ -125,8 +125,8 @@ int sl_baresip_init(const uint8_t *conf)
 	slconf->baresip->net.use_linklocal = false;
 
 	re_snprintf(slconf->baresip->sip.cafile,
-		    sizeof(slconf->baresip->sip.cafile), "%s/cacert.pem",
-		    sl_conf_path());
+		    sizeof(slconf->baresip->sip.cafile),
+		    "%s" DIR_SEP "cacert.pem", sl_conf_path());
 
 	str_ncpy(slconf->baresip->sip.uuid, sl_conf_uuid(),
 		 sizeof(slconf->baresip->sip.uuid));
