@@ -32,7 +32,7 @@ const char *sl_conf_path(void)
 	}
 
 	err = fs_mkdir(conf_path, 0700);
-	if (err) {
+	if (err && err != EEXIST) {
 		warning("sl_conf_path: fs_mkdir err %m\n", err);
 	}
 
