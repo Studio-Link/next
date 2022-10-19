@@ -12,12 +12,10 @@ static void http_resph(int err, const struct http_msg *msg, void *arg)
 	const char *user;
 	const char *domain;
 	const char *password;
-#if 0
 	const char *regint;
 	const char *stunserver;
 	const char *stunuser;
 	const char *stunpass;
-#endif
 	(void)arg;
 
 
@@ -51,10 +49,31 @@ static void http_resph(int err, const struct http_msg *msg, void *arg)
 	if (!password)
 		goto out;
 
+	regint = odict_string(o, "regint");
+	if (!regint)
+		goto out;
+
+	stunserver = odict_string(o, "stunserver");
+	if (!stunserver)
+		goto out;
+
+	stunuser = odict_string(o, "stunuser");
+	if (!stunuser)
+		goto out;
+
+	stunpass = odict_string(o, "stunpass");
+	if (!stunpass)
+		goto out;
+
 	err = 0;
 
-	re_snprintf(aor, sizeof(aor), "<sip:%s@%s;transport=tls>;auth_pass=%s",
-		    user, domain, password);
+	re_snprintf(
+		aor, sizeof(aor),
+		"<sip:%s@%s;transport=tls>;auth_pass=%s;regint=%s;stunserver="
+		"\"%s\";medianat=turn;mediaenc=dtls_srtp;stunuser=%s;stunpass="
+		"%s;",
+		user, domain, password, regint, stunserver, stunuser,
+		stunpass);
 
 	err = ua_alloc(&ua, aor);
 	if (err)
