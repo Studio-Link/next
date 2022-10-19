@@ -99,6 +99,12 @@ int sl_baresip_init(const uint8_t *conf)
 
 	slconf = sl_conf();
 
+	err = sl_conf_cacert();
+	if (err) {
+		warning("sl_conf_cacert: failed (%m)\n", err);
+		return err;
+	}
+
 	/*
 	 * turn off buffering on stdout
 	 */
@@ -162,15 +168,8 @@ out:
 
 
 int sl_init(void)
-
 {
 	int err;
-
-	err = sl_conf_cacert();
-	if (err) {
-		warning("sl_init: cacert write failed (%m)\n", err);
-		goto out;
-	}
 
 	err = sl_ws_init();
 	if (err) {
