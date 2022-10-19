@@ -91,12 +91,9 @@ out:
 
 int sl_account_init(void)
 {
-	struct config *conf = conf_config();
+	struct sl_config *conf = sl_conf();
 	char url[256];
 	int err;
-
-	if (!conf)
-		return EINVAL;
 
 	err = sl_httpc_alloc(&httpc, http_resph);
 	if (err)
@@ -104,7 +101,7 @@ int sl_account_init(void)
 
 	re_snprintf(url, sizeof(url),
 		    "https://my.studio.link/api/v1/provisioning/%s",
-		    conf->sip.uuid);
+		    conf->baresip->sip.uuid);
 
 	err = sl_httpc_req(httpc, SL_HTTP_GET, url);
 

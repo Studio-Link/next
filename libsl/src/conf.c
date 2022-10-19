@@ -5,7 +5,11 @@ enum { UUID_LEN = 37 };
 static char conf_path[FS_PATH_MAX] = {0};
 static char uuid[UUID_LEN];
 
-static struct sl_config slconf = {NULL};
+static struct sl_config slconf = {
+	.baresip = NULL,
+	.play.mod = "portaudio",
+	.src.mod = "portaudio"
+};
 
 
 struct sl_config *sl_conf(void)

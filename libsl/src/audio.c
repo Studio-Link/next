@@ -425,21 +425,21 @@ static void driver_alloc(struct slaudio *a)
 {
 	const struct auplay *play;
 	const struct ausrc *src;
-	struct config *conf;
+	struct sl_config *conf;
 	struct le *le;
 
-	conf = conf_config();
+	conf = sl_conf();
 
 	if (!a || !conf)
 		return;
 
 
-	play = auplay_find(baresip_auplayl(), conf->audio.play_mod);
+	play = auplay_find(baresip_auplayl(), conf->play.mod);
 	if (!play)
 		return;
 	a->play.devl = &play->dev_list;
 
-	src = ausrc_find(baresip_ausrcl(), conf->audio.src_mod);
+	src = ausrc_find(baresip_ausrcl(), conf->src.mod);
 	if (!src)
 		return;
 	a->src.devl = &src->dev_list;
@@ -467,8 +467,7 @@ static void driver_alloc(struct slaudio *a)
 		break;
 	}
 
-	info("slaudio: %s/%s allocated\n", conf->audio.play_mod,
-	     conf->audio.src_mod);
+	info("slaudio: %s/%s allocated\n", conf->play.mod, conf->src.mod);
 }
 
 

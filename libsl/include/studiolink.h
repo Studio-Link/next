@@ -33,7 +33,12 @@ extern "C" {
  */
 
 struct sl_config {
-	struct config *baresip;
+	struct config *baresip; /**< baresip config object            */
+
+	struct {
+		char src[128];
+		char mod[16];
+	} play, src;
 };
 
 const char *sl_conf_path(void);

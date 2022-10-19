@@ -70,10 +70,10 @@ static int run_tests(void)
 
 int main(void)
 {
-	struct config *conf;
-	size_t ntests	    = ARRAY_SIZE(tests);
-	struct auplay *play = NULL;
-	struct ausrc *src   = NULL;
+	struct sl_config *conf = sl_conf();
+	size_t ntests	       = ARRAY_SIZE(tests);
+	struct auplay *play    = NULL;
+	struct ausrc *src      = NULL;
 	int err;
 
 	log_enable_debug(true);
@@ -81,13 +81,13 @@ int main(void)
 	err = sl_baresip_init(NULL);
 	TEST_ERR(err);
 
-	conf = conf_config();
+	str_ncpy(conf->baresip->audio.play_mod, "mock-auplay",
+		 sizeof(conf->baresip->audio.play_mod));
+	str_ncpy(conf->play.mod, "mock-auplay", sizeof(conf->play.mod));
 
-	re_snprintf(conf->audio.play_mod, sizeof(conf->audio.play_mod),
-		    "mock-auplay");
-
-	re_snprintf(conf->audio.src_mod, sizeof(conf->audio.src_mod),
-		    "mock-auplay");
+	str_ncpy(conf->baresip->audio.src_mod, "mock-ausrc",
+		 sizeof(conf->baresip->audio.src_mod));
+	str_ncpy(conf->src.mod, "mock-ausrc", sizeof(conf->src.mod));
 
 	err = mock_auplay_register(&play, baresip_auplayl(), NULL, NULL);
 	TEST_ERR(err);
