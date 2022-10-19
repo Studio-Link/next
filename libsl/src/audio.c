@@ -506,11 +506,19 @@ int sl_audio_alloc(struct slaudio **audiop, struct sl_track *track)
 
 int sl_audio_init(void)
 {
-	int err = 0;
+	struct sl_config *conf = sl_conf();
+	int err		       = 0;
+
+	str_ncpy(conf->baresip->audio.play_mod, "slaudio",
+		 sizeof(conf->baresip->audio.play_mod));
+
+	str_ncpy(conf->baresip->audio.src_mod, "slaudio",
+		 sizeof(conf->baresip->audio.src_mod));
 
 	err = ausrc_register(&ausrc, baresip_ausrcl(), "slaudio", src_alloc);
 	err |= auplay_register(&auplay, baresip_auplayl(), "slaudio",
 			       play_alloc);
+
 	return err;
 }
 

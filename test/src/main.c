@@ -81,12 +81,7 @@ int main(void)
 	err = sl_baresip_init(NULL);
 	TEST_ERR(err);
 
-	str_ncpy(conf->baresip->audio.play_mod, "mock-auplay",
-		 sizeof(conf->baresip->audio.play_mod));
 	str_ncpy(conf->play.mod, "mock-auplay", sizeof(conf->play.mod));
-
-	str_ncpy(conf->baresip->audio.src_mod, "mock-ausrc",
-		 sizeof(conf->baresip->audio.src_mod));
 	str_ncpy(conf->src.mod, "mock-ausrc", sizeof(conf->src.mod));
 
 	err = mock_auplay_register(&play, baresip_auplayl(), NULL, NULL);
