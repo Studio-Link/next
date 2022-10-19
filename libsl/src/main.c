@@ -87,7 +87,8 @@ int sl_getopt(int argc, char *const argv[])
 int sl_baresip_init(const uint8_t *conf)
 {
 	struct config *config;
-	const char *conf_ = "opus_bitrate       64000\n";
+	const char *conf_ = "opus_bitrate       64000\n"
+			    "sip_verify_server yes\n";
 	int err;
 
 	config = conf_config();
@@ -118,6 +119,9 @@ int sl_baresip_init(const uint8_t *conf)
 	}
 
 	config->net.use_linklocal = false;
+
+	re_snprintf(config->sip.cafile, sizeof(config->sip.cafile),
+		    "%s/cacert.pem", sl_conf_path());
 
 	str_ncpy(config->sip.uuid, sl_conf_uuid(), sizeof(config->sip.uuid));
 
