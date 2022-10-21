@@ -1,9 +1,15 @@
 import { reactive } from 'vue'
 
 export enum LocalTrackStates {
-    Setup = 1,
+    Setup = 0,
     SelectAudio,
     Ready,
+}
+
+export enum RemoteTrackStates {
+    NoCall = 0,
+    Calling,
+    OnCall,
 }
 
 interface Track {
@@ -35,6 +41,7 @@ interface LocalTrack extends Track {
 
 interface RemoteTrack extends Track {
     status?: string
+    state: RemoteTrackStates
 }
 
 interface Tracks {
@@ -54,7 +61,7 @@ interface Tracks {
     localState(id: number): LocalTrackStates
     select(id: number): void
     extend(id: number, active: boolean): void
-    selected(): number
+    selected(): number,
 }
 
 export const tracks: Tracks = {
@@ -78,7 +85,6 @@ export const tracks: Tracks = {
         }
         this.socket.onmessage = (message) => {
             const tracks = JSON.parse(message.data)
-            // console.log(tracks)
             this.update(tracks)
         }
         this.selected_debounce = false
@@ -96,15 +102,6 @@ export const tracks: Tracks = {
         for (const key in tracks) {
             tracks[key].id = parseInt(key)
 
-            if (tracks[key].type == 'local') {
-                console.log(tracks[key])
-                this.local_tracks.push(tracks[key])
-            }
-
-            if (tracks[key].type == 'remote') {
-                this.remote_tracks.push(tracks[key])
-            }
-
             /* Initialize frontend state only once */
             if (this.state[tracks[key].id] === undefined) {
                 this.state[tracks[key].id] = {
@@ -115,6 +112,15 @@ export const tracks: Tracks = {
                     name: tracks[key].name,
                 }
                 last_key = parseInt(key)
+            }
+
+            if (tracks[key].type == 'local') {
+                this.local_tracks.push(tracks[key])
+            }
+
+            if (tracks[key].type == 'remote') {
+                console.log(tracks[key])
+                this.remote_tracks.push(tracks[key])
             }
         }
 

@@ -12,6 +12,14 @@ export default {
         api_request('POST', '/dial?track=' + String(track), peer);
     },
 
+    hangup(track: number) {
+        api_request('POST', '/hangup?track=' + String(track), null);
+    },
+
+    accept(track: number) {
+        api_request('POST', '/accept?track=' + String(track), null);
+    },
+
     track_add(type: string) {
         api_request('POST', '/tracks/' + type, null);
     },

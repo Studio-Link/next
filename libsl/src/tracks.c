@@ -4,6 +4,8 @@
 
 #define SL_MAX_TRACKS 99
 
+enum remote_state { NO_CALL = 0, CALLING, ONCALL };
+
 /* Local audio device track */
 struct local {
 	struct slaudio *slaudio;
@@ -12,6 +14,7 @@ struct local {
 /* Remote audio call track */
 struct remote {
 	struct call *call;
+	enum remote_state state;
 };
 
 struct sl_track {
@@ -19,6 +22,7 @@ struct sl_track {
 	int id;
 	enum sl_track_type type;
 	char name[64];
+	char error[64];
 	enum sl_track_status status;
 	union
 	{
@@ -80,11 +84,15 @@ int sl_tracks_json(struct re_printf *pf)
 			o_slaudio = mem_deref(o_slaudio);
 		}
 
-		if (track->type == SL_TRACK_REMOTE)
+		if (track->type == SL_TRACK_REMOTE) {
 			odict_entry_add(o_track, "type", ODICT_STRING,
 					"remote");
+			odict_entry_add(o_track, "state", ODICT_INT,
+					track->u.remote.state);
+		}
 
 		odict_entry_add(o_track, "name", ODICT_STRING, track->name);
+		odict_entry_add(o_track, "error", ODICT_STRING, track->error);
 		odict_entry_add(o_tracks, str_itoa(track->id, id, 10),
 				ODICT_OBJECT, o_track);
 		o_track = mem_deref(o_track);
@@ -135,8 +143,10 @@ static void track_destructor(void *data)
 	if (track->type == SL_TRACK_LOCAL)
 		mem_deref(track->u.local.slaudio);
 
-	if (track->type == SL_TRACK_REMOTE)
+	if (track->type == SL_TRACK_REMOTE) {
+		ua_hangup(sl_account_ua(), track->u.remote.call, 0, NULL);
 		sl_audio_del_remote_track(track);
+	}
 }
 
 
@@ -226,19 +236,107 @@ enum sl_track_status sl_track_status(int id)
 
 struct slaudio *sl_track_audio(struct sl_track *track)
 {
-	if (!track)
-		return NULL;
-
-	if (track->type != SL_TRACK_LOCAL)
+	if (!track || track->type != SL_TRACK_LOCAL)
 		return NULL;
 
 	return track->u.local.slaudio;
 }
 
 
+int sl_track_dial(struct sl_track *track, struct pl *peer)
+{
+	int err;
+	char *peerc;
+
+	if (!track || track->type != SL_TRACK_REMOTE)
+		return EINVAL;
+
+	track->error[0] = '\0';
+
+	err = account_uri_complete_strdup(ua_account(sl_account_ua()), &peerc,
+					  peer);
+	if (err)
+		return err;
+
+	err = ua_connect(sl_account_ua(), &track->u.remote.call, NULL, peerc,
+			 VIDMODE_OFF);
+	if (err)
+		return err;
+
+	mem_deref(peerc);
+
+	return 0;
+}
+
+
+void sl_track_hangup(struct sl_track *track)
+{
+	if (!track || track->type != SL_TRACK_REMOTE)
+		return;
+
+	ua_hangup(sl_account_ua(), track->u.remote.call, 0, NULL);
+
+	track->u.remote.call = NULL;
+}
+
+
+void sl_track_ws_send(void)
+{
+	char *json_str = mem_zalloc(SL_MAX_JSON + 1, NULL);
+	re_snprintf(json_str, SL_MAX_JSON, "%H", sl_tracks_json);
+	sl_ws_send_str(WS_TRACKS, json_str);
+	mem_deref(json_str);
+}
+
+
+static void eventh(struct ua *ua, enum ua_event ev, struct call *call,
+		   const char *prm, void *arg)
+{
+	struct le *le;
+	bool changed = false;
+	(void)ua;
+	(void)call;
+	(void)prm;
+	(void)arg;
+
+
+	LIST_FOREACH(&tracks, le)
+	{
+		struct sl_track *track = le->data;
+
+		if (track->type != SL_TRACK_REMOTE)
+			continue;
+
+		if (track->u.remote.call != call)
+			continue;
+
+		if (ev == UA_EVENT_CALL_RINGING) {
+			track->u.remote.state = CALLING;
+			changed		      = true;
+		}
+
+		if (ev == UA_EVENT_CALL_CLOSED) {
+			track->u.remote.state = NO_CALL;
+			track->u.remote.call  = NULL;
+			if (call_scode(call) != 200)
+				str_ncpy(track->error, prm,
+					 sizeof(track->error));
+			changed = true;
+		}
+	}
+
+	if (!changed)
+		return;
+
+	sl_track_ws_send();
+}
+
+
 int sl_tracks_init(void)
 {
 	int err;
+
+	uag_event_register(eventh, NULL);
 
 	err = sl_track_add(&local_track, SL_TRACK_LOCAL);
 	if (err)
@@ -253,6 +351,8 @@ int sl_tracks_init(void)
 int sl_tracks_close(void)
 {
 	list_flush(&tracks);
+	uag_event_unregister(eventh);
+
 	local_track = NULL;
 
 	return 0;
