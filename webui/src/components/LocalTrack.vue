@@ -9,7 +9,7 @@
         </div>
 
         <div class="flex mt-1">
-            <div class="bg-sl-02dpa rounded-lg h-44 w-full shadow" :class="{ 'h-56': isExtended() }">
+            <div class="bg-sl-02dpa rounded-lg h-48 w-full shadow" :class="{ 'h-56': isExtended() }">
                 <div class="flex justify-between items-center">
                     <div :id="`track${pkey}`" tabindex="0"
                         :class="{ 'bg-sl-disabled': isActive(), 'bg-sl-24dpa': !isActive() }"

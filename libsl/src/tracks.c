@@ -2,9 +2,7 @@
 #include <baresip.h>
 #include <studiolink.h>
 
-#define SL_MAX_TRACKS 99
-
-enum remote_state { NO_CALL = 0, CALLING, ONCALL };
+#define SL_MAX_TRACKS 16
 
 /* Local audio device track */
 struct local {
@@ -14,7 +12,6 @@ struct local {
 /* Remote audio call track */
 struct remote {
 	struct call *call;
-	enum remote_state state;
 };
 
 struct sl_track {
@@ -87,11 +84,10 @@ int sl_tracks_json(struct re_printf *pf)
 		if (track->type == SL_TRACK_REMOTE) {
 			odict_entry_add(o_track, "type", ODICT_STRING,
 					"remote");
-			odict_entry_add(o_track, "state", ODICT_INT,
-					track->u.remote.state);
 		}
 
 		odict_entry_add(o_track, "name", ODICT_STRING, track->name);
+		odict_entry_add(o_track, "status", ODICT_INT, track->status);
 		odict_entry_add(o_track, "error", ODICT_STRING, track->error);
 		odict_entry_add(o_tracks, str_itoa(track->id, id, 10),
 				ODICT_OBJECT, o_track);
@@ -144,7 +140,9 @@ static void track_destructor(void *data)
 		mem_deref(track->u.local.slaudio);
 
 	if (track->type == SL_TRACK_REMOTE) {
-		ua_hangup(sl_account_ua(), track->u.remote.call, 0, NULL);
+		if (track->u.remote.call)
+			ua_hangup(sl_account_ua(), track->u.remote.call, 0,
+				  NULL);
 		sl_audio_del_remote_track(track);
 	}
 }
@@ -263,6 +261,11 @@ int sl_track_dial(struct sl_track *track, struct pl *peer)
 	if (err)
 		return err;
 
+	track->status = SL_TRACK_REMOTE_CALLING;
+	pl_strcpy(peer, track->name, sizeof(track->name));
+
+	sl_track_ws_send();
+
 	mem_deref(peerc);
 
 	return 0;
@@ -274,8 +277,9 @@ void sl_track_hangup(struct sl_track *track)
 	if (!track || track->type != SL_TRACK_REMOTE)
 		return;
 
-	ua_hangup(sl_account_ua(), track->u.remote.call, 0, NULL);
+	ua_hangup(sl_account_ua(), track->u.remote.call, 0, "");
 
+	track->name[0]	     = '\0';
 	track->u.remote.call = NULL;
 }
 
@@ -311,13 +315,19 @@ static void eventh(struct ua *ua, enum ua_event ev, struct call *call,
 			continue;
 
 		if (ev == UA_EVENT_CALL_RINGING) {
-			track->u.remote.state = CALLING;
-			changed		      = true;
+			track->status = SL_TRACK_REMOTE_CALLING;
+			changed	      = true;
+		}
+
+		if (ev == UA_EVENT_CALL_ESTABLISHED) {
+			track->status = SL_TRACK_REMOTE_CONNECTED;
+			changed	      = true;
 		}
 
 		if (ev == UA_EVENT_CALL_CLOSED) {
-			track->u.remote.state = NO_CALL;
-			track->u.remote.call  = NULL;
+			track->status	     = SL_TRACK_IDLE;
+			track->u.remote.call = NULL;
+			track->name[0]	     = '\0';
 			if (call_scode(call) != 200)
 				str_ncpy(track->error, prm,
 					 sizeof(track->error));

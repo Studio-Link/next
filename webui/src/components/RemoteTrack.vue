@@ -13,7 +13,7 @@
         </div>
 
         <div class="flex mt-1">
-            <div class="bg-sl-02dpa rounded-lg h-44 w-full shadow">
+            <div class="bg-sl-02dpa rounded-lg h-48 w-full shadow">
                 <div class="flex justify-between items-center">
                     <div :id="`track${pkey}`" ref="tid" tabindex="0" @focus="setActive()"
                         :class="[isActive() ? 'bg-sl-disabled' : 'bg-sl-24dpa']"
@@ -26,7 +26,7 @@
                         <RemoteTrackSettings v-if="isActive()" :pkey="props.pkey" />
                     </div>
                 </div>
-                <RemoteTrackCall :pkey="props.pkey" :idx="props.idx" />
+                <RemoteTrackCall :pkey="props.pkey" :idx="props.idx" :error="props.error" />
                 <div class="text-right mt-0.5 mr-0.5 text-xs">
                     <button class="opacity-30 hover:opacity-60 focus:opacity-60" title="Remove track"
                         @click="deleteRemoteTrack()" @focus="setActive()">
@@ -59,6 +59,7 @@ import api from '../api'
 const props = defineProps({ 
     'pkey': { type: Number, required: true },
     'idx': { type: Number, required: true },
+    'error': { type: String, required: true },
 })
 
 const tid = ref<HTMLDivElement>()

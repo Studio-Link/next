@@ -143,8 +143,10 @@ enum sl_track_type { SL_TRACK_REMOTE, SL_TRACK_LOCAL };
 enum sl_track_status {
 	SL_TRACK_INVALID = -1,
 	SL_TRACK_IDLE,
-	SL_TRACK_CONNECTED,
-	SL_TRACK_CLOSED
+	SL_TRACK_AUDIO_READY,
+	SL_TRACK_REMOTE_CONNECTED,
+	SL_TRACK_REMOTE_CALLING,
+	SL_TRACK_REMOTE_CLOSED
 };
 int sl_tracks_init(void);
 int sl_tracks_close(void);

@@ -6,6 +6,7 @@
             <input @keyup.enter="api.dial(pkey, peer)" :id="pkey.toString()" v-model="peer" ref="slid" type="text"
                 class="form-input block w-full sm:text-sm sm:leading-5 text-sl-on_surface_1 bg-sl-surface mb-2 border-none focus:ring-sl-primary rounded-lg"
                 placeholder="xyz@studio.link" />
+                <p class="text-sm text-red-500">{{ error }}</p>
         </div>
         <div class="mt-2 flex justify-between items-center">
             <ButtonPrimary @click="api.dial(pkey, peer)">
@@ -38,16 +39,27 @@
             Hangup
         </ButtonSecondary>
     </div>
+    <div v-if="isOnCall()" class="text-center">
+        <svg class="w-24 h-24 fill-neutral-700 mx-auto"
+        xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+        <path
+        d="M224 32C135.6 32 64 103.6 64 192v16c0 8.8-7.2 16-16 16s-16-7.2-16-16V192C32 86 118 0 224 0S416 86 416 192v16c0 61.9-50.1 112-112 112H240 224 208c-17.7 0-32-14.3-32-32s14.3-32 32-32h32c17.7 0 32 14.3 32 32h32c44.2 0 80-35.8 80-80V192c0-88.4-71.6-160-160-160zM96 192c0-70.7 57.3-128 128-128s128 57.3 128 128c0 13.9-2.2 27.3-6.3 39.8C337.4 246.3 321.8 256 304 256h-8.6c-11.1-19.1-31.7-32-55.4-32H208c-35.3 0-64 28.7-64 64c0 1.4 0 2.7 .1 4C114.8 268.6 96 232.5 96 192zM224 352h16 64 9.6C387.8 352 448 412.2 448 486.4c0 14.1-11.5 25.6-25.6 25.6H25.6C11.5 512 0 500.5 0 486.4C0 412.2 60.2 352 134.4 352H208h16z" />
+        </svg>
+        <ButtonSecondary v-if="isActive()" class="mt-2" @click="api.hangup(pkey)">
+        Hangup
+        </ButtonSecondary>
+    </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { tracks, RemoteTrackStates } from '../../states/tracks'
+import { tracks, TrackStatus } from '../../states/tracks'
 import api from '../../api'
 
 const props = defineProps({
 'pkey': { type: Number, required: true },
-'idx': { type: Number, required: true }
+'idx': { type: Number, required: true },
+'error': { type: String, required: true }
 })
 
 const peer = ref("");
@@ -56,12 +68,16 @@ function isActive() {
     return tracks.isSelected(props.pkey)
 }
 
+function isOnCall() {
+    return tracks.remote_tracks[props.idx].status === TrackStatus.REMOTE_CONNECTED
+}
+
 function isNoCall() {
-    return tracks.remote_tracks[props.idx].state === RemoteTrackStates.NoCall
+    return tracks.remote_tracks[props.idx].status === TrackStatus.IDLE
 }
 
 function isCalling() {
-    return tracks.remote_tracks[props.idx].state === RemoteTrackStates.Calling
+    return tracks.remote_tracks[props.idx].status === TrackStatus.REMOTE_CALLING
 }
 
 </script>

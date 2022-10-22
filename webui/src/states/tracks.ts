@@ -6,15 +6,19 @@ export enum LocalTrackStates {
     Ready,
 }
 
-export enum RemoteTrackStates {
-    NoCall = 0,
-    Calling,
-    OnCall,
+export enum TrackStatus {
+    IDLE,
+    AUDIO_READY,
+    REMOTE_CONNECTED,
+    REMOTE_CALLING,
+    REMOTE_CLOSED
 }
 
 interface Track {
     id: number
     name: string
+    status: TrackStatus
+    error: string
 }
 
 interface State extends Track {
@@ -39,16 +43,11 @@ interface LocalTrack extends Track {
     audio: AudioList
 }
 
-interface RemoteTrack extends Track {
-    status?: string
-    state: RemoteTrackStates
-}
-
 interface Tracks {
     socket?: WebSocket
     state: State[]
     local_tracks: LocalTrack[]
-    remote_tracks: RemoteTrack[]
+    remote_tracks: Track[]
     selected_debounce: boolean
     clear_tracks(): void
     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
@@ -71,7 +70,7 @@ export const tracks: Tracks = {
     selected_debounce: false,
 
     getTrackName(id: number): string {
-        if (this.state[id]) {
+        if (this.state[id] != undefined) {
             return this.state[id].name
         }
 
@@ -108,18 +107,21 @@ export const tracks: Tracks = {
                     id: tracks[key].id,
                     selected: false,
                     extended: false,
+                    status: TrackStatus.IDLE,
+                    error: "",
                     local: LocalTrackStates.Setup,
                     name: tracks[key].name,
                 }
                 last_key = parseInt(key)
             }
 
+            this.state[tracks[key].id].name = tracks[key].name
+
             if (tracks[key].type == 'local') {
                 this.local_tracks.push(tracks[key])
             }
 
             if (tracks[key].type == 'remote') {
-                console.log(tracks[key])
                 this.remote_tracks.push(tracks[key])
             }
         }
