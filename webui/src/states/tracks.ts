@@ -11,7 +11,7 @@ export enum TrackStatus {
     AUDIO_READY,
     REMOTE_CONNECTED,
     REMOTE_CALLING,
-    REMOTE_CLOSED
+    REMOTE_INCOMING
 }
 
 interface Track {
@@ -68,9 +68,8 @@ export const tracks: Tracks = {
 
     getTrackName(id: number): string {
         if (this.state[id] != undefined) {
-            return this.state[id].name
+            return this.state[id].name.replace('sip:', '')
         }
-
         return 'error'
     },
 

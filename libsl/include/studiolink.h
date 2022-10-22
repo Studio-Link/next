@@ -146,7 +146,7 @@ enum sl_track_status {
 	SL_TRACK_AUDIO_READY,
 	SL_TRACK_REMOTE_CONNECTED,
 	SL_TRACK_REMOTE_CALLING,
-	SL_TRACK_REMOTE_CLOSED
+	SL_TRACK_REMOTE_INCOMING,
 };
 int sl_tracks_init(void);
 int sl_tracks_close(void);
@@ -159,6 +159,7 @@ int sl_tracks_json(struct re_printf *pf);
 struct sl_track *sl_track_by_id(int id);
 struct slaudio *sl_track_audio(struct sl_track *track);
 int sl_track_dial(struct sl_track *track, struct pl *peer);
+void sl_track_accept(struct sl_track *track);
 void sl_track_hangup(struct sl_track *track);
 void sl_track_ws_send(void);
 

@@ -33,8 +33,17 @@
         </div>
     </div>
     <div v-if="!isActive() && isNoCall()" class="text-center mt-10 text-sl-disabled">No call</div>
+    <div v-if="isIncoming()" class="text-center mt-2 text-sl-disabled">
+        <div class="mb-4 truncate animate-pulse">Incoming call from <br />{{ peerName() }}</div>
+        <ButtonPrimary @click="api.accept(pkey)" class="mr-2">
+            Accept
+        </ButtonPrimary>
+        <ButtonSecondary @click="api.hangup(pkey)">
+            Cancel 
+        </ButtonSecondary>
+    </div>
     <div v-if="isCalling()" class="text-center mt-2 text-sl-disabled">
-        <div class="mb-4 truncate">Calling <br />{{ peer }}</div>
+        <div class="mb-4 truncate animate-pulse">Calling <br />{{ peerName() }}</div>
         <ButtonSecondary @click="api.hangup(pkey)">
             Hangup
         </ButtonSecondary>
@@ -78,6 +87,14 @@ function isNoCall() {
 
 function isCalling() {
     return tracks.remote_tracks[props.idx].status === TrackStatus.REMOTE_CALLING
+}
+
+function isIncoming() {
+    return tracks.remote_tracks[props.idx].status === TrackStatus.REMOTE_INCOMING
+}
+
+function peerName() {
+    return tracks.getTrackName(props.pkey);
 }
 
 </script>

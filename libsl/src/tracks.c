@@ -282,6 +282,15 @@ out:
 }
 
 
+void sl_track_accept(struct sl_track *track)
+{
+	if (!track || track->type != SL_TRACK_REMOTE)
+		return;
+
+	ua_answer(sl_account_ua(), track->u.remote.call, VIDMODE_OFF);
+}
+
+
 void sl_track_hangup(struct sl_track *track)
 {
 	if (!track || track->type != SL_TRACK_REMOTE)
@@ -303,6 +312,34 @@ void sl_track_ws_send(void)
 }
 
 
+static void call_incoming(struct call *call)
+{
+	struct le *le;
+	struct sl_track *track;
+
+	LIST_FOREACH(&tracks, le)
+	{
+		track = le->data;
+
+		if (track->type != SL_TRACK_REMOTE)
+			continue;
+
+		if (track->u.remote.call)
+			continue;
+
+		goto out;
+	}
+
+	/* Add new track if no empty remote track is found */
+	sl_track_add(&track, SL_TRACK_REMOTE);
+
+out:
+	track->u.remote.call = call;
+	track->status = SL_TRACK_REMOTE_INCOMING;
+	str_ncpy(track->name, call_peeruri(call), sizeof(track->name));
+}
+
+
 static void eventh(struct ua *ua, enum ua_event ev, struct call *call,
 		   const char *prm, void *arg)
 {
@@ -311,6 +348,11 @@ static void eventh(struct ua *ua, enum ua_event ev, struct call *call,
 	(void)ua;
 	(void)arg;
 
+	if (ev == UA_EVENT_CALL_INCOMING) {
+		call_incoming(call);
+		sl_track_ws_send();
+		return;
+	}
 
 	LIST_FOREACH(&tracks, le)
 	{
@@ -321,6 +363,7 @@ static void eventh(struct ua *ua, enum ua_event ev, struct call *call,
 
 		if (track->u.remote.call != call)
 			continue;
+
 
 		if (ev == UA_EVENT_CALL_RINGING) {
 			track->status = SL_TRACK_REMOTE_CALLING;
