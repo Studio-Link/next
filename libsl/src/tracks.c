@@ -19,7 +19,7 @@ struct sl_track {
 	int id;
 	enum sl_track_type type;
 	char name[64];
-	char error[64];
+	char error[128];
 	enum sl_track_status status;
 	union
 	{
@@ -244,7 +244,7 @@ struct slaudio *sl_track_audio(struct sl_track *track)
 int sl_track_dial(struct sl_track *track, struct pl *peer)
 {
 	int err;
-	char *peerc;
+	char *peerc = NULL;
 
 	if (!track || track->type != SL_TRACK_REMOTE)
 		return EINVAL;
@@ -254,21 +254,31 @@ int sl_track_dial(struct sl_track *track, struct pl *peer)
 	err = account_uri_complete_strdup(ua_account(sl_account_ua()), &peerc,
 					  peer);
 	if (err)
-		return err;
+		goto out;
 
 	err = ua_connect(sl_account_ua(), &track->u.remote.call, NULL, peerc,
 			 VIDMODE_OFF);
 	if (err)
-		return err;
+		goto out;
 
 	track->status = SL_TRACK_REMOTE_CALLING;
 	pl_strcpy(peer, track->name, sizeof(track->name));
+
+
+out:
+	if (err) {
+		re_snprintf(track->error, sizeof(track->error), "%m", err);
+	}
+
+	if (err == EINVAL)
+		str_ncpy(track->error, "Invalid ID", sizeof(track->error));
+
 
 	sl_track_ws_send();
 
 	mem_deref(peerc);
 
-	return 0;
+	return err;
 }
 
 

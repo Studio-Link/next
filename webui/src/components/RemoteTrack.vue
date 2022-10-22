@@ -13,7 +13,7 @@
         </div>
 
         <div class="flex mt-1">
-            <div class="bg-sl-02dpa rounded-lg h-48 w-full shadow">
+            <div class="relative bg-sl-02dpa rounded-lg min-h-[11em] w-full shadow pb-2">
                 <div class="flex justify-between items-center">
                     <div :id="`track${pkey}`" ref="tid" tabindex="0" @focus="setActive()"
                         :class="[isActive() ? 'bg-sl-disabled' : 'bg-sl-24dpa']"
@@ -27,7 +27,7 @@
                     </div>
                 </div>
                 <RemoteTrackCall :pkey="props.pkey" :idx="props.idx" :error="props.error" />
-                <div class="text-right mt-0.5 mr-0.5 text-xs">
+                <div class="absolute bottom-0 right-0 mr-0.5 text-xs">
                     <button class="opacity-30 hover:opacity-60 focus:opacity-60" title="Remove track"
                         @click="deleteRemoteTrack()" @focus="setActive()">
                         <svg v-if="isActive()" class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">

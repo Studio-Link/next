@@ -9,7 +9,7 @@
         </div>
 
         <div class="flex mt-1">
-            <div class="bg-sl-02dpa rounded-lg h-48 w-full shadow" :class="{ 'h-56': isExtended() }">
+            <div class="bg-sl-02dpa rounded-lg min-h-[11em] w-full shadow pb-2">
                 <div class="flex justify-between items-center">
                     <div :id="`track${pkey}`" tabindex="0"
                         :class="{ 'bg-sl-disabled': isActive(), 'bg-sl-24dpa': !isActive() }"
@@ -57,10 +57,6 @@ function localState() {
 
 function isActive() {
     return tracks.isSelected(props.pkey)
-}
-
-function isExtended() {
-    return tracks.isExtended(props.pkey)
 }
 
 function setActive() {

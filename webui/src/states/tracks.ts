@@ -23,7 +23,6 @@ interface Track {
 
 interface State extends Track {
     selected: boolean
-    extended: boolean
     local: LocalTrackStates
 }
 
@@ -56,10 +55,8 @@ interface Tracks {
     websocket(ws_host: string): void
     isValid(id: number): boolean
     isSelected(id: number): boolean
-    isExtended(id: number): boolean
     localState(id: number): LocalTrackStates
     select(id: number): void
-    extend(id: number, active: boolean): void
     selected(): number,
 }
 
@@ -106,7 +103,6 @@ export const tracks: Tracks = {
                 this.state[tracks[key].id] = {
                     id: tracks[key].id,
                     selected: false,
-                    extended: false,
                     status: TrackStatus.IDLE,
                     error: "",
                     local: LocalTrackStates.Setup,
@@ -157,13 +153,6 @@ export const tracks: Tracks = {
         return this.state[id].local
     },
 
-    isExtended(id: number): boolean {
-        if (this.state[id]) {
-            return this.state[id].extended
-        }
-        return false
-    },
-
     select(id: number): void {
         if (this.state[id] === undefined)
             return
@@ -180,10 +169,6 @@ export const tracks: Tracks = {
         })
 
         this.state[id].selected = true
-    },
-
-    extend(id: number, active: boolean): void {
-        this.state[id].extended = active
     },
 
     selected(): number {

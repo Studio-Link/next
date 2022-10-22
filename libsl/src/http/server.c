@@ -181,9 +181,6 @@ static void http_req_handler(struct http_conn *conn,
 
 		pl_set_mbuf(&peer, msg->mb);
 
-		if (peer.l > 64 || peer.l < 1)
-			goto err;
-
 		err = re_regex(msg->prm.p, msg->prm.l, "track=[0-9]+",
 			       &pltrack);
 		if (err)
