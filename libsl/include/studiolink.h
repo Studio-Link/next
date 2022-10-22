@@ -141,12 +141,15 @@ void sl_ws_dummyh(const struct websock_hdr *hdr, struct mbuf *mb, void *arg);
 struct sl_track;
 enum sl_track_type { SL_TRACK_REMOTE, SL_TRACK_LOCAL };
 enum sl_track_status {
-	SL_TRACK_INVALID = -1,
-	SL_TRACK_IDLE,
-	SL_TRACK_AUDIO_READY,
-	SL_TRACK_REMOTE_CONNECTED,
-	SL_TRACK_REMOTE_CALLING,
-	SL_TRACK_REMOTE_INCOMING,
+	SL_TRACK_INVALID	     = -1,
+	SL_TRACK_IDLE		     = 0,
+	SL_TRACK_LOCAL_REGISTERING   = 1,
+	SL_TRACK_LOCAL_REGISTER_OK   = 2,
+	SL_TRACK_LOCAL_REGISTER_FAIL = 3,
+	SL_TRACK_LOCAL_AUDIO_READY   = 4,
+	SL_TRACK_REMOTE_CONNECTED    = 5,
+	SL_TRACK_REMOTE_CALLING	     = 6,
+	SL_TRACK_REMOTE_INCOMING     = 7,
 };
 int sl_tracks_init(void);
 int sl_tracks_close(void);

@@ -7,11 +7,14 @@ export enum LocalTrackStates {
 }
 
 export enum TrackStatus {
-    IDLE,
-    AUDIO_READY,
-    REMOTE_CONNECTED,
-    REMOTE_CALLING,
-    REMOTE_INCOMING
+    IDLE = 0,
+    LOCAL_REGISTERING = 1,
+    LOCAL_REGISTER_OK = 2,
+    LOCAL_REGISTER_FAIL = 3,
+    LOCAL_AUDIO_READY = 4,
+    REMOTE_CONNECTED = 5,
+    REMOTE_CALLING = 6,
+    REMOTE_INCOMING = 7
 }
 
 interface Track {
@@ -111,6 +114,7 @@ export const tracks: Tracks = {
             }
 
             this.state[tracks[key].id].name = tracks[key].name
+            this.state[tracks[key].id].status = tracks[key].status
 
             if (tracks[key].type == 'local') {
                 this.local_tracks.push(tracks[key])

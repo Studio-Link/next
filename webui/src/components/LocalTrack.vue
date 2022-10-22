@@ -1,10 +1,11 @@
 <template>
     <li aria-label="Local track" class="col-span-1" @mouseenter="setActive()" @touchstart.passive="setActive()">
         <div class="flex justify-between h-5">
-            <h2 class="ml-1 font-semibold text-sl-disabled text-sm truncate pr-2">{{ getTrackName() }} me@studio.link
+            <h2 class="ml-1 font-semibold text-sl-disabled text-sm truncate pr-2">{{ getTrackName() }}
             </h2>
             <div class="flex">
-                <div class="font-semibold text-sm text-green-600 uppercase text-right">Online</div>
+                <div v-if="tracks.state[props.pkey].status === TrackStatus.LOCAL_REGISTER_OK" class="font-semibold text-sm text-green-600 uppercase text-right">ONLINE</div>
+                <div v-if="tracks.state[props.pkey].status === TrackStatus.LOCAL_REGISTER_FAIL" class="font-semibold text-sm text-red-600 uppercase text-right">FAILED</div>
             </div>
         </div>
 
@@ -46,7 +47,7 @@
 import { watch } from 'vue'
 import LocalTrackSettings from './LocalTrackSettings.vue'
 import AudioSettings from './AudioSettings.vue'
-import { LocalTrackStates, tracks } from '../states/tracks'
+import { LocalTrackStates, tracks, TrackStatus } from '../states/tracks'
 import api from '../api'
 
 const props = defineProps({ 'pkey': { type: Number, required: true } })

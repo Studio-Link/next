@@ -317,6 +317,9 @@ static void call_incoming(struct call *call)
 	struct le *le;
 	struct sl_track *track;
 
+	if (!call)
+		return;
+
 	LIST_FOREACH(&tracks, le)
 	{
 		track = le->data;
@@ -335,7 +338,7 @@ static void call_incoming(struct call *call)
 
 out:
 	track->u.remote.call = call;
-	track->status = SL_TRACK_REMOTE_INCOMING;
+	track->status	     = SL_TRACK_REMOTE_INCOMING;
 	str_ncpy(track->name, call_peeruri(call), sizeof(track->name));
 }
 
@@ -351,6 +354,33 @@ static void eventh(struct ua *ua, enum ua_event ev, struct call *call,
 	if (ev == UA_EVENT_CALL_INCOMING) {
 		call_incoming(call);
 		sl_track_ws_send();
+		return;
+	}
+
+	if (ev == UA_EVENT_REGISTERING) {
+		if (local_track) {
+			str_ncpy(local_track->name,
+				 account_aor(ua_account(sl_account_ua())),
+				 sizeof(local_track->name));
+			local_track->status = SL_TRACK_LOCAL_REGISTERING;
+			sl_track_ws_send();
+		}
+		return;
+	}
+
+	if (ev == UA_EVENT_REGISTER_OK) {
+		if (local_track) {
+			local_track->status = SL_TRACK_LOCAL_REGISTER_OK;
+			sl_track_ws_send();
+		}
+		return;
+	}
+
+	if (ev == UA_EVENT_REGISTER_FAIL) {
+		if (local_track) {
+			local_track->status = SL_TRACK_LOCAL_REGISTER_FAIL;
+			sl_track_ws_send();
+		}
 		return;
 	}
 
