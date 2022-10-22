@@ -309,8 +309,6 @@ static void eventh(struct ua *ua, enum ua_event ev, struct call *call,
 	struct le *le;
 	bool changed = false;
 	(void)ua;
-	(void)call;
-	(void)prm;
 	(void)arg;
 
 
