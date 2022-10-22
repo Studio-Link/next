@@ -346,10 +346,10 @@ static void ausrc_read_handler(struct auframe *af, void *arg)
 static int driver_start(struct slaudio *a)
 {
 	char index[ITOA_BUFSZ];
-	struct config *conf;
+	struct sl_config *conf;
 	int err;
 
-	conf = conf_config();
+	conf = sl_conf();
 
 	if (!conf)
 		return EINVAL;
@@ -361,7 +361,7 @@ static int driver_start(struct slaudio *a)
 		a->ausrc_st = mem_deref(a->ausrc_st);
 
 	err = auplay_alloc(&a->auplay_st, baresip_auplayl(),
-			   conf->audio.play_mod, &a->auplay_prm,
+			   conf->play.mod, &a->auplay_prm,
 			   str_itoa(a->play.selected, index, 10),
 			   auplay_write_handler, NULL);
 	if (err) {
@@ -369,7 +369,7 @@ static int driver_start(struct slaudio *a)
 		return err;
 	}
 
-	err = ausrc_alloc(&a->ausrc_st, baresip_ausrcl(), conf->audio.src_mod,
+	err = ausrc_alloc(&a->ausrc_st, baresip_ausrcl(), conf->src.mod,
 			  &a->ausrc_prm, str_itoa(a->src.selected, index, 10),
 			  ausrc_read_handler, NULL, NULL);
 	if (err) {
@@ -506,11 +506,19 @@ int sl_audio_alloc(struct slaudio **audiop, struct sl_track *track)
 
 int sl_audio_init(void)
 {
-	int err = 0;
+	struct sl_config *conf = sl_conf();
+	int err		       = 0;
+
+	str_ncpy(conf->baresip->audio.play_mod, "slaudio",
+		 sizeof(conf->baresip->audio.play_mod));
+
+	str_ncpy(conf->baresip->audio.src_mod, "slaudio",
+		 sizeof(conf->baresip->audio.src_mod));
 
 	err = ausrc_register(&ausrc, baresip_ausrcl(), "slaudio", src_alloc);
 	err |= auplay_register(&auplay, baresip_auplayl(), "slaudio",
 			       play_alloc);
+
 	return err;
 }
 

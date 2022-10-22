@@ -1,19 +1,28 @@
 import { reactive } from 'vue'
 
 export enum LocalTrackStates {
-    Setup = 1,
+    Setup = 0,
     SelectAudio,
     Ready,
+}
+
+export enum TrackStatus {
+    IDLE,
+    AUDIO_READY,
+    REMOTE_CONNECTED,
+    REMOTE_CALLING,
+    REMOTE_CLOSED
 }
 
 interface Track {
     id: number
     name: string
+    status: TrackStatus
+    error: string
 }
 
 interface State extends Track {
     selected: boolean
-    extended: boolean
     local: LocalTrackStates
 }
 
@@ -33,15 +42,11 @@ interface LocalTrack extends Track {
     audio: AudioList
 }
 
-interface RemoteTrack extends Track {
-    status?: string
-}
-
 interface Tracks {
     socket?: WebSocket
     state: State[]
     local_tracks: LocalTrack[]
-    remote_tracks: RemoteTrack[]
+    remote_tracks: Track[]
     selected_debounce: boolean
     clear_tracks(): void
     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
@@ -50,11 +55,9 @@ interface Tracks {
     websocket(ws_host: string): void
     isValid(id: number): boolean
     isSelected(id: number): boolean
-    isExtended(id: number): boolean
     localState(id: number): LocalTrackStates
     select(id: number): void
-    extend(id: number, active: boolean): void
-    selected(): number
+    selected(): number,
 }
 
 export const tracks: Tracks = {
@@ -64,7 +67,7 @@ export const tracks: Tracks = {
     selected_debounce: false,
 
     getTrackName(id: number): string {
-        if (this.state[id]) {
+        if (this.state[id] != undefined) {
             return this.state[id].name
         }
 
@@ -78,7 +81,6 @@ export const tracks: Tracks = {
         }
         this.socket.onmessage = (message) => {
             const tracks = JSON.parse(message.data)
-            // console.log(tracks)
             this.update(tracks)
         }
         this.selected_debounce = false
@@ -96,25 +98,27 @@ export const tracks: Tracks = {
         for (const key in tracks) {
             tracks[key].id = parseInt(key)
 
-            if (tracks[key].type == 'local') {
-                console.log(tracks[key])
-                this.local_tracks.push(tracks[key])
-            }
-
-            if (tracks[key].type == 'remote') {
-                this.remote_tracks.push(tracks[key])
-            }
-
             /* Initialize frontend state only once */
             if (this.state[tracks[key].id] === undefined) {
                 this.state[tracks[key].id] = {
                     id: tracks[key].id,
                     selected: false,
-                    extended: false,
+                    status: TrackStatus.IDLE,
+                    error: "",
                     local: LocalTrackStates.Setup,
                     name: tracks[key].name,
                 }
                 last_key = parseInt(key)
+            }
+
+            this.state[tracks[key].id].name = tracks[key].name
+
+            if (tracks[key].type == 'local') {
+                this.local_tracks.push(tracks[key])
+            }
+
+            if (tracks[key].type == 'remote') {
+                this.remote_tracks.push(tracks[key])
             }
         }
 
@@ -149,13 +153,6 @@ export const tracks: Tracks = {
         return this.state[id].local
     },
 
-    isExtended(id: number): boolean {
-        if (this.state[id]) {
-            return this.state[id].extended
-        }
-        return false
-    },
-
     select(id: number): void {
         if (this.state[id] === undefined)
             return
@@ -172,10 +169,6 @@ export const tracks: Tracks = {
         })
 
         this.state[id].selected = true
-    },
-
-    extend(id: number, active: boolean): void {
-        this.state[id].extended = active
     },
 
     selected(): number {

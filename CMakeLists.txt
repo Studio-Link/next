@@ -75,7 +75,7 @@ set(RE_LIBRARY re CACHE STRING "")
 set(REM_LIBRARY rem CACHE STRING "")
 
 set(STATIC ON CACHE BOOL "")
-set(MODULES auconv auresamp ice dtls_srtp turn opus g711 portaudio)
+set(MODULES auconv auresamp ice dtls_srtp turn opus g711 portaudio netroam)
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
   list(APPEND MODULES alsa jack pulse_async)

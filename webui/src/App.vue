@@ -15,16 +15,19 @@
             <div>
                 <main>
                     <Tracks class="px-2" />
+                    <div class="h-32"></div>
                 </main>
             </div>
         </div>
     </div>
-    <footer class="bottom-0 fixed left-16 right-0">
+    <footer class="bottom-0 fixed left-16 right-0 w-64 mx-auto">
         <div class="flex flex-wrap justify-between items-end px-2">
             <BottomActions />
-            <Version />
         </div>
     </footer>
+    <div class="bottom-0 fixed right-0">
+    <Version />
+    </div>
 </template>
 
 <script setup lang='ts'>

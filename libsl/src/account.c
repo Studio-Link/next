@@ -89,6 +89,12 @@ out:
 }
 
 
+struct ua *sl_account_ua(void)
+{
+	return ua;
+}
+
+
 int sl_account_init(void)
 {
 	struct sl_config *conf = sl_conf();

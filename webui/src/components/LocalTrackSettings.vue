@@ -43,7 +43,6 @@ const props = defineProps({ 'pkey': { type: Number, required: true } })
 
 function audioSettings() {
     tracks.state[props.pkey].local = LocalTrackStates.SelectAudio
-    tracks.state[props.pkey].extended = true
 }
 
 

@@ -1,7 +1,7 @@
 <template>
     <ul class="grid grid-cols-1 gap-x-5 gap-y-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        <LocalTrack v-for="track in localTracks" :key="track.id" :pkey="track.id" />
-        <RemoteTrack v-for="track in remoteTracks" :key="track.id" :pkey="track.id" />
+        <LocalTrack v-for="(track, index) in localTracks" :key="track.id" :pkey="track.id" :idx="index" />
+        <RemoteTrack v-for="(track, index) in remoteTracks" :key="track.id" :pkey="track.id" :idx="index" :error="track.error" />
         <li class="col-span-1" @mouseenter="newTrackVisible = true" @mouseleave="newTrackVisible = false">
             <div class="flex items-center justify-center h-24 md:h-44 mt-4">
                 <button accesskey="t" aria-label="Add Remote Track" :class="{

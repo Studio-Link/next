@@ -39,20 +39,20 @@ static int test_track_add(void)
 
 
 	/* Add max >99 tracks */
-	for (int i = 0; i < 97; i++) {
+	for (int i = 0; i < 14; i++) {
 		err = sl_track_add(&track, SL_TRACK_REMOTE);
 		TEST_ERR(err);
 		ASSERT_EQ((i + 4), sl_track_next_id());
 	}
-	ASSERT_TRUE(list_count(sl_tracks()) == 99);
+	ASSERT_TRUE(list_count(sl_tracks()) == 16);
 	err = sl_track_add(&track, SL_TRACK_REMOTE);
 	ASSERT_EQ(E2BIG, err);
 
 	/* Test delete and re-add after max tracks reached */
-	err = sl_track_del(18);
+	err = sl_track_del(10);
 	TEST_ERR(err);
 
-	ASSERT_EQ(18, sl_track_next_id());
+	ASSERT_EQ(10, sl_track_next_id());
 
 	err = sl_track_add(&track, SL_TRACK_REMOTE);
 	TEST_ERR(err);

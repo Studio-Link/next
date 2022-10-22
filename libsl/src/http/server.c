@@ -13,8 +13,6 @@
 #include "logo_standalone.svg.h"
 #include "logo_solo.svg.h"
 
-#define SL_MAX_JSON (512 * 1024)
-
 
 static void http_sreply(struct http_conn *conn, uint16_t scode,
 			const char *reason, const char *ctype, const char *fmt,
@@ -173,6 +171,49 @@ static void http_req_handler(struct http_conn *conn,
 		sl_ws_send_str(WS_TRACKS, json_str);
 
 		http_sreply(conn, 200, "OK", "text/html", "", 0);
+		goto out;
+	}
+
+	if (0 == pl_strcasecmp(&msg->path, "/api/v1/dial") &&
+	    0 == pl_strcasecmp(&msg->met, "POST")) {
+		struct pl pltrack = PL_INIT;
+		struct pl peer;
+
+		pl_set_mbuf(&peer, msg->mb);
+
+		err = re_regex(msg->prm.p, msg->prm.l, "track=[0-9]+",
+			       &pltrack);
+		if (err)
+			goto err;
+
+		info("dial %r on track %d\n", &peer, pl_i32(&pltrack));
+
+		err = sl_track_dial(sl_track_by_id(pl_i32(&pltrack)), &peer);
+		if (err)
+			goto err;
+
+		sl_track_ws_send();
+
+		http_sreply(conn, 200, "OK", "text/html", "", 0);
+
+		goto out;
+	}
+
+	if (0 == pl_strcasecmp(&msg->path, "/api/v1/hangup") &&
+	    0 == pl_strcasecmp(&msg->met, "POST")) {
+		struct pl pltrack = PL_INIT;
+
+		err = re_regex(msg->prm.p, msg->prm.l, "track=[0-9]+",
+			       &pltrack);
+		if (err)
+			goto err;
+
+		sl_track_hangup(sl_track_by_id(pl_i32(&pltrack)));
+
+		sl_track_ws_send();
+
+		http_sreply(conn, 200, "OK", "text/html", "", 0);
+
 		goto out;
 	}
 

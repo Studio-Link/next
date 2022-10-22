@@ -26,7 +26,7 @@ extern "C" {
 #endif
 
 #define FS_PATH_MAX 512
-
+#define SL_MAX_JSON (512 * 1024)
 
 /******************************************************************************
  * conf.c
@@ -143,8 +143,10 @@ enum sl_track_type { SL_TRACK_REMOTE, SL_TRACK_LOCAL };
 enum sl_track_status {
 	SL_TRACK_INVALID = -1,
 	SL_TRACK_IDLE,
-	SL_TRACK_CONNECTED,
-	SL_TRACK_CLOSED
+	SL_TRACK_AUDIO_READY,
+	SL_TRACK_REMOTE_CONNECTED,
+	SL_TRACK_REMOTE_CALLING,
+	SL_TRACK_REMOTE_CLOSED
 };
 int sl_tracks_init(void);
 int sl_tracks_close(void);
@@ -156,6 +158,9 @@ enum sl_track_status sl_track_status(int id);
 int sl_tracks_json(struct re_printf *pf);
 struct sl_track *sl_track_by_id(int id);
 struct slaudio *sl_track_audio(struct sl_track *track);
+int sl_track_dial(struct sl_track *track, struct pl *peer);
+void sl_track_hangup(struct sl_track *track);
+void sl_track_ws_send(void);
 
 
 /******************************************************************************
@@ -199,6 +204,7 @@ int sl_db_set(struct sldb *key, struct sldb *val);
  */
 int sl_account_init(void);
 int sl_account_close(void);
+struct ua *sl_account_ua(void);
 
 
 #ifdef __cplusplus

@@ -8,7 +8,7 @@ static struct http_sock *httpsock = NULL;
 static bool headless		  = false;
 
 
-static const char *modv[] = {"turn", "ice", "dtls_srtp",
+static const char *modv[] = {"turn", "ice", "dtls_srtp", "netroam",
 
 			     /* audio codecs */
 			     "opus", "g711",
