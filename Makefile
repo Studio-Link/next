@@ -213,12 +213,13 @@ macos_debug: all
 
 .PHONY: run_san
 run_san:
-	TSAN_OPTIONS="suppressions=tsan.supp" make run
+	ASAN_OPTIONS=fast_unwind_on_malloc=0 \
+	TSAN_OPTIONS="suppressions=tsan.supp" \
+	make run
 
 .PHONY: asan
 asan:
 	make clean
-	make external
 	cmake -B build -GNinja -DCMAKE_BUILD_TYPE=Debug \
 		-DCMAKE_C_FLAGS="-fsanitize=undefined,address \
 		-fno-omit-frame-pointer" \
@@ -228,7 +229,6 @@ asan:
 .PHONY: tsan
 tsan:
 	make clean
-	make external
 	cmake -B build -GNinja -DCMAKE_BUILD_TYPE=Debug \
 		-DCMAKE_C_FLAGS="-fsanitize=undefined,thread \
 		-fno-omit-frame-pointer" \
