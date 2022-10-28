@@ -189,6 +189,12 @@ int sl_init(void)
 		goto out;
 	}
 
+	err = sl_audio_init();
+	if (err) {
+		warning("sl_init: audio init failed (%m)\n", err);
+		goto out;
+	}
+
 	err = sl_tracks_init();
 	if (err) {
 		warning("sl_init: tracks init failed (%m)\n", err);
@@ -197,11 +203,6 @@ int sl_init(void)
 
 	sl_meter_init();
 
-	err = sl_audio_init();
-	if (err) {
-		warning("sl_init: audio init failed (%m)\n", err);
-		goto out;
-	}
 
 out:
 	if (err)
@@ -261,8 +262,8 @@ void sl_close(void)
 	httpsock = mem_deref(httpsock);
 
 	sl_tracks_close();
-	sl_meter_close();
 	sl_audio_close();
+	sl_meter_close();
 	sl_account_close();
 
 	ua_stop_all(true);

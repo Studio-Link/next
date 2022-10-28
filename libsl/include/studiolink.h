@@ -173,8 +173,6 @@ void sl_track_ws_send(void);
 struct slaudio;
 int sl_audio_init(void);
 int sl_audio_close(void);
-int sl_audio_add_remote_track(struct slaudio *audio, struct sl_track *track);
-int sl_audio_del_remote_track(struct sl_track *track);
 int sl_audio_alloc(struct slaudio **audiop, struct sl_track *track);
 int slaudio_odict(struct odict **o, struct slaudio *a);
 int sl_audio_set_device(struct slaudio *audio, int play_idx, int src_idx);

@@ -1,10 +1,10 @@
 #include <studiolink.h>
 
+enum { PTIME = 20, SRATE = 48000, CH = 2 };
 
 struct slaudio {
 	struct le le;
 	struct sl_track *local_track;
-	struct list remotel;
 	struct auplay_st *auplay_st;
 	struct ausrc_st *ausrc_st;
 	struct ausrc_prm ausrc_prm;
@@ -13,38 +13,32 @@ struct slaudio {
 		const struct list *devl;
 		int selected;
 	} play, src;
-};
-
-struct remote_track {
-	struct le le;
-	struct sl_track *track;
-	struct ausrc_st *ausrc_st;
-	struct auplay_st *auplay_st;
+	struct aumix_source *aumix_src;
+	struct aubuf *ab_mix;
 };
 
 struct ausrc_st {
-	struct aubuf *aubuf;
-	enum aufmt fmt;
-	struct ausrc_prm *prm;
-	uint32_t ptime;
-	size_t sampc;
-	volatile bool run;
+	struct le le;
 	ausrc_read_h *rh;
-	ausrc_error_h *errh;
 	void *arg;
+	struct auplay_st *st_play;
 };
 
 struct auplay_st {
-	struct auplay_prm prm;
-	volatile bool run;
-	void *sampv;
-	size_t sampc;
+	struct le le;
 	auplay_write_h *wh;
+	int16_t *sampv;
 	void *arg;
+	uint64_t ts;
+	struct ausrc_st *st_src;
+	struct aumix_source *aumix_src;
 };
 
-static struct ausrc *ausrc;
-static struct auplay *auplay;
+static struct aumix *aumix	= NULL;
+static struct ausrc *ausrc	= NULL;
+static struct auplay *auplay	= NULL;
+static struct list auplayl	= LIST_INIT;
+static struct list ausrcl	= LIST_INIT;
 static struct list local_tracks = LIST_INIT;
 
 
@@ -171,47 +165,84 @@ int slaudio_odict(struct odict **o, struct slaudio *a)
 }
 
 
+/* called by aumix thread */
+static void mix_handler(const int16_t *sampv, size_t sampc, void *arg)
+{
+	struct auplay_st *st_play = arg;
+	struct auframe af;
+
+	if (!st_play->st_src)
+		return;
+
+	/* read handler */
+	auframe_init(&af, AUFMT_S16LE, (int16_t *)sampv, sampc, SRATE, CH);
+	af.timestamp = st_play->ts;
+	st_play->st_src->rh(&af, st_play->st_src->arg);
+
+	/* write handler */
+	auframe_init(&af, AUFMT_S16LE, st_play->sampv, sampc, SRATE, CH);
+	af.timestamp = st_play->ts;
+	st_play->wh(&af, st_play->arg);
+
+	aumix_source_put(st_play->aumix_src, st_play->sampv, sampc);
+
+	st_play->ts += PTIME * 1000;
+}
+
+
+static void ausrc_destructor(void *arg)
+{
+	struct ausrc_st *st = arg;
+	if (st->st_play && st->st_play->aumix_src)
+		aumix_source_enable(st->st_play->aumix_src, false);
+	list_unlink(&st->le);
+}
+
+
 static int src_alloc(struct ausrc_st **stp, const struct ausrc *as,
 		     struct ausrc_prm *prm, const char *device,
 		     ausrc_read_h *rh, ausrc_error_h *errh, void *arg)
 {
 	struct ausrc_st *st;
 	struct le *le;
-	struct slaudio *audio;
 	int err = 0;
 	(void)device;
+	(void)errh;
 
 	if (!stp || !as || !prm || !rh)
 		return EINVAL;
 
-	st = mem_zalloc(sizeof(*st), NULL);
+	if (prm->ch != CH || prm->srate != SRATE || prm->fmt != AUFMT_S16LE ||
+	    prm->ptime != PTIME)
+		return EINVAL;
+
+	st = mem_zalloc(sizeof(*st), ausrc_destructor);
 	if (!st)
 		return ENOMEM;
 
-	st->rh	  = rh;
-	st->errh  = errh;
-	st->arg	  = arg;
-	st->prm	  = prm;
-	st->ptime = prm->ptime;
+	st->rh	= rh;
+	st->arg = arg;
 
 	if (list_isempty(&local_tracks)) {
-		warning("slaudio: no local tracks available");
+		warning("slaudio: no local tracks available\n");
 		return EINVAL;
 	}
 
-	/* TODO: refactor for multiple local tracks */
-	audio = local_tracks.head->data;
+	/* setup if auplay is started before ausrc */
+	for (le = list_head(&auplayl); le; le = le->next) {
+		struct auplay_st *st_play = le->data;
 
-	LIST_FOREACH(&audio->remotel, le)
-	{
-		struct remote_track *remote = le->data;
+		/* compare struct audio arg */
+		if (st->arg == st_play->arg) {
+			st_play->st_src = st;
+			st->st_play	= st_play;
 
-		if (remote->ausrc_st)
-			continue;
-
-		remote->ausrc_st = st;
-		break;
+			aumix_source_enable(st_play->aumix_src, true);
+			break;
+		}
 	}
+
+	list_append(&ausrcl, &st->le, st);
 
 	if (err)
 		mem_deref(st);
@@ -222,47 +253,73 @@ static int src_alloc(struct ausrc_st **stp, const struct ausrc *as,
 }
 
 
+static void auplay_destructor(void *arg)
+{
+	struct auplay_st *st = arg;
+
+	mem_deref(st->aumix_src);
+	mem_deref(st->sampv);
+	list_unlink(&st->le);
+}
+
+
 static int play_alloc(struct auplay_st **stp, const struct auplay *ap,
 		      struct auplay_prm *prm, const char *device,
 		      auplay_write_h *wh, void *arg)
 {
 	struct auplay_st *st;
 	struct le *le;
-	struct slaudio *audio;
 	int err = 0;
 	(void)ap;
 	(void)device;
 
-	if (!prm || !wh || !prm->ch || !prm->srate || !prm->ptime)
+	if (!prm || !wh)
 		return EINVAL;
 
-	st = mem_zalloc(sizeof(*st), NULL);
+	if (prm->ch != CH || prm->srate != SRATE || prm->fmt != AUFMT_S16LE ||
+	    prm->ptime != PTIME)
+		return EINVAL;
+
+	st = mem_zalloc(sizeof(*st), auplay_destructor);
 	if (!st)
 		return ENOMEM;
 
+	st->sampv = mem_zalloc((SRATE * CH * PTIME / 1000) * sizeof(int16_t),
+			       NULL);
+	if (!st->sampv) {
+		err = ENOMEM;
+		goto out;
+	}
+
 	st->wh	= wh;
 	st->arg = arg;
-	st->prm = *prm;
 
 	if (list_isempty(&local_tracks)) {
-		warning("slaudio: no local tracks available");
+		warning("slaudio: no local tracks available\n");
 		return EINVAL;
 	}
 
-	/* TODO: refactor for multiple local tracks */
-	audio = local_tracks.head->data;
+	err = aumix_source_alloc(&st->aumix_src, aumix, mix_handler, st);
+	if (err)
+		goto out;
 
-	LIST_FOREACH(&audio->remotel, le)
-	{
-		struct remote_track *remote = le->data;
+	/* setup if ausrc is started before auplay */
+	for (le = list_head(&ausrcl); le; le = le->next) {
+		struct ausrc_st *st_src = le->data;
 
-		if (remote->auplay_st)
-			continue;
+		/* compare struct audio arg */
+		if (st->arg == st_src->arg) {
+			st_src->st_play = st;
+			st->st_src	= st_src;
 
-		remote->auplay_st = st;
-		break;
+			aumix_source_enable(st->aumix_src, true);
+			break;
+		}
 	}
 
+	list_append(&auplayl, &st->le, st);
+
+out:
 	if (err)
 		mem_deref(st);
 	else if (stp)
@@ -272,66 +329,33 @@ static int play_alloc(struct auplay_st **stp, const struct auplay *ap,
 }
 
 
-int sl_audio_del_remote_track(struct sl_track *track)
+/* called by aumix thread */
+static void driver_mixh(const int16_t *sampv, size_t sampc, void *arg)
 {
-	struct le *le;
+	struct slaudio *a = arg;
 
-	if (!track)
-		return EINVAL;
-
-	LIST_FOREACH(&local_tracks, le)
-	{
-		struct slaudio *audio = le->data;
-		struct le *rle;
-
-		LIST_FOREACH(&audio->remotel, rle)
-		{
-			struct remote_track *remote = rle->data;
-
-			if (remote->track != track)
-				continue;
-
-			list_unlink(&remote->le);
-			mem_deref(remote);
-
-			return 0;
-		}
-	}
-
-	return ENODATA;
+	aubuf_write_samp(a->ab_mix, sampv, sampc);
 }
 
 
-int sl_audio_add_remote_track(struct slaudio *audio, struct sl_track *track)
-{
-	struct remote_track *remote;
-
-	if (!audio || !track)
-		return EINVAL;
-
-	remote = mem_zalloc(sizeof(*remote), NULL);
-	if (!remote)
-		return ENOMEM;
-
-	remote->track = track;
-
-	list_append(&audio->remotel, &remote->le, remote);
-
-	return 0;
-}
-
-
-static void auplay_write_handler(struct auframe *af, void *arg)
+static void driver_write_handler(struct auframe *af, void *arg)
 {
 	(void)af;
-	(void)arg;
+	struct slaudio *a = arg;
+
+	if (af->fmt != AUFMT_S16LE) {
+		warning("auplay wrong format\n");
+		return;
+	}
+
+	aubuf_read_auframe(a->ab_mix, af);
 }
 
 
-static void ausrc_read_handler(struct auframe *af, void *arg)
+static void driver_read_handler(struct auframe *af, void *arg)
 {
 	float sampv[4096];
-	(void)arg;
+	struct slaudio *a = arg;
 
 	if (af->fmt != AUFMT_S16LE) {
 		warning("ausrc wrong format\n");
@@ -340,6 +364,8 @@ static void ausrc_read_handler(struct auframe *af, void *arg)
 
 	auconv_from_s16(AUFMT_FLOAT, sampv, af->sampv, af->sampc);
 	sl_meter_process(0, sampv, af->sampc / 2);
+
+	aumix_source_put(a->aumix_src, af->sampv, af->sampc);
 }
 
 
@@ -360,10 +386,10 @@ static int driver_start(struct slaudio *a)
 	if (a->ausrc_st)
 		a->ausrc_st = mem_deref(a->ausrc_st);
 
-	err = auplay_alloc(&a->auplay_st, baresip_auplayl(),
-			   conf->play.mod, &a->auplay_prm,
+	err = auplay_alloc(&a->auplay_st, baresip_auplayl(), conf->play.mod,
+			   &a->auplay_prm,
 			   str_itoa(a->play.selected, index, 10),
-			   auplay_write_handler, NULL);
+			   driver_write_handler, a);
 	if (err) {
 		warning("slaudio: start_player failed: %m\n", err);
 		return err;
@@ -371,7 +397,7 @@ static int driver_start(struct slaudio *a)
 
 	err = ausrc_alloc(&a->ausrc_st, baresip_ausrcl(), conf->src.mod,
 			  &a->ausrc_prm, str_itoa(a->src.selected, index, 10),
-			  ausrc_read_handler, NULL, NULL);
+			  driver_read_handler, NULL, a);
 	if (err) {
 		warning("slaudio: start_src failed: %m\n", err);
 		return err;
@@ -414,10 +440,10 @@ static void slaudio_destructor(void *data)
 	struct slaudio *audio = data;
 
 	list_unlink(&audio->le);
-	list_flush(&audio->remotel);
-
+	mem_deref(audio->aumix_src);
 	mem_deref(audio->auplay_st);
 	mem_deref(audio->ausrc_st);
+	mem_deref(audio->ab_mix);
 }
 
 
@@ -433,7 +459,6 @@ static void driver_alloc(struct slaudio *a)
 	if (!a || !conf)
 		return;
 
-
 	play = auplay_find(baresip_auplayl(), conf->play.mod);
 	if (!play)
 		return;
@@ -445,6 +470,7 @@ static void driver_alloc(struct slaudio *a)
 	a->src.devl = &src->dev_list;
 
 
+	/* set default source */
 	LIST_FOREACH(a->src.devl, le)
 	{
 		struct mediadev *dev = le->data;
@@ -456,6 +482,7 @@ static void driver_alloc(struct slaudio *a)
 		break;
 	}
 
+	/* set default play */
 	LIST_FOREACH(a->play.devl, le)
 	{
 		struct mediadev *dev = le->data;
@@ -474,6 +501,7 @@ static void driver_alloc(struct slaudio *a)
 int sl_audio_alloc(struct slaudio **audiop, struct sl_track *track)
 {
 	struct slaudio *a;
+	int err;
 
 	if (!audiop || !track)
 		return EINVAL;
@@ -486,28 +514,45 @@ int sl_audio_alloc(struct slaudio **audiop, struct sl_track *track)
 
 	list_append(&local_tracks, &a->le, a);
 
-	a->auplay_prm.srate = 48000;
-	a->auplay_prm.ch    = 2;
-	a->auplay_prm.ptime = 20;
+	a->auplay_prm.srate = SRATE;
+	a->auplay_prm.ch    = CH;
+	a->auplay_prm.ptime = PTIME;
 	a->auplay_prm.fmt   = AUFMT_S16LE;
 
-	a->ausrc_prm.srate = 48000;
-	a->ausrc_prm.ch	   = 2;
-	a->ausrc_prm.ptime = 20;
+	a->ausrc_prm.srate = SRATE;
+	a->ausrc_prm.ch	   = CH;
+	a->ausrc_prm.ptime = PTIME;
 	a->ausrc_prm.fmt   = AUFMT_S16LE;
 
 	driver_alloc(a);
 
-	*audiop = a;
+	err = aubuf_alloc(&a->ab_mix, 0,
+			  (SRATE * CH * PTIME) / 1000 * sizeof(int16_t) * 3);
+	if (err)
+		goto out;
 
-	return 0;
+	err = aumix_source_alloc(&a->aumix_src, aumix, driver_mixh, a);
+	if (err)
+		goto out;
+
+	aumix_source_enable(a->aumix_src, true);
+
+out:
+	if (err) {
+		mem_deref(a);
+		warning("sl_audio_alloc: failed %m\n", err);
+	}
+	else
+		*audiop = a;
+
+	return err;
 }
 
 
 int sl_audio_init(void)
 {
 	struct sl_config *conf = sl_conf();
-	int err		       = 0;
+	int err;
 
 	str_ncpy(conf->baresip->audio.play_mod, "slaudio",
 		 sizeof(conf->baresip->audio.play_mod));
@@ -518,6 +563,12 @@ int sl_audio_init(void)
 	err = ausrc_register(&ausrc, baresip_ausrcl(), "slaudio", src_alloc);
 	err |= auplay_register(&auplay, baresip_auplayl(), "slaudio",
 			       play_alloc);
+	if (err) {
+		warning("sl_audio_init: register failed %m\n", err);
+		return err;
+	}
+
+	err = aumix_alloc(&aumix, SRATE, CH, PTIME);
 
 	return err;
 }
@@ -527,6 +578,9 @@ int sl_audio_close(void)
 {
 	ausrc  = mem_deref(ausrc);
 	auplay = mem_deref(auplay);
+	aumix  = mem_deref(aumix);
+
+	warning("audio close \n");
 
 	return 0;
 }

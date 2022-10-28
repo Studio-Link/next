@@ -136,6 +136,8 @@ static void track_destructor(void *data)
 {
 	struct sl_track *track = data;
 
+	list_unlink(&track->le);
+
 	if (track->type == SL_TRACK_LOCAL)
 		mem_deref(track->u.local.slaudio);
 
@@ -143,7 +145,6 @@ static void track_destructor(void *data)
 		if (track->u.remote.call)
 			ua_hangup(sl_account_ua(), track->u.remote.call, 0,
 				  NULL);
-		sl_audio_del_remote_track(track);
 	}
 }
 
@@ -172,9 +173,6 @@ int sl_track_add(struct sl_track **trackp, enum sl_track_type type)
 	list_append(&tracks, &track->le, track);
 	list_sort(&tracks, sort_handler, NULL);
 
-	if (local_track)
-		sl_audio_add_remote_track(local_track->u.local.slaudio, track);
-
 	*trackp = track;
 
 	return 0;
@@ -193,7 +191,6 @@ int sl_track_del(int id)
 	{
 		struct sl_track *track = le->data;
 		if (track->id == id) {
-			list_unlink(le);
 			mem_deref(track);
 			return 0;
 		}
@@ -441,8 +438,8 @@ int sl_tracks_init(void)
 
 int sl_tracks_close(void)
 {
-	list_flush(&tracks);
 	uag_event_unregister(eventh);
+	list_flush(&tracks);
 
 	local_track = NULL;
 
