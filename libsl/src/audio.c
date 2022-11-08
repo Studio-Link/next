@@ -13,7 +13,7 @@ struct slaudio {
 		const struct list *devl;
 		int selected;
 	} play, src;
-	struct aumix_source *aumix_src;
+	struct aumix_source *aumix_src; /**< filled by local driver */
 	struct aubuf *ab_mix;
 };
 
@@ -31,7 +31,7 @@ struct auplay_st {
 	void *arg;
 	uint64_t ts;
 	struct ausrc_st *st_src;
-	struct aumix_source *aumix_src;
+	struct aumix_source *aumix_src; /**< filled by remote */
 };
 
 static struct aumix *aumix	= NULL;
@@ -257,9 +257,9 @@ static void auplay_destructor(void *arg)
 {
 	struct auplay_st *st = arg;
 
+	list_unlink(&st->le);
 	mem_deref(st->aumix_src);
 	mem_deref(st->sampv);
-	list_unlink(&st->le);
 }
 
 
@@ -440,9 +440,9 @@ static void slaudio_destructor(void *data)
 	struct slaudio *audio = data;
 
 	list_unlink(&audio->le);
-	mem_deref(audio->aumix_src);
 	mem_deref(audio->auplay_st);
 	mem_deref(audio->ausrc_st);
+	mem_deref(audio->aumix_src);
 	mem_deref(audio->ab_mix);
 }
 
@@ -579,8 +579,6 @@ int sl_audio_close(void)
 	ausrc  = mem_deref(ausrc);
 	auplay = mem_deref(auplay);
 	aumix  = mem_deref(aumix);
-
-	warning("audio close \n");
 
 	return 0;
 }
