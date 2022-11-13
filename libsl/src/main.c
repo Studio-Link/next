@@ -87,8 +87,14 @@ int sl_getopt(int argc, char *const argv[])
 int sl_baresip_init(const uint8_t *conf)
 {
 	struct sl_config *slconf;
-	const char *conf_ = "opus_bitrate       64000\n"
-			    "sip_verify_server yes\n";
+	const char *conf_ = "call_max_calls	16\n"
+			    "sip_verify_server	yes\n"
+			    "audio_buffer	20-160\n"
+			    "audio_buffer_mode	adaptive\n"
+			    "audio_silence	-35.0\n"
+			    "jitter_buffer_type	off\n"
+			    "opus_bitrate	64000\n"
+			    "ice_policy		relay\n";
 	int err;
 
 	err = sl_conf_init();
@@ -262,12 +268,12 @@ void sl_close(void)
 	httpsock = mem_deref(httpsock);
 
 	sl_tracks_close();
-	sl_audio_close();
-	sl_meter_close();
 	sl_account_close();
 
 	ua_stop_all(true);
 	ua_close();
+	sl_audio_close();
+	sl_meter_close();
 	module_app_unload();
 	conf_close();
 
