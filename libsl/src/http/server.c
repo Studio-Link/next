@@ -41,6 +41,7 @@ static void http_sreply(struct http_conn *conn, uint16_t scode,
 		"Content-Length: %zu\r\n"
 		"Cache-Control: no-cache, no-store, must-revalidate\r\n"
 		"Referrer-Policy: no-referrer\r\n"
+
 		"Content-Security-Policy: default-src 'self' ws:; "
 		"frame-ancestors 'self'; form-action 'self'; img-src * data:;"
 		"style-src 'self' 'unsafe-inline';\r\n"
