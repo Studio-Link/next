@@ -91,8 +91,7 @@ add_subdirectory(external/rem)
 add_subdirectory(external/baresip)
 
 # Studio Link
-find_package(re CONFIG REQUIRED
-  HINTS ${CMAKE_CURRENT_SOURCE_DIR}/../external/re/cmake)
+find_package(re CONFIG REQUIRED)
 
 add_compile_definitions(SL_VERSION="${PROJECT_VERSION}")
 
