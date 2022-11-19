@@ -27,6 +27,7 @@ set(SRCS
   src/http/server.c
   src/main.c
   src/meters.c
+  src/mix.c
   src/tracks.c
   src/ws.c
 )

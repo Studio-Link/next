@@ -96,6 +96,7 @@ int sl_baresip_init(const uint8_t *conf)
 			    "audio_silence	-35.0\n"
 			    "audio_jitter_buffer_type	off\n"
 			    "video_jitter_buffer_type	off\n"
+			    "audio_txmode	thread\n"
 			    "opus_bitrate	64000\n"
 			    "avcodec_h264enc	libopenh264\n"
 			    "ice_policy		relay\n";
