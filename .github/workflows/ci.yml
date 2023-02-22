@@ -62,7 +62,7 @@ jobs:
     - name: install ninja
       if: ${{ runner.os == 'macOS' }}
       run: |
-        brew install ninja automake cppcheck
+        brew install ninja automake cppcheck pkg-config
 
     - name: websocat linux
       if: ${{ runner.os == 'Linux' }}
