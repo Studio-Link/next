@@ -1,4 +1,4 @@
-OPENSSL_VERSION   := 3.0.7
+OPENSSL_VERSION   := 3.0.8
 OPENSSL_MIRROR    := https://www.openssl.org/source
 OPUS_VERSION      := 1.3.1
 OPUS_MIRROR       := https://archive.mozilla.org/pub/opus
@@ -6,6 +6,5 @@ PORTAUDIO_VERSION := master
 PORTAUDIO_MIRROR  := https://github.com/studio-link-3rdparty
 SAMPLERATE_MIRROR := https://github.com/studio-link-3rdparty
 LIBRE_VERSION     := main
-LIBREM_VERSION    := main
 BARESIP_VERSION   := main
 CACHE_VERSION     := 9 # github cache invalidation workaround

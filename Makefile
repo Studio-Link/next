@@ -120,17 +120,12 @@ third_party/cacert.pem:
 external_dir:
 	mkdir -p external
 
-external: external_dir external/re external/rem external/baresip
+external: external_dir external/re external/baresip
 
 external/re:
 	$(shell [ ! -d external/re ] && \
 		git -C external clone https://github.com/baresip/re.git)
 	git -C external/re checkout $(LIBRE_VERSION)
-
-external/rem:
-	$(shell [ ! -d external/rem ] && \
-		git -C external clone https://github.com/baresip/rem.git)
-	git -C external/rem checkout $(LIBREM_VERSION)
 
 external/baresip:
 	$(shell [ ! -d external/baresip ] && \
