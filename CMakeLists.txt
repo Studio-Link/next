@@ -85,8 +85,8 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 endif()
 
 # Baresip dependencies
-add_subdirectory(external/re)
-add_subdirectory(external/baresip)
+add_subdirectory(external/re EXCLUDE_FROM_ALL)
+add_subdirectory(external/baresip EXCLUDE_FROM_ALL)
 
 # Studio Link
 find_package(re CONFIG REQUIRED)
