@@ -1,7 +1,7 @@
-OPENSSL_VERSION   := 3.0.8
+OPENSSL_VERSION   := 3.1.0
 OPENSSL_MIRROR    := https://www.openssl.org/source
-OPUS_VERSION      := 1.3.1
-OPUS_MIRROR       := https://archive.mozilla.org/pub/opus
+OPUS_VERSION      := 1.4
+OPUS_MIRROR       := https://downloads.xiph.org/releases/opus
 PORTAUDIO_VERSION := master
 PORTAUDIO_MIRROR  := https://github.com/studio-link-3rdparty
 SAMPLERATE_MIRROR := https://github.com/studio-link-3rdparty
