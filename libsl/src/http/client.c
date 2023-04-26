@@ -20,6 +20,9 @@ int sl_httpc_alloc(struct sl_httpc **http, http_resp_h *resph)
 	struct sl_httpc *p;
 	char file[FS_PATH_MAX];
 
+	if (!http || !resph)
+		return EINVAL;
+
 	p = mem_zalloc(sizeof(struct sl_httpc), destroy);
 	if (!p)
 		return ENOMEM;
