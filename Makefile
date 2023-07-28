@@ -63,8 +63,8 @@ third_party_dir:
 	mkdir -p third_party/lib
 
 .PHONY: third_party
-third_party: third_party_dir openssl opus samplerate portaudio lmdb cacert \
-	ffmpeg
+third_party: third_party_dir ffmpeg openssl opus samplerate portaudio lmdb \
+	cacert
 
 third_party/openssl:
 	$(HIDE)cd third_party && \
@@ -117,22 +117,48 @@ third_party/lmdb:
 		cp liblmdb.a ../../../lib/ && \
 		cp lmdb.h ../../../include/
 
-third_party/ffmpeg:
+third_party/openh264:
+	$(HIDE)cd third_party && \
+		wget ${H264_MIRROR}/v${H264_VERSION}.tar.gz && \
+		tar -xzf v${H264_VERSION}.tar.gz && \
+		mv openh264-${H264_VERSION} openh264 && \
+		cd openh264 && make CC=$(CC) -j && \
+		cp libopenh264.a ../lib/ && \
+		cp -a codec/api/wels ../include/
+
+third_party/ffmpeg: third_party/openh264
 	$(HIDE)cd third_party && \
 		wget ${FFMPEG_MIRROR}/ffmpeg-${FFMPEG_VERSION}.tar.xz && \
 		tar -xf ffmpeg-${FFMPEG_VERSION}.tar.xz && \
 		mv ffmpeg-${FFMPEG_VERSION} ffmpeg && \
 		cd ffmpeg && \
 		./configure --cc=$(CC) \
+			--extra-cflags="-I../include" \
 			--disable-autodetect \
 			--disable-doc \
 			--disable-everything \
 			--disable-programs \
-			--enable-gpl \
-			--enable-libx264 \
-			--enable-encoder=libx264 \
+			--enable-libopenh264 \
+			--enable-encoder=libopenh264 \
 			--enable-decoder=h264 && \
-		make CC=$(CC) -j
+		make CC=$(CC) -j && \
+		cp lib*/*.a ../lib/ && \
+		mkdir ../include/libavcodec && \
+		mkdir ../include/libavdevice && \
+		mkdir ../include/libavfilter && \
+		mkdir ../include/libavformat && \
+		mkdir ../include/libavutil && \
+		mkdir ../include/libpostproc && \
+		mkdir ../include/libswresample && \
+		mkdir ../include/libswscale && \
+		cp -a libavcodec/*.h ../include/libavcodec/ && \
+		cp -a libavdevice/*.h ../include/libavdevice/ && \
+		cp -a libavfilter/*.h ../include/libavfilter/ && \
+		cp -a libavformat/*.h ../include/libavformat/ && \
+		cp -a libavutil/*.h ../include/libavutil/ && \
+		cp -a libpostproc/*.h ../include/libpostproc/ && \
+		cp -a libswresample/*.h ../include/libswresample/ && \
+		cp -a libswscale/*.h ../include/libswscale/
 
 third_party/cacert.pem:
 	wget https://curl.se/ca/cacert.pem -O third_party/cacert.pem
