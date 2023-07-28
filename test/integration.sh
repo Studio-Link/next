@@ -63,7 +63,7 @@ script_trap_exit() {
 
 script_init() {
 	readonly script_output="$(mktemp "/tmp/test".XXXXX)"
-	build/app/linux/studiolink --headless &
+	build/app/cli/studiolink --headless &
 	test_pid="$!"
 
 	sleep 1
@@ -101,15 +101,15 @@ a_user_can_connect_with_websocket() {
 }
 
 a_user_can_call_cli_help() {
-	build/app/linux/studiolink -h || [[ $? == 254 ]]
+	build/app/cli/studiolink -h || [[ $? == 254 ]]
 }
 
 a_user_can_not_call_unknown_cli_options() {
-	build/app/linux/studiolink -sjdfksdf || [[ $? == 22 ]]
-	build/app/linux/studiolink -Hasldkfj || [[ $? == 22 ]]
-	build/app/linux/studiolink -x || [[ $? == 22 ]]
-	build/app/linux/studiolink --headlesssadlkfjasd || [[ $? == 22 ]]
-	build/app/linux/studiolink --headless="asdfjdsf" || [[ $? == 22 ]]
+	build/app/cli/studiolink -sjdfksdf || [[ $? == 22 ]]
+	build/app/cli/studiolink -Hasldkfj || [[ $? == 22 ]]
+	build/app/cli/studiolink -x || [[ $? == 22 ]]
+	build/app/cli/studiolink --headlesssadlkfjasd || [[ $? == 22 ]]
+	build/app/cli/studiolink --headless="asdfjdsf" || [[ $? == 22 ]]
 }
 
 a_user_can_add_tracks() {

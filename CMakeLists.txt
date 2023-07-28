@@ -96,4 +96,4 @@ add_compile_definitions(SL_VERSION="${PROJECT_VERSION}")
 
 add_subdirectory(libsl)
 add_subdirectory(test)
-add_subdirectory(app/linux)
+add_subdirectory(app/cli)

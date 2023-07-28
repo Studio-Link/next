@@ -209,11 +209,11 @@ watch:
 r: run
 .PHONY: run
 run: all
-	build/app/linux/studiolink
+	build/app/cli/studiolink
 
 .PHONY: dev
 dev: all
-	build/app/linux/studiolink --headless
+	build/app/cli/studiolink --headless
 
 .PHONY: release
 release:
@@ -224,11 +224,11 @@ release:
 
 .PHONY: linux_debug
 linux_debug: all
-	readelf -d build/app/linux/studiolink | grep NEEDED
+	readelf -d build/app/cli/studiolink | grep NEEDED
 
 .PHONY: macos_debug
 macos_debug: all
-	otool -L build/app/macos/studiolink
+	otool -L build/app/cli/studiolink
 
 
 ##############################################################################
