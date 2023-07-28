@@ -60,7 +60,8 @@ third_party_dir:
 	mkdir -p third_party/lib
 
 .PHONY: third_party
-third_party: third_party_dir openssl opus samplerate portaudio lmdb cacert
+third_party: third_party_dir openssl opus samplerate portaudio lmdb cacert \
+	ffmpeg
 
 third_party/openssl:
 	$(HIDE)cd third_party && \
@@ -112,6 +113,23 @@ third_party/lmdb:
 		make CC=$(CC) -j && \
 		cp liblmdb.a ../../../lib/ && \
 		cp lmdb.h ../../../include/
+
+third_party/ffmpeg:
+	$(HIDE)cd third_party && \
+		wget ${FFMPEG_MIRROR}/ffmpeg-${FFMPEG_VERSION}.tar.xz && \
+		tar -xf ffmpeg-${FFMPEG_VERSION}.tar.xz && \
+		mv ffmpeg-${FFMPEG_VERSION} ffmpeg && \
+		cd ffmpeg && \
+		./configure --cc=$(CC) \
+			--disable-autodetect \
+			--disable-doc \
+			--disable-everything \
+			--disable-programs \
+			--enable-gpl \
+			--enable-libx264 \
+			--enable-encoder=libx264 \
+			--enable-decoder=h264 && \
+		make CC=$(CC) -j
 
 third_party/cacert.pem:
 	wget https://curl.se/ca/cacert.pem -O third_party/cacert.pem

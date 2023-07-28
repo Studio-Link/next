@@ -1,6 +1,8 @@
 OPENSSL_VERSION   := 3.1.1
 OPENSSL_MIRROR    := https://www.openssl.org/source
 OPUS_VERSION      := 1.4
+FFMPEG_MIRROR     := https://ffmpeg.org/releases
+FFMPEG_VERSION    := 6.0
 OPUS_MIRROR       := https://downloads.xiph.org/releases/opus
 PORTAUDIO_VERSION := master
 PORTAUDIO_MIRROR  := https://github.com/studio-link-3rdparty
