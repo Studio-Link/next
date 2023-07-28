@@ -123,7 +123,7 @@ third_party/openh264:
 		tar -xzf v${H264_VERSION}.tar.gz && \
 		mv openh264-${H264_VERSION} openh264 && \
 		cd openh264 && make CC=$(CC) -j && \
-		make PREFIX=.. install-static
+		make PREFIX=$(shell realpath third_party) install-static
 
 third_party/ffmpeg: third_party/openh264
 	$(HIDE)cd third_party && \
@@ -132,7 +132,7 @@ third_party/ffmpeg: third_party/openh264
 		mv ffmpeg-${FFMPEG_VERSION} ffmpeg && \
 		export PKG_CONFIG_PATH=../lib/pkgconfig && \
 		cd ffmpeg && \
-		./configure --cc=$(CC) \
+		./configure --prefix=$(shell realpath third_party) --cc=$(CC) \
 			--extra-cflags="-I../include" \
 			--disable-autodetect \
 			--disable-doc \
@@ -141,24 +141,7 @@ third_party/ffmpeg: third_party/openh264
 			--enable-libopenh264 \
 			--enable-encoder=libopenh264 \
 			--enable-decoder=h264 && \
-		make CC=$(CC) -j && \
-		cp lib*/*.a ../lib/ && \
-		mkdir ../include/libavcodec && \
-		mkdir ../include/libavdevice && \
-		mkdir ../include/libavfilter && \
-		mkdir ../include/libavformat && \
-		mkdir ../include/libavutil && \
-		mkdir ../include/libpostproc && \
-		mkdir ../include/libswresample && \
-		mkdir ../include/libswscale && \
-		cp -a libavcodec/*.h ../include/libavcodec/ && \
-		cp -a libavdevice/*.h ../include/libavdevice/ && \
-		cp -a libavfilter/*.h ../include/libavfilter/ && \
-		cp -a libavformat/*.h ../include/libavformat/ && \
-		cp -a libavutil/*.h ../include/libavutil/ && \
-		cp -a libpostproc/*.h ../include/libpostproc/ && \
-		cp -a libswresample/*.h ../include/libswresample/ && \
-		cp -a libswscale/*.h ../include/libswscale/
+		make CC=$(CC) -j install
 
 third_party/cacert.pem:
 	wget https://curl.se/ca/cacert.pem -O third_party/cacert.pem
