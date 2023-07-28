@@ -5,6 +5,7 @@ build-*
 .vscode
 compile_commands.json
 .cache
+cache
 
 # Object files
 *.o

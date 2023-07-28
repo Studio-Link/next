@@ -1,5 +1,0 @@
-# Getting Started
-
-## Download
-
-## Tour
