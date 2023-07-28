@@ -123,14 +123,14 @@ third_party/openh264:
 		tar -xzf v${H264_VERSION}.tar.gz && \
 		mv openh264-${H264_VERSION} openh264 && \
 		cd openh264 && make CC=$(CC) -j && \
-		cp libopenh264.a ../lib/ && \
-		cp -a codec/api/wels ../include/
+		make PREFIX=.. install-static
 
 third_party/ffmpeg: third_party/openh264
 	$(HIDE)cd third_party && \
 		wget ${FFMPEG_MIRROR}/ffmpeg-${FFMPEG_VERSION}.tar.xz && \
 		tar -xf ffmpeg-${FFMPEG_VERSION}.tar.xz && \
 		mv ffmpeg-${FFMPEG_VERSION} ffmpeg && \
+		export PKG_CONFIG_PATH=../lib/pkgconfig && \
 		cd ffmpeg && \
 		./configure --cc=$(CC) \
 			--extra-cflags="-I../include" \
