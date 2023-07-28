@@ -59,10 +59,10 @@ jobs:
       run: |
         sudo apt-get install -y libasound2-dev libjack-jackd2-dev libpulse-dev libpulse0
 
-    - name: install ninja
+    - name: install brew deps
       if: ${{ runner.os == 'macOS' }}
       run: |
-        brew install ninja automake cppcheck pkg-config nasm
+        brew install ninja automake cppcheck pkg-config nasm coreutils
 
     - name: websocat linux
       if: ${{ runner.os == 'Linux' }}
