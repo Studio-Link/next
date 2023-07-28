@@ -1,7 +1,7 @@
 #
 # CMakeLists.txt
 #
-# Copyright (C) 2022 Sebastian Reimers
+# Copyright (C) 2023 Sebastian Reimers
 #
 
 ##############################################################################
@@ -13,7 +13,7 @@ cmake_minimum_required(VERSION 3.10)
 
 set(CMAKE_C_COMPILER clang)
 
-project(studiolink VERSION 23.03.0 LANGUAGES C)
+project(studiolink VERSION 23.08.0 LANGUAGES C)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake)
 
@@ -75,7 +75,7 @@ set(RE_LIBRARY re CACHE STRING "")
 set(LIBRE_BUILD_SHARED OFF CACHE STRING "")
 
 set(STATIC ON CACHE BOOL "")
-set(MODULES auconv auresamp ice dtls_srtp turn opus g711 portaudio netroam)
+set(MODULES auconv auresamp ice dtls_srtp turn opus g711 portaudio netroam avcodec)
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
   list(APPEND MODULES alsa jack pulse)

@@ -11,6 +11,7 @@
 project(sl LANGUAGES C)
 
 find_package(LMDB REQUIRED)
+find_package(OPENH264 REQUIRED)
 
 ##############################################################################
 #
@@ -82,6 +83,6 @@ LIST(APPEND COMPILED_RESOURCES ${OUTPUT_FILE})
 #
 
 add_library(${PROJECT_NAME} STATIC ${SRCS} ${HEADERS} ${COMPILED_RESOURCES})
-target_link_libraries(${PROJECT_NAME} PUBLIC baresip re ${LMDB_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} PUBLIC baresip re ${LMDB_LIBRARIES} ${OPENH264_LIBRARIES} stdc++)
 target_include_directories(${PROJECT_NAME} PUBLIC include PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 target_compile_definitions(${PROJECT_NAME} PRIVATE ${RE_DEFINITIONS})

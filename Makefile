@@ -1,7 +1,7 @@
 #
 # Makefile
 #
-# Copyright (C) 2022 Studio.Link Sebastian Reimers
+# Copyright (C) 2023 Studio.Link Sebastian Reimers
 # Variables (make CC=gcc V=1):
 #   V		Verbose mode (example: make V=1)
 #   CC		Override CC (default clang)
@@ -54,13 +54,17 @@ lmdb: third_party/lmdb
 .PHONY: cacert
 cacert: third_party/cacert.pem
 
+.PHONY: ffmpeg
+ffmpeg: third_party/ffmpeg
+
 .PHONY: third_party_dir
 third_party_dir:
 	mkdir -p third_party/include
 	mkdir -p third_party/lib
 
 .PHONY: third_party
-third_party: third_party_dir openssl opus samplerate portaudio lmdb cacert
+third_party: third_party_dir ffmpeg openssl opus samplerate portaudio lmdb \
+	cacert
 
 third_party/openssl:
 	$(HIDE)cd third_party && \
@@ -112,6 +116,32 @@ third_party/lmdb:
 		make CC=$(CC) -j && \
 		cp liblmdb.a ../../../lib/ && \
 		cp lmdb.h ../../../include/
+
+third_party/openh264:
+	$(HIDE)cd third_party && \
+		wget ${H264_MIRROR}/v${H264_VERSION}.tar.gz && \
+		tar -xzf v${H264_VERSION}.tar.gz && \
+		mv openh264-${H264_VERSION} openh264 && \
+		cd openh264 && make CC=$(CC) -j && \
+		make PREFIX=$(shell realpath third_party) install-static
+
+third_party/ffmpeg: third_party/openh264
+	$(HIDE)cd third_party && \
+		wget ${FFMPEG_MIRROR}/ffmpeg-${FFMPEG_VERSION}.tar.xz && \
+		tar -xf ffmpeg-${FFMPEG_VERSION}.tar.xz && \
+		mv ffmpeg-${FFMPEG_VERSION} ffmpeg && \
+		export PKG_CONFIG_PATH=../lib/pkgconfig && \
+		cd ffmpeg && \
+		./configure --prefix=$(shell realpath third_party) --cc=$(CC) \
+			--extra-cflags="-I../include" \
+			--disable-autodetect \
+			--disable-doc \
+			--disable-everything \
+			--disable-programs \
+			--enable-libopenh264 \
+			--enable-encoder=libopenh264 \
+			--enable-decoder=h264 && \
+		make CC=$(CC) -j install
 
 third_party/cacert.pem:
 	wget https://curl.se/ca/cacert.pem -O third_party/cacert.pem

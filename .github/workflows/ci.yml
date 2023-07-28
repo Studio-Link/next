@@ -52,17 +52,17 @@ jobs:
         wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
         sudo add-apt-repository "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-14 main"
         sudo apt-get update
-        sudo apt-get install -y clang-tools-14 clang-14 clang-tidy-14 ninja-build cppcheck gdb
+        sudo apt-get install -y clang-tools-14 clang-14 clang-tidy-14 ninja-build cppcheck gdb nasm yasm
 
     - name: install sound libs
       if: ${{ runner.os == 'Linux' }}
       run: |
         sudo apt-get install -y libasound2-dev libjack-jackd2-dev libpulse-dev libpulse0
 
-    - name: install ninja
+    - name: install brew deps
       if: ${{ runner.os == 'macOS' }}
       run: |
-        brew install ninja automake cppcheck pkg-config
+        brew install ninja automake cppcheck pkg-config nasm coreutils
 
     - name: websocat linux
       if: ${{ runner.os == 'Linux' }}
@@ -119,7 +119,7 @@ jobs:
     
     - name: install and ninja
       run: |
-        sudo apt-get update && sudo apt-get install -y ninja-build
+        sudo apt-get update && sudo apt-get install -y ninja-build nasm
 
     - name: install sound libs
       if: ${{ runner.os == 'Linux' }}
