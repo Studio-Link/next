@@ -1,4 +1,4 @@
-OPENSSL_VERSION   := 3.1.0
+OPENSSL_VERSION   := 3.1.1
 OPENSSL_MIRROR    := https://www.openssl.org/source
 OPUS_VERSION      := 1.4
 OPUS_MIRROR       := https://downloads.xiph.org/releases/opus
