@@ -92,7 +92,8 @@ int sl_baresip_init(const uint8_t *conf)
 			    "audio_buffer	20-160\n"
 			    "audio_buffer_mode	adaptive\n"
 			    "audio_silence	-35.0\n"
-			    "jitter_buffer_type	off\n"
+			    "audio_jitter_buffer_type	off\n"
+			    "video_jitter_buffer_type	off\n"
 			    "opus_bitrate	64000\n"
 			    "ice_policy		relay\n";
 	int err;

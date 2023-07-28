@@ -72,6 +72,7 @@ if(${CMAKE_BUILD_TYPE} MATCHES "[Rr]el" AND NOT UNIX)
 endif()
 
 set(RE_LIBRARY re CACHE STRING "")
+set(LIBRE_BUILD_SHARED OFF CACHE STRING "")
 
 set(STATIC ON CACHE BOOL "")
 set(MODULES auconv auresamp ice dtls_srtp turn opus g711 portaudio netroam)
