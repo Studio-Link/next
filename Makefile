@@ -54,6 +54,9 @@ lmdb: third_party/lmdb
 .PHONY: cacert
 cacert: third_party/cacert.pem
 
+.PHONY: ffmpeg
+ffmpeg: third_party/ffmpeg
+
 .PHONY: third_party_dir
 third_party_dir:
 	mkdir -p third_party/include
