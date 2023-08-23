@@ -98,6 +98,7 @@ int sl_baresip_init(const uint8_t *conf)
 			    "video_jitter_buffer_type	off\n"
 			    "audio_txmode	thread\n"
 			    "opus_bitrate	64000\n"
+			    "dns_getaddrinfo	yes\n"
 			    "avcodec_h264enc	libopenh264\n"
 			    "ice_policy		relay\n";
 	int err;
