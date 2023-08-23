@@ -69,6 +69,9 @@ int sl_getopt(int argc, char *const argv[])
 		case 'h':
 			usage();
 			return -2;
+		case 'v':
+			log_enable_debug(true);
+			break;
 		case 'H':
 			headless = true;
 			break;
