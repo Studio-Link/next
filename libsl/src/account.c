@@ -1,7 +1,7 @@
 #include <studiolink.h>
 
 static struct ua *ua;
-struct sl_httpc *httpc;
+static struct sl_httpc *httpc;
 
 
 static void http_resph(int err, const struct http_msg *msg, void *arg)
