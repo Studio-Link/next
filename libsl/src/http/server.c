@@ -13,6 +13,8 @@
 #include "logo_standalone.svg.h"
 #include "logo_solo.svg.h"
 
+static struct http_sock *server_sock = NULL;
+
 
 static void http_sreply(struct http_conn *conn, uint16_t scode,
 			const char *reason, const char *ctype, const char *fmt,
@@ -314,13 +316,10 @@ err:
 }
 
 
-int sl_http_listen(struct http_sock **sock)
+int sl_http_listen(void)
 {
 	int err;
 	struct sa srv;
-
-	if (!sock)
-		return EINVAL;
 
 #ifdef RELEASE
 	err = sa_set_str(&srv, "127.0.0.1", 9999);
@@ -331,7 +330,13 @@ int sl_http_listen(struct http_sock **sock)
 		return err;
 
 	info("listen webui: http://%J\n", &srv);
-	err = http_listen(sock, &srv, http_req_handler, NULL);
+	err = http_listen(&server_sock, &srv, http_req_handler, NULL);
 
 	return err;
+}
+
+
+void sl_http_close(void)
+{
+	server_sock = mem_deref(server_sock);
 }

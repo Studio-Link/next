@@ -4,8 +4,7 @@
 
 enum { ASYNC_WORKERS = 6 };
 
-static struct http_sock *httpsock = NULL;
-static bool headless		  = false;
+static bool headless = false;
 
 
 static const char *modv[] = {"turn", "ice", "dtls_srtp", "netroam",
@@ -198,7 +197,7 @@ int sl_init(void)
 		goto out;
 	}
 
-	err = sl_http_listen(&httpsock);
+	err = sl_http_listen();
 	if (err) {
 		warning("sl_init: http_listen failed (%m)\n", err);
 		goto out;
@@ -274,7 +273,7 @@ int sl_main(void)
 void sl_close(void)
 {
 	sl_ws_close();
-	httpsock = mem_deref(httpsock);
+	sl_http_close();
 
 	sl_tracks_close();
 	sl_account_close();
