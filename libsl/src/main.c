@@ -244,7 +244,9 @@ static void webui_closed(int err, void *arg)
 	(void)arg;
 
 	if (err)
-		warning("webui open failed! %m\n", err);
+		warning("webui/browser open failed! %m\n", err);
+	else
+		info("webui/browser closed\n");
 
 	re_cancel();
 }
