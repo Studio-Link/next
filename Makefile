@@ -153,15 +153,14 @@ external_dir:
 external: external_dir external/re external/baresip
 
 external/re:
-	$(shell [ ! -d external/re ] && \
-		git -C external clone https://github.com/baresip/re.git)
-	git -C external/re checkout $(LIBRE_VERSION)
+	$(HIDE) [ ! -d external/re ] && \
+		git -C external clone -b $(LIBRE_VERSION) --depth=1 \
+		https://github.com/baresip/re.git
 
 external/baresip:
-	$(shell [ ! -d external/baresip ] && \
-		git -C external clone \
-		https://github.com/baresip/baresip.git)
-	git -C external/baresip checkout $(BARESIP_VERSION)
+	$(HIDE) [ ! -d external/baresip ] && \
+		git -C external clone -b $(BARESIP_VERSION) --depth=1 \
+		https://github.com/baresip/baresip.git
 
 
 ##############################################################################
