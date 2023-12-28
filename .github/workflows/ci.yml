@@ -46,13 +46,13 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: install clang-14 and ninja
+    - name: install clang-16 and ninja
       if: ${{ runner.os == 'Linux' }}
       run: |
         wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
-        sudo add-apt-repository "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-14 main"
+        sudo add-apt-repository "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-16 main"
         sudo apt-get update
-        sudo apt-get install -y clang-tools-14 clang-14 clang-tidy-14 ninja-build cppcheck gdb nasm yasm
+        sudo apt-get install -y clang-tools-16 clang-16 clang-tidy-16 ninja-build cppcheck gdb nasm yasm
 
     - name: install sound libs
       if: ${{ runner.os == 'Linux' }}
@@ -93,13 +93,13 @@ jobs:
 
     - name: make StudioLink - Linux
       if: ${{ runner.os == 'Linux' }}
-      run: make CC=clang-14 CI=1 && make test
+      run: make CC=clang-16 CI=1 && make test
 
     - name: clang-tidy
       if: ${{ runner.os == 'Linux' }}
       run: |
-        clang-tidy-14 -p build -checks=cert-\*,-cert-dcl37-c,-cert-dcl51-cpp,-clang-analyzer-valist.Uninitialized libsl/src/*.c
-        clang-tidy-14 -p build -checks=cert-\*,-cert-dcl37-c,-cert-dcl51-cpp,-clang-analyzer-valist.Uninitialized test/src/*.c
+        clang-tidy-16 -p build -checks=cert-\*,-cert-dcl37-c,-cert-dcl51-cpp,-clang-analyzer-valist.Uninitialized libsl/src/*.c
+        clang-tidy-16 -p build -checks=cert-\*,-cert-dcl37-c,-cert-dcl51-cpp,-clang-analyzer-valist.Uninitialized test/src/*.c
 
     - name: clang scan-build
       if: ${{ runner.os == 'Linux' }}
