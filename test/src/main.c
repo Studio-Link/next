@@ -51,7 +51,7 @@ static int run_tests(void)
 	size_t i;
 	int err;
 
-	for (i = 0; i < ARRAY_SIZE(tests); i++) {
+	for (i = 0; i < RE_ARRAY_SIZE(tests); i++) {
 
 		re_printf(".");
 
@@ -71,7 +71,7 @@ static int run_tests(void)
 int main(void)
 {
 	struct sl_config *conf = sl_conf();
-	size_t ntests	       = ARRAY_SIZE(tests);
+	size_t ntests	       = RE_ARRAY_SIZE(tests);
 	struct auplay *play    = NULL;
 	struct ausrc *src      = NULL;
 	int err;

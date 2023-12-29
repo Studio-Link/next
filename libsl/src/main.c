@@ -163,7 +163,7 @@ int sl_baresip_init(const uint8_t *conf)
 		goto out;
 	}
 
-	for (size_t i = 0; i < ARRAY_SIZE(modv); i++) {
+	for (size_t i = 0; i < RE_ARRAY_SIZE(modv); i++) {
 
 		err = module_load(".", modv[i]);
 		if (err) {
