@@ -153,7 +153,7 @@ static void http_req_handler(struct http_conn *conn,
 	if (0 == pl_strcasecmp(&msg->path, "/ws/v1/tracks")) {
 		sl_ws_open(conn, WS_TRACKS, msg, sl_ws_dummyh);
 
-		re_snprintf(json_str, SL_MAX_JSON, "%H", sl_tracks_json);
+		re_snprintf(json_str, SL_MAX_JSON, "%H", sl_tracks_json, NULL);
 		sl_ws_send_str(WS_TRACKS, json_str);
 		goto out;
 	}
@@ -170,7 +170,7 @@ static void http_req_handler(struct http_conn *conn,
 	if (0 == pl_strcasecmp(&msg->path, "/api/v1/tracks/remote") &&
 	    0 == pl_strcasecmp(&msg->met, "POST")) {
 		sl_track_add(&track, SL_TRACK_REMOTE);
-		re_snprintf(json_str, SL_MAX_JSON, "%H", sl_tracks_json);
+		re_snprintf(json_str, SL_MAX_JSON, "%H", sl_tracks_json, NULL);
 		sl_ws_send_str(WS_TRACKS, json_str);
 
 		http_sreply(conn, 200, "OK", "text/html", "", 0);

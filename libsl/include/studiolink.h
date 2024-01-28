@@ -159,7 +159,7 @@ int sl_track_next_id(void);
 int sl_track_add(struct sl_track **trackp, enum sl_track_type type);
 int sl_track_del(int id);
 enum sl_track_status sl_track_status(int id);
-int sl_tracks_json(struct re_printf *pf);
+int sl_tracks_json(struct re_printf *pf, void *arg);
 struct sl_track *sl_track_by_id(int id);
 struct slaudio *sl_track_audio(struct sl_track *track);
 int sl_track_dial(struct sl_track *track, struct pl *peer);

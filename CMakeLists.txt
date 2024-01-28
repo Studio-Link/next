@@ -27,7 +27,6 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_C_STANDARD 11)
-set(CMAKE_C_EXTENSIONS OFF)
 
 if(MSVC)
   add_compile_options("/W3")
@@ -51,7 +50,11 @@ else()
 endif()
 
 if(CMAKE_C_COMPILER_ID MATCHES "Clang")
-  add_compile_options(-Wshorten-64-to-32 -Watomic-implicit-seq-cst)
+  add_compile_options(
+      -Wshorten-64-to-32
+      -Watomic-implicit-seq-cst
+      -Wno-gnu-zero-variadic-macro-arguments
+  )
 endif()
 
 # #############################################################################

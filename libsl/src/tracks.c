@@ -40,13 +40,14 @@ const struct list *sl_tracks(void)
 }
 
 
-int sl_tracks_json(struct re_printf *pf)
+int sl_tracks_json(struct re_printf *pf, void *arg)
 {
 	struct le *le;
 	struct odict *o_tracks;
 	struct odict *o_track;
 	char id[ITOA_BUFSZ];
 	int err;
+	(void)arg;
 
 	if (!pf)
 		return EINVAL;
@@ -303,7 +304,7 @@ void sl_track_hangup(struct sl_track *track)
 void sl_track_ws_send(void)
 {
 	char *json_str = mem_zalloc(SL_MAX_JSON + 1, NULL);
-	re_snprintf(json_str, SL_MAX_JSON, "%H", sl_tracks_json);
+	re_snprintf(json_str, SL_MAX_JSON, "%H", sl_tracks_json, NULL);
 	sl_ws_send_str(WS_TRACKS, json_str);
 	mem_deref(json_str);
 }
