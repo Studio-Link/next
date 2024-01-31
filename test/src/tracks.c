@@ -21,7 +21,8 @@ static int test_track_add(void)
 	ASSERT_EQ(2, list_count(sl_tracks()));
 
 	/* Get all tracks as json string */
-	err = re_snprintf(json_str, sizeof(json_str), "%H", sl_tracks_json);
+	err = re_snprintf(json_str, sizeof(json_str), "%H", sl_tracks_json,
+			  NULL);
 	ASSERT_TRUE(-1 != err);
 
 	/* Validate json */
@@ -61,7 +62,8 @@ static int test_track_add(void)
 	ASSERT_EQ(E2BIG, err);
 
 	/* Validate json */
-	err = re_snprintf(json_str, sizeof(json_str), "%H", sl_tracks_json);
+	err = re_snprintf(json_str, sizeof(json_str), "%H", sl_tracks_json,
+			  NULL);
 	ASSERT_TRUE(-1 != err);
 	err = json_decode_odict(&o, 32, json_str, sizeof(json_str), 8);
 	TEST_ERR(err);

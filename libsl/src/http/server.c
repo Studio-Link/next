@@ -288,7 +288,7 @@ static void http_req_handler(struct http_conn *conn,
 			goto out;
 		}
 
-		re_snprintf(json_str, SL_MAX_JSON, "%H", sl_tracks_json);
+		re_snprintf(json_str, SL_MAX_JSON, "%H", sl_tracks_json, NULL);
 		sl_ws_send_str(WS_TRACKS, json_str);
 		http_sreply(conn, 200, "OK", "text/html", "", 0);
 		goto out;
