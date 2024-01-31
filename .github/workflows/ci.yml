@@ -79,7 +79,7 @@ jobs:
         mv websocat.x86_64-apple-darwin /usr/local/bin/websocat
         chmod +x /usr/local/bin/websocat
 
-    - uses: actions/cache@v3
+    - uses: actions/cache@v4
       with:
         path: third_party
         key: ${{ runner.os }}-${{ hashFiles('versions.mk') }}
@@ -131,7 +131,7 @@ jobs:
       run: |
         sudo apt-get install -y libasound2-dev libjack-jackd2-dev libpulse-dev libpulse0
 
-    - uses: actions/cache@v3
+    - uses: actions/cache@v4
       with:
         path: third_party
         key: ${{ runner.os }}-gcc-${{ hashFiles('versions.mk') }}
@@ -146,7 +146,7 @@ jobs:
     - run: make && make clean
 
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@v2
+      uses: github/codeql-action/init@v3
       with:
         languages: cpp
         queries: security-extended
@@ -155,4 +155,4 @@ jobs:
         make
 
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v2
+      uses: github/codeql-action/analyze@v3
