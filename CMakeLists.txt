@@ -90,7 +90,7 @@ set(MODULES
     alsa
     auconv
     auresamp
-    avcodec
+    vp8
     coreaudio
     dtls_srtp
     g711

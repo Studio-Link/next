@@ -9,7 +9,7 @@ static bool headless = false;
 
 static const char *modv[] = {"turn", "ice", "dtls_srtp", "netroam",
 			     /* video codecs */
-			     "avcodec",
+			     "vp8",
 
 			     /* audio codecs */
 			     "opus", "g711",
@@ -101,7 +101,6 @@ int sl_baresip_init(const uint8_t *conf)
 			    "audio_txmode	thread\n"
 			    "opus_bitrate	64000\n"
 			    "dns_getaddrinfo	yes\n"
-			    "avcodec_h264enc	libopenh264\n"
 			    "ice_policy		relay\n";
 	int err;
 
