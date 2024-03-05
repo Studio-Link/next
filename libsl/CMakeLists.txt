@@ -11,7 +11,6 @@
 project(sl LANGUAGES C)
 
 find_package(LMDB REQUIRED)
-find_package(OPENH264 REQUIRED)
 
 ##############################################################################
 #

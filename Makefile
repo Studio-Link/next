@@ -51,11 +51,11 @@ samplerate: third_party/libsamplerate
 .PHONY: lmdb
 lmdb: third_party/lmdb
 
+.PHONY: libvpx
+libvpx: third_party/libvpx
+
 .PHONY: cacert
 cacert: third_party/cacert.pem
-
-.PHONY: ffmpeg
-ffmpeg: third_party/ffmpeg
 
 .PHONY: third_party_dir
 third_party_dir:
@@ -63,8 +63,19 @@ third_party_dir:
 	mkdir -p third_party/lib
 
 .PHONY: third_party
-third_party: third_party_dir ffmpeg openssl opus samplerate portaudio lmdb \
+third_party: third_party_dir libvpx openssl opus samplerate portaudio lmdb \
 	cacert
+
+third_party/libvpx:
+	$(HIDE)cd third_party && \
+	git clone --depth=1 --branch=${VPX_VERSION} ${VPX_MIRROR} && \
+	mkdir build_vpx && cd build_vpx && \
+	../libvpx/configure --prefix=../ --enable-realtime-only \
+	--disable-unit-tests --disable-vp9 --disable-tools --disable-shared \
+	--enable-runtime-cpu-detect \
+	--disable-install-docs --disable-examples && \
+	make -j4 && \
+	make install
 
 third_party/openssl:
 	$(HIDE)cd third_party && \
@@ -116,32 +127,6 @@ third_party/lmdb:
 		make CC=$(CC) -j && \
 		cp liblmdb.a ../../../lib/ && \
 		cp lmdb.h ../../../include/
-
-third_party/openh264:
-	$(HIDE)cd third_party && \
-		wget ${H264_MIRROR}/v${H264_VERSION}.tar.gz && \
-		tar -xzf v${H264_VERSION}.tar.gz && \
-		mv openh264-${H264_VERSION} openh264 && \
-		cd openh264 && make CC=$(CC) -j && \
-		make PREFIX=$(shell realpath third_party) install-static
-
-third_party/ffmpeg: third_party/openh264
-	$(HIDE)cd third_party && \
-		wget ${FFMPEG_MIRROR}/ffmpeg-${FFMPEG_VERSION}.tar.xz && \
-		tar -xf ffmpeg-${FFMPEG_VERSION}.tar.xz && \
-		mv ffmpeg-${FFMPEG_VERSION} ffmpeg && \
-		export PKG_CONFIG_PATH=../lib/pkgconfig && \
-		cd ffmpeg && \
-		./configure --prefix=$(shell realpath third_party) --cc=$(CC) \
-			--extra-cflags="-I../include" \
-			--disable-autodetect \
-			--disable-doc \
-			--disable-everything \
-			--disable-programs \
-			--enable-libopenh264 \
-			--enable-encoder=libopenh264 \
-			--enable-decoder=h264 && \
-		make CC=$(CC) -j install
 
 third_party/cacert.pem:
 	wget https://curl.se/ca/cacert.pem -O third_party/cacert.pem
@@ -241,8 +226,14 @@ run_san:
 	TSAN_OPTIONS="suppressions=tsan.supp" \
 	make run
 
+.PHONY: test_san
+test_san:
+	ASAN_OPTIONS=fast_unwind_on_malloc=0 \
+	TSAN_OPTIONS="suppressions=tsan.supp" \
+	make test
+
 .PHONY: asan
-asan:
+asan: external
 	make clean
 	cmake -B build -GNinja -DCMAKE_BUILD_TYPE=Debug \
 		-DCMAKE_C_FLAGS="-fsanitize=undefined,address \
@@ -251,7 +242,7 @@ asan:
 	make all
 
 .PHONY: tsan
-tsan:
+tsan: external
 	make clean
 	cmake -B build -GNinja -DCMAKE_BUILD_TYPE=Debug \
 		-DCMAKE_C_FLAGS="-fsanitize=undefined,thread \
