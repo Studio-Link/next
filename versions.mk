@@ -1,6 +1,6 @@
 OPENSSL_VERSION   := 3.2.1
 OPENSSL_MIRROR    := https://www.openssl.org/source
-OPUS_VERSION      := 1.4
+OPUS_VERSION      := 1.5.1
 OPUS_MIRROR       := https://downloads.xiph.org/releases/opus
 VPX_VERSION       := v1.14.0
 VPX_MIRROR        := https://chromium.googlesource.com/webm/libvpx

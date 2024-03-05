@@ -95,7 +95,8 @@ third_party/opus:
 		tar -xzf opus-${OPUS_VERSION}.tar.gz && \
 		mv opus-${OPUS_VERSION} opus
 	$(HIDE)cd third_party/opus && \
-		CC=$(CC) ./configure --with-pic && \
+		CC=$(CC) ./configure --with-pic --enable-dred \
+		--enable-deep-plc --enable-osce && \
 		make -j && \
 		cp .libs/libopus.a ../lib/ && \
 		mkdir -p ../include/opus && \
