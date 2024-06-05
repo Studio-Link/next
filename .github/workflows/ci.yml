@@ -63,7 +63,7 @@ jobs:
     - name: install brew deps
       if: ${{ runner.os == 'macOS' }}
       run: |
-        brew install ninja automake cppcheck pkg-config nasm coreutils
+        brew install ninja automake cppcheck pkg-config nasm coreutils libtool
 
     - name: websocat linux
       if: ${{ runner.os == 'Linux' }}
