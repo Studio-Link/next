@@ -71,7 +71,7 @@ script_init() {
 }
 
 curl_head() {
-	curl -I "${test_url}$1" 2>/dev/null
+	curl -I "${test_url}$1"
 }
 
 curl_post() {
