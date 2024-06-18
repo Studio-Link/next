@@ -64,6 +64,8 @@ jobs:
       if: ${{ runner.os == 'macOS' }}
       run: |
         brew install ninja automake cppcheck pkg-config nasm coreutils libtool curl
+        curl --version
+        which curl
 
     - name: websocat linux
       if: ${{ runner.os == 'Linux' }}
