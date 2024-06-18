@@ -64,6 +64,8 @@ jobs:
       if: ${{ runner.os == 'macOS' }}
       run: |
         brew install ninja automake cppcheck pkg-config nasm coreutils libtool curl
+        echo 'export PATH="$(brew --prefix)/opt/curl/bin:$PATH"' >> ~/.zshrc
+        source ~/.zshrc
         curl --version
         which curl
 
