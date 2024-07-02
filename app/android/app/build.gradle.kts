@@ -21,8 +21,12 @@ android {
         }
         externalNativeBuild {
             cmake {
-                cppFlags += ""
+                arguments += listOf("-DANDROID_STL=none")
             }
+        }
+
+        ndk {
+            abiFilters.addAll(arrayOf("arm64-v8a", "x86_64"))
         }
     }
 

@@ -41,6 +41,7 @@ struct sl_config {
 	} play, src;
 };
 
+int sl_conf_path_set(const char *path);
 const char *sl_conf_path(void);
 const char *sl_conf_uuid(void);
 int sl_conf_cacert(void);

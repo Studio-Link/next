@@ -23,7 +23,7 @@ static const char *modv[] = {"turn", "ice", "dtls_srtp", "netroam",
 			     "auconv", "auresamp",
 
 			     /* audio drivers */
-			     "portaudio"};
+			     };
 
 
 static void jitter_stats(void *arg)
@@ -141,7 +141,8 @@ int sl_baresip_init(const uint8_t *conf)
 			    "audio_txmode	thread\n"
 			    "opus_bitrate	64000\n"
 			    "dns_getaddrinfo	yes\n"
-			    "ice_policy		relay\n";
+			    "ice_policy		relay\n"
+			    "dns_server 8.8.8.8:53\n";
 	int err;
 
 	err = sl_conf_init();

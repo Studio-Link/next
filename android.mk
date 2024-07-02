@@ -99,6 +99,7 @@ third_party_dir:
 .PHONY: openssl
 openssl: third_party_dir
 	$(HIDE)cd third_party_android && \
+		rm -rf openssl && \
 		wget ${OPENSSL_MIRROR}/openssl-${OPENSSL_VERSION}.tar.gz && \
 		tar -xzf openssl-${OPENSSL_VERSION}.tar.gz && \
 		cp -a openssl-${OPENSSL_VERSION} openssl
@@ -114,6 +115,7 @@ openssl: third_party_dir
 .PHONY: lmdb
 lmdb: third_party_dir
 	$(HIDE)cd third_party_android && \
+		rm -rf lmdb && \
 		git clone https://github.com/LMDB/lmdb && \
 		cd lmdb/libraries/liblmdb && \
 		make CC=$(CC) -j && \
@@ -123,6 +125,7 @@ lmdb: third_party_dir
 .PHONY: opus
 opus: third_party_dir
 	$(HIDE)cd third_party_android && \
+		rm -rf opus && \
 		wget ${OPUS_MIRROR}/opus-${OPUS_VERSION}.tar.gz && \
 		tar -xzf opus-${OPUS_VERSION}.tar.gz && \
 		mv opus-${OPUS_VERSION} opus

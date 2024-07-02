@@ -14,6 +14,27 @@ struct sl_config *sl_conf(void)
 	return &slconf;
 }
 
+int sl_conf_path_set(const char *path)
+{
+	int err;
+
+	if (!path)
+		return EINVAL;
+
+	if (re_snprintf(conf_path, sizeof(conf_path),
+			"%s" DIR_SEP ".studio-link", path) < 0) {
+		warning("sl_conf_path: path too long\n");
+		return ENAMETOOLONG; 
+	}
+
+	err = fs_mkdir(conf_path, 0700);
+	if (err && err != EEXIST) {
+		warning("sl_conf_path: fs_mkdir err %m\n", err);
+		return err;
+	}
+
+	return 0;
+}
 
 /**
  * Get the path to configuration files
