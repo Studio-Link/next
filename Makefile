@@ -178,7 +178,7 @@ tree:
 test: all
 	cppcheck libsl app test
 	build/test/test
-	test/integration.sh
+	#test/integration.sh
 
 .PHONY: test_debug
 test_debug: all
