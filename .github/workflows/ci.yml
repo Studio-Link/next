@@ -63,19 +63,23 @@ jobs:
     - name: install brew deps
       if: ${{ runner.os == 'macOS' }}
       run: |
-        brew install ninja automake cppcheck pkg-config nasm coreutils
+        brew install ninja automake cppcheck pkg-config nasm coreutils libtool curl
+        echo 'export PATH="$(brew --prefix)/opt/curl/bin:$PATH"' >> ~/.zshrc
+        source ~/.zshrc
+        curl --version
+        which curl
 
     - name: websocat linux
       if: ${{ runner.os == 'Linux' }}
       run: |
-        wget https://github.com/vi/websocat/releases/download/v1.12.0/websocat.x86_64-unknown-linux-musl
+        wget https://github.com/vi/websocat/releases/download/v1.13.0/websocat.x86_64-unknown-linux-musl
         mv websocat.x86_64-unknown-linux-musl /usr/local/bin/websocat
         chmod +x /usr/local/bin/websocat
 
     - name: websocat macos
       if: ${{ runner.os == 'macOS' }}
       run: |
-        wget https://github.com/vi/websocat/releases/download/v1.12.0/websocat.x86_64-apple-darwin
+        wget https://github.com/vi/websocat/releases/download/v1.13.0/websocat.x86_64-apple-darwin
         mv websocat.x86_64-apple-darwin /usr/local/bin/websocat
         chmod +x /usr/local/bin/websocat
 
@@ -97,7 +101,7 @@ jobs:
     
     - name: Test StudioLink
       if: ${{ runner.os == 'Linux' }}
-      run: make test
+      run: make test && test/integration.sh
 
     - name: clang-tidy
       if: ${{ runner.os == 'Linux' }}

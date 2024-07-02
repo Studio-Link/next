@@ -6,7 +6,7 @@ set -o errexit  # Exit on most errors
 set -o nounset  # Disallow expansion of unset variables
 set -o errtrace # Make sure any error trap is inherited
 set -o pipefail # Use last non-zero exit code in a pipeline
-# set -o xtrace   # Trace the execution of the script
+set -o xtrace   # Trace the execution of the script
 
 IFS=$'\n\t'
 
@@ -71,7 +71,7 @@ script_init() {
 }
 
 curl_head() {
-	curl -I "${test_url}$1" 2>/dev/null
+	curl -I "${test_url}$1"
 }
 
 curl_post() {
