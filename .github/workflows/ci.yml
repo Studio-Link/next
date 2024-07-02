@@ -101,7 +101,7 @@ jobs:
     
     - name: Test StudioLink
       if: ${{ runner.os == 'Linux' }}
-      run: make test
+      run: make test && test/integration.sh
 
     - name: clang-tidy
       if: ${{ runner.os == 'Linux' }}
