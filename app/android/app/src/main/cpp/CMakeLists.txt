@@ -12,6 +12,46 @@ cmake_minimum_required(VERSION 3.22.1)
 # build script scope).
 project("api")
 
+# target environment on the build host system
+set(CMAKE_FIND_ROOT_PATH
+        /home/sreimers/next/third_party_android/${CMAKE_ANDROID_ARCH_ABI}
+        /home/sreimers/next/external/re
+        /home/sreimers/next/external/libsl/include
+)
+
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+set(RE_LIBRARY
+        re
+        CACHE STRING "")
+
+set(LIBRE_BUILD_SHARED
+        OFF
+        CACHE STRING "")
+
+set(STATIC
+        ON
+        CACHE BOOL "")
+
+set(MODULES
+        auconv
+        auresamp
+        dtls_srtp
+        g711
+        ice
+        opus
+        turn
+        CACHE STRING "")
+
+# Baresip dependencies
+add_subdirectory(external/re EXCLUDE_FROM_ALL)
+add_subdirectory(external/baresip EXCLUDE_FROM_ALL)
+
+find_package(re CONFIG REQUIRED)
+
+add_compile_definitions(SL_VERSION="${PROJECT_VERSION}")
+add_subdirectory(external/libsl EXCLUDE_FROM_ALL)
+
 # Creates and names a library, sets it as either STATIC
 # or SHARED, and provides the relative paths to its source code.
 # You can define multiple libraries, and CMake builds them for you.
@@ -35,4 +75,4 @@ add_library(${CMAKE_PROJECT_NAME} SHARED
 target_link_libraries(${CMAKE_PROJECT_NAME}
     # List libraries link to the target library
     android
-    log)
+    log sl baresip re)

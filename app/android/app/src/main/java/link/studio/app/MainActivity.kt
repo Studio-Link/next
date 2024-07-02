@@ -43,6 +43,7 @@ private class MyWebViewClient : WebViewClient() {
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        Api.slStart(filesDir.absolutePath)
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         val myWebView = WebView(this)
