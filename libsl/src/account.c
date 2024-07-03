@@ -111,7 +111,6 @@ int sl_account_init(void)
 		    conf->baresip->sip.uuid);
 
 	err = sl_httpc_req(httpc, SL_HTTP_GET, url);
-    warning("TEST: FAILED %s %m", url, err);
 
 out:
 	return err;
