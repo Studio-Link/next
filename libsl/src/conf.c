@@ -24,7 +24,7 @@ int sl_conf_path_set(const char *path)
 	if (re_snprintf(conf_path, sizeof(conf_path),
 			"%s" DIR_SEP ".studio-link", path) < 0) {
 		warning("sl_conf_path: path too long\n");
-		return ENAMETOOLONG; 
+		return ENAMETOOLONG;
 	}
 
 	err = fs_mkdir(conf_path, 0700);
