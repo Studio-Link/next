@@ -8,8 +8,10 @@ static bool headless = false;
 
 
 static const char *modv[] = {"turn", "ice", "dtls_srtp", "netroam",
+#ifndef ANDROID
 			     /* video codecs */
 			     "vp8",
+#endif
 
 			     /* audio codecs */
 			     "opus", "g711",
@@ -18,6 +20,11 @@ static const char *modv[] = {"turn", "ice", "dtls_srtp", "netroam",
 			     "auconv", "auresamp",
 
 			     /* audio drivers */
+#ifdef ANDROID
+			     "opensles"
+#else
+			     "portaudio"
+#endif
 			     };
 
 
