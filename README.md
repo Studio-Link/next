@@ -34,6 +34,13 @@ make
 ```bash
 make TARGET=mingw64
 ```
+## Prepare Android 3rd Party builds
+
+```bash
+make external
+make -f android.mk ANDROID_TARGET_ARCH=arm64-v8a
+make -f android.mk ANDROID_TARGET_ARCH=x86_64 # emulator
+```
 
 ## Supported Platforms (planned)
 
