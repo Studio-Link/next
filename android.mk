@@ -90,6 +90,12 @@ THIRD_PARTY_ROOT := ${PWD}/third_party_android/${ANDROID_TARGET_ARCH}
 
 default: all
 
+.PHONY: cacert
+cacert: third_party_android/cacert.pem
+
+third_party_android/cacert.pem:
+	wget https://curl.se/ca/cacert.pem -O third_party_android/cacert.pem
+
 .PHONY: third_party_dir
 third_party_dir:
 	mkdir -p ${THIRD_PARTY_ROOT}/include
@@ -136,4 +142,4 @@ opus: third_party_dir
 		mkdir -p ${THIRD_PARTY_ROOT}/include/opus && \
 		cp include/*.h ${THIRD_PARTY_ROOT}/include/opus/
 
-all: openssl lmdb opus
+all: openssl lmdb opus cacert
