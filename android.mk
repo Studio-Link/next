@@ -10,11 +10,10 @@ PWD	:= $(shell pwd)
 
 # Path to Android NDK
 # NDK version must match ndkVersion in app/build.gradle
-NDK_PATH := /home/sreimers/Android/Sdk/ndk/$(shell grep ndkVersion app/android/app/build.gradle.kts | sed 's/[^0-9.]*//g')
+NDK_PATH := /opt/Android/Sdk/ndk/$(shell grep ndkVersion app/android/app/build.gradle.kts | sed 's/[^0-9.]*//g')
 
-# Android API level
-API_LEVEL	:= 26
-
+# Android API level 26 == Android 8.0
+API_LEVEL := 26
 
 # Set default from following values: [armeabi-v7a, arm64-v8a, x86_64]
 ANDROID_TARGET_ARCH := arm64-v8a
