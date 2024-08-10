@@ -6,14 +6,14 @@ plugins {
 android {
     namespace = "link.studio.app"
     compileSdk = 34
-    ndkVersion = "27.0.11902837"
+    ndkVersion = "27.0.12077973"
 
     defaultConfig {
         applicationId = "link.studio.app"
         minSdk = 26
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 24010
+        versionName = "24.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
