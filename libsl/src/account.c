@@ -6,7 +6,7 @@ static struct sl_httpc *httpc;
 
 static void http_resph(int err, const struct http_msg *msg, void *arg)
 {
-	char aor[1024] = {0};
+	char *aor = NULL;
 	struct pl json;
 	struct odict *o = NULL;
 	const char *user;
@@ -67,8 +67,8 @@ static void http_resph(int err, const struct http_msg *msg, void *arg)
 
 	err = 0;
 
-	re_snprintf(
-		aor, sizeof(aor),
+	re_sdprintf(
+		&aor,
 		"<sip:%s@%s;transport=tls>;auth_pass=%s;regint=%s;stunserver="
 		"\"%s\";medianat=turn;mediaenc=dtls_srtp;stunuser=%s;stunpass="
 		"%s;",
@@ -86,6 +86,7 @@ out:
 		warning("sl_account_init/http_resph: err %m\n", err);
 
 	mem_deref(o);
+	mem_deref(aor);
 }
 
 
