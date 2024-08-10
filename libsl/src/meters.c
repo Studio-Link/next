@@ -7,9 +7,9 @@
 static float bias		    = 1.0f;
 static float peaks[MAX_METERS]	    = {0};
 static float sent_peaks[MAX_METERS] = {0};
-static mtx_t *mutex;
+static mtx_t *mutex = NULL;
 
-static struct tmr tmr;
+static struct tmr tmr = {.le = LE_INIT};
 
 
 void sl_meter_process(unsigned int ch, float *in, unsigned long nframes)

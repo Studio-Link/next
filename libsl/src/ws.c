@@ -3,7 +3,7 @@
 #include <studiolink.h>
 
 static struct websock *ws = NULL;
-static struct list wsl;
+static struct list wsl = LIST_INIT;
 struct ws_conn {
 	struct le le;
 	struct websock_conn *c;
