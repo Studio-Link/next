@@ -14,9 +14,9 @@ project("api")
 
 # target environment on the build host system
 set(CMAKE_FIND_ROOT_PATH
-        /home/sreimers/next/third_party_android/${CMAKE_ANDROID_ARCH_ABI}
-        /home/sreimers/next/external/re
-        /home/sreimers/next/external/libsl/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/external/third_party/${CMAKE_ANDROID_ARCH_ABI}
+        ${CMAKE_CURRENT_SOURCE_DIR}/external/re
+        ${CMAKE_CURRENT_SOURCE_DIR}/external/libsl/include
 )
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -41,6 +41,8 @@ set(MODULES
         ice
         opus
         turn
+        netroam
+        opensles
         CACHE STRING "")
 
 # Baresip dependencies
