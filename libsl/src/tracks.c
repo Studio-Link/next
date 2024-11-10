@@ -341,12 +341,12 @@ out:
 }
 
 
-static void eventh(struct ua *ua, enum ua_event ev, struct call *call,
-		   const char *prm, void *arg)
+static void eventh(enum ua_event ev, struct bevent *event, void *arg)
 {
 	struct le *le;
 	bool changed = false;
-	(void)ua;
+	struct call *call = bevent_get_call(event);
+	const char *prm = bevent_get_text(event);
 	(void)arg;
 
 	if (ev == UA_EVENT_CALL_INCOMING) {
@@ -425,7 +425,7 @@ int sl_tracks_init(void)
 {
 	int err;
 
-	uag_event_register(eventh, NULL);
+	bevent_register(eventh, NULL);
 
 	err = sl_track_add(&local_track, SL_TRACK_LOCAL);
 	if (err)
@@ -439,7 +439,7 @@ int sl_tracks_init(void)
 
 int sl_tracks_close(void)
 {
-	uag_event_unregister(eventh);
+	bevent_unregister(eventh);
 	list_flush(&tracks);
 
 	local_track = NULL;
