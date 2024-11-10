@@ -8,5 +8,5 @@ PORTAUDIO_VERSION := master
 PORTAUDIO_MIRROR  := https://github.com/studio-link-3rdparty
 SAMPLERATE_MIRROR := https://github.com/studio-link-3rdparty
 LIBRE_VERSION     := main
-BARESIP_VERSION   := main
+BARESIP_VERSION   := playout_time
 CACHE_VERSION     := 2024111001 # github cache invalidation workaround
