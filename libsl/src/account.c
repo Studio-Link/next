@@ -1,7 +1,7 @@
 #include <studiolink.h>
 
-static struct ua *ua;
-static struct sl_httpc *httpc;
+static struct ua *ua	      = NULL;
+static struct sl_httpc *httpc = NULL;
 
 
 static void http_resph(int err, const struct http_msg *msg, void *arg)
@@ -120,6 +120,7 @@ out:
 int sl_account_close(void)
 {
 	httpc = mem_deref(httpc);
+	ua    = NULL;
 
 	return 0;
 }
