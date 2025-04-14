@@ -1,8 +1,8 @@
-OPENSSL_VERSION   := 3.4.0
+OPENSSL_VERSION   := 3.4.1
 OPENSSL_MIRROR    := https://www.openssl.org/source
 OPUS_VERSION      := 1.5.2
 OPUS_MIRROR       := https://downloads.xiph.org/releases/opus
-VPX_VERSION       := v1.15.0
+VPX_VERSION       := v1.15.1
 VPX_MIRROR        := https://chromium.googlesource.com/webm/libvpx
 PORTAUDIO_VERSION := master
 PORTAUDIO_MIRROR  := https://github.com/studio-link-3rdparty
