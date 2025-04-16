@@ -40,7 +40,7 @@ jobs:
     needs: webui
     strategy:
       matrix:
-        os: [ubuntu-20.04, macos-latest]
+        os: [ubuntu-22.04, macos-latest]
     env:
       MACOSX_DEPLOYMENT_TARGET: "10.12"
     steps:
