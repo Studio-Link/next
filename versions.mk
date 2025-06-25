@@ -1,4 +1,4 @@
-OPENSSL_VERSION   := 3.4.1
+OPENSSL_VERSION   := 3.5.0
 OPENSSL_MIRROR    := https://www.openssl.org/source
 OPUS_VERSION      := 1.5.2
 OPUS_MIRROR       := https://downloads.xiph.org/releases/opus
@@ -9,4 +9,4 @@ PORTAUDIO_MIRROR  := https://github.com/studio-link-3rdparty
 SAMPLERATE_MIRROR := https://github.com/studio-link-3rdparty
 LIBRE_VERSION     := main
 BARESIP_VERSION   := playout_time
-CACHE_VERSION     := 2024111001 # github cache invalidation workaround
+CACHE_VERSION     := 2025062501 # github cache invalidation workaround
