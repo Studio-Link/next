@@ -54,7 +54,7 @@ int sl_getopt(int argc, char *const argv[])
 		"\n");
 
 	(void)re_printf("v%s"
-			" Copyright (C) 2013 - 2024"
+			" Copyright (C) 2013 - 2025"
 			" Sebastian Reimers\n\n",
 			SL_VERSION);
 
