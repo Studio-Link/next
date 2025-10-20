@@ -18,7 +18,6 @@ project(
   VERSION 24.1.0
   LANGUAGES C)
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake)
 
 # #############################################################################
 #

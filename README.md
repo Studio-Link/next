@@ -29,6 +29,14 @@ Please use the prebuilt binarys at https://doku.studio-link.de/standalone/instal
 make
 ```
 
+## Prepare Android 3rd Party builds
+
+```bash
+make external
+make -f android.mk ANDROID_TARGET_ARCH=arm64-v8a
+make -f android.mk ANDROID_TARGET_ARCH=x86_64 # emulator
+```
+
 ## Supported Platforms (planned)
 
 - Windows 64Bit

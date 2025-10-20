@@ -8,8 +8,10 @@ static bool headless = false;
 
 
 static const char *modv[] = {"turn", "ice", "dtls_srtp", "netroam",
+#ifndef ANDROID
 			     /* video codecs */
 			     "vp8",
+#endif
 
 			     /* audio codecs */
 			     "opus", "g711",
@@ -18,7 +20,12 @@ static const char *modv[] = {"turn", "ice", "dtls_srtp", "netroam",
 			     "auconv", "auresamp",
 
 			     /* audio drivers */
-			     "portaudio"};
+#ifdef ANDROID
+			     "opensles"
+#else
+			     "portaudio"
+#endif
+			     };
 
 
 static void signal_handler(int signum)
@@ -101,7 +108,8 @@ int sl_baresip_init(const uint8_t *conf)
 			    "audio_txmode	thread\n"
 			    "opus_bitrate	64000\n"
 			    "dns_getaddrinfo	yes\n"
-			    "ice_policy		relay\n";
+			    "ice_policy		relay\n"
+			    "dns_server 8.8.8.8:53\n";
 	int err;
 
 	err = sl_conf_init();

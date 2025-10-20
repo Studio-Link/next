@@ -168,7 +168,7 @@ distclean: clean cleaner
 
 .PHONY: ccheck
 ccheck:
-	test/ccheck.py libsl Makefile test app
+	test/ccheck.py libsl Makefile test app/linux
 
 .PHONY: tree
 tree:
