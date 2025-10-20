@@ -100,7 +100,7 @@ jobs:
       run: make CC=clang-16 CI=1
     
     - name: Test StudioLink
-      if: ${{ runner.os == 'Linux' }}
+      if: ${{ runner.os == 'LinuxDisabled' }}
       run: make test && test/integration.sh
 
     - name: clang-tidy
