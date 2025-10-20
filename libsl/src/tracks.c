@@ -341,7 +341,7 @@ out:
 }
 
 
-static void eventh(enum ua_event ev, struct bevent *event, void *arg)
+static void eventh(enum bevent_ev ev, struct bevent *event, void *arg)
 {
 	struct le *le;
 	bool changed = false;
@@ -349,13 +349,13 @@ static void eventh(enum ua_event ev, struct bevent *event, void *arg)
 	const char *prm = bevent_get_text(event);
 	(void)arg;
 
-	if (ev == UA_EVENT_CALL_INCOMING) {
+	if (ev == BEVENT_CALL_INCOMING) {
 		call_incoming(call);
 		sl_track_ws_send();
 		return;
 	}
 
-	if (ev == UA_EVENT_REGISTERING) {
+	if (ev == BEVENT_REGISTERING) {
 		if (local_track) {
 			str_ncpy(local_track->name,
 				 account_aor(ua_account(sl_account_ua())),
@@ -366,7 +366,7 @@ static void eventh(enum ua_event ev, struct bevent *event, void *arg)
 		return;
 	}
 
-	if (ev == UA_EVENT_REGISTER_OK) {
+	if (ev == BEVENT_REGISTER_OK) {
 		if (local_track) {
 			local_track->status = SL_TRACK_LOCAL_REGISTER_OK;
 			sl_track_ws_send();
@@ -374,7 +374,7 @@ static void eventh(enum ua_event ev, struct bevent *event, void *arg)
 		return;
 	}
 
-	if (ev == UA_EVENT_REGISTER_FAIL) {
+	if (ev == BEVENT_REGISTER_FAIL) {
 		if (local_track) {
 			local_track->status = SL_TRACK_LOCAL_REGISTER_FAIL;
 			sl_track_ws_send();
@@ -393,17 +393,17 @@ static void eventh(enum ua_event ev, struct bevent *event, void *arg)
 			continue;
 
 
-		if (ev == UA_EVENT_CALL_RINGING) {
+		if (ev == BEVENT_CALL_RINGING) {
 			track->status = SL_TRACK_REMOTE_CALLING;
 			changed	      = true;
 		}
 
-		if (ev == UA_EVENT_CALL_ESTABLISHED) {
+		if (ev == BEVENT_CALL_ESTABLISHED) {
 			track->status = SL_TRACK_REMOTE_CONNECTED;
 			changed	      = true;
 		}
 
-		if (ev == UA_EVENT_CALL_CLOSED) {
+		if (ev == BEVENT_CALL_CLOSED) {
 			track->status	     = SL_TRACK_IDLE;
 			track->u.remote.call = NULL;
 			track->name[0]	     = '\0';
