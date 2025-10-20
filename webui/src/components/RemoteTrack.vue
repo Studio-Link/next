@@ -1,5 +1,5 @@
 <template>
-    <li aria-label="Remote track" class="col-span-1" @mouseenter="setActive()" @touchstart.passive="setActive()">
+    <li aria-label="Remote track" class="aspect-video col-span-1" @mouseenter="setActive()" @touchstart.passive="setActive()">
         <div class="flex justify-between h-5">
             <h2 class="ml-1 font-semibold text-sl-disabled text-sm truncate pr-2">{{ getTrackName() }}</h2>
             <div class="flex">
@@ -13,7 +13,7 @@
         </div>
 
         <div class="flex mt-1">
-            <div class="relative bg-sl-02dpa rounded-lg min-h-[11em] w-full shadow pb-2">
+            <div class="relative bg-sl-02dpa rounded-lg min-h-[10em] w-full shadow pb-2">
                 <div class="flex justify-between items-center">
                     <div :id="`track${pkey}`" ref="tid" tabindex="0" @focus="setActive()"
                         :class="[isActive() ? 'bg-sl-disabled' : 'bg-sl-24dpa']"

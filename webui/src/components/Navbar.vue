@@ -13,7 +13,7 @@
 			</a>
 			<a
 				href="#"
-				class="ml-4 inline-flex items-center px-1 pt-1 border-transparent text-base font-medium leading-5 text-sl-disabled hover:text-sl-on_surface_1 focus:text-gray-300 focus:border-gray-300"
+				class="hidden ml-4 inline-flex items-center px-1 pt-1 border-transparent text-base font-medium leading-5 text-sl-disabled hover:text-sl-on_surface_1 focus:text-gray-300 focus:border-gray-300"
 			>Options</a>
 		</div>
 	</nav>
