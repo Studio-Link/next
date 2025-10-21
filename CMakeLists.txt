@@ -15,7 +15,7 @@ set(CMAKE_C_COMPILER clang)
 
 project(
   studiolink
-  VERSION 24.1.0
+  VERSION 25.11.0
   LANGUAGES C)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake)
