@@ -102,7 +102,7 @@ int main(void)
 out:
 	if (err) {
 		warning("test failed (%m)\n", err);
-		re_printf("%H\n", re_debug, 0);
+		re_printf("%H\n", re_debug, NULL);
 	}
 
 	mem_deref(play);
