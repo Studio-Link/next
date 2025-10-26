@@ -138,7 +138,8 @@ third_party/portaudio:
 	$(HIDE)cd third_party && \
 		git clone ${PORTAUDIO_MIRROR}/portaudio.git && \
 	    cd portaudio && \
-		cmake -B build -DBUILD_SHARED_LIBS=0 && \
+		cmake -B build -DBUILD_SHARED_LIBS=0 \
+		-DPA_USE_WMME=OFF -DPA_USE_DS=OFF -DPA_USE_WDMKS=OFF && \
 		cmake --build build -j && \
 		cp -a build/libportaudio.a ../lib/ && \
 		cp include/*.h ../include/
