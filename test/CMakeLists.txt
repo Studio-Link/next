@@ -30,5 +30,5 @@ set(SRCS
 #
 
 add_executable(${PROJECT_NAME} ${SRCS})
-target_link_libraries(${PROJECT_NAME} PRIVATE sl)
+target_link_libraries(${PROJECT_NAME} PRIVATE sl baresip re)
 target_compile_definitions(${PROJECT_NAME} PRIVATE ${RE_DEFINITIONS})
