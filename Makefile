@@ -104,6 +104,7 @@ third_party/libvpx:
 	--enable-realtime-only \
 	--disable-unit-tests --disable-vp9 --disable-tools --disable-shared \
 	--enable-runtime-cpu-detect \
+	--enable-pic \
 	--disable-install-docs --disable-examples && \
 	make -j4 && \
 	make install
@@ -146,10 +147,8 @@ third_party/libsamplerate:
 	$(HIDE)cd third_party && \
 		git clone ${SAMPLERATE_MIRROR}/libsamplerate.git && \
 		cd libsamplerate && \
-		cmake -B build \
-		-DBUILD_SHARED_LIBS=0 \
-		-DBUILD_TESTING=OFF \
-		-DLIBSAMPLERATE_EXAMPLES=OFF && \
+		cmake -B build -DBUILD_SHARED_LIBS=0 \
+		-DBUILD_TESTING=OFF -DLIBSAMPLERATE_EXAMPLES=OFF && \
 		cmake --build build -j && \
 		cp -a build/src/libsamplerate.a ../lib/ && \
 		cp include/*.h ../include/
