@@ -44,6 +44,10 @@ jobs:
         name: webui
     - name: unzip webui
       run: rm -Rf webui && unzip webui.zip
+    - uses: actions/cache@v4
+      with:
+        path: third_party
+        key: mingw-${{ hashFiles('versions.mk') }}
     - name: mingw
       run: |
         sudo apt-get install -y mingw-w64 binutils-mingw-w64 nasm
