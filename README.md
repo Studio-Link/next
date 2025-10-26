@@ -29,6 +29,12 @@ Please use the prebuilt binarys at https://doku.studio-link.de/standalone/instal
 make
 ```
 
+## Development Build - Windows Cross Compilation mingw64
+
+```bash
+make TARGET=mingw64
+```
+
 ## Supported Platforms (planned)
 
 - Windows 64Bit
