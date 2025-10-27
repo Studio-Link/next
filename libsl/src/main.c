@@ -127,6 +127,12 @@ int sl_baresip_init(const uint8_t *conf)
 	if (err)
 		return err;
 
+#ifdef RE_TRACE_ENABLED
+	err = re_trace_init("re_trace.json");
+	if (err)
+		return err;
+#endif
+
 	re_thread_async_init(ASYNC_WORKERS);
 
 	(void)sys_coredump_set(true);
@@ -290,6 +296,9 @@ void sl_close(void)
 	mod_close();
 
 	re_thread_async_close();
+#ifdef RE_TRACE_ENABLED
+	re_trace_close();
+#endif
 
 	/* Check for open timers */
 	tmr_debug();
