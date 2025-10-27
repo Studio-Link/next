@@ -17,6 +17,8 @@ MAKE += -j CC=$(CC)
 ifeq ($(V),)
 HIDE=@
 MAKE += --no-print-directory
+else
+CMAKE_VERBOSE := --verbose
 endif
 
 TARGET := Linux
@@ -59,7 +61,7 @@ endif
 all: third_party external
 	$(HIDE)echo $(OS)
 	$(HIDE)[ -d build ] || cmake -B build -GNinja -DCMAKE_BUILD_TYPE=Debug
-	$(HIDE)cmake --build build -j
+	$(HIDE)cmake --build build -j $(CMAKE_VERBOSE)
 
 ##############################################################################
 #
