@@ -261,7 +261,8 @@ int sl_track_dial(struct sl_track *track, struct pl *peer)
 
 	track->status = SL_TRACK_REMOTE_CALLING;
 	pl_strcpy(peer, track->name, sizeof(track->name));
-
+	audio_set_devicename(call_audio(track->u.remote.call), track->name,
+			     track->name);
 
 out:
 	if (err) {
@@ -338,15 +339,17 @@ out:
 	track->u.remote.call = call;
 	track->status	     = SL_TRACK_REMOTE_INCOMING;
 	str_ncpy(track->name, call_peeruri(call), sizeof(track->name));
+
+	audio_set_devicename(call_audio(call), track->name, track->name);
 }
 
 
 static void eventh(enum bevent_ev ev, struct bevent *event, void *arg)
 {
 	struct le *le;
-	bool changed = false;
+	bool changed	  = false;
 	struct call *call = bevent_get_call(event);
-	const char *prm = bevent_get_text(event);
+	const char *prm	  = bevent_get_text(event);
 	(void)arg;
 
 	if (ev == BEVENT_CALL_INCOMING) {
