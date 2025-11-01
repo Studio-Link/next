@@ -210,18 +210,6 @@ int sl_account_close(void);
 struct ua *sl_account_ua(void);
 
 
-/******************************************************************************
- * mix.c
- */
-struct mix;
-struct mix_source;
-typedef void(mix_frame_h)(struct auframe *af, void *arg);
-int mix_alloc(struct mix **mixp);
-int mix_source_alloc(struct mix_source **srcp, struct mix *mix,
-		     mix_frame_h *wh, mix_frame_h *rh, void *arg);
-int mix_sources(struct mix *mix, struct mix_source *msrc, struct auframe *maf);
-
-
 #ifdef __cplusplus
 }
 #endif
