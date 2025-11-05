@@ -2,9 +2,13 @@
 #include <getopt.h>
 #include <studiolink.h>
 
-enum { ASYNC_WORKERS = 6 };
+enum { ASYNC_WORKERS = 6, JITTER_INTERVAL = 10 };
 
-static bool headless = false;
+static bool headless	    = false;
+static uint64_t jitter_last = 0;
+static uint64_t jitter_last_report = 0;
+static int64_t max_jitter   = 0; /* Mainloop jitter */
+static struct tmr tmr_jitter;
 
 
 static const char *modv[] = {"turn", "ice", "dtls_srtp", "netroam",
@@ -19,6 +23,28 @@ static const char *modv[] = {"turn", "ice", "dtls_srtp", "netroam",
 
 			     /* audio drivers */
 			     "portaudio"};
+
+
+static void jitter_stats(void *arg)
+{
+	(void)arg;
+
+	if (jitter_last) {
+		int64_t jitter =
+			(tmr_jiffies() - jitter_last) - JITTER_INTERVAL;
+		if (jitter > max_jitter)
+			max_jitter = jitter;
+	}
+
+	if ((tmr_jiffies() - jitter_last_report) > 1000) {
+		RE_TRACE_INSTANT_I("slmain", "max_jitter", max_jitter);
+		max_jitter = 0;
+		jitter_last_report = tmr_jiffies();
+	}
+
+	jitter_last = tmr_jiffies();
+	tmr_start(&tmr_jitter, JITTER_INTERVAL, jitter_stats, NULL);
+}
 
 
 static void signal_handler(int signum)
@@ -225,6 +251,8 @@ int sl_init(void)
 
 	sl_meter_init();
 
+	tmr_init(&tmr_jitter);
+	tmr_start(&tmr_jitter, JITTER_INTERVAL, jitter_stats, NULL);
 
 out:
 	if (err)
