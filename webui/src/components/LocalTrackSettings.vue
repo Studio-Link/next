@@ -2,7 +2,7 @@
     <Menu as="div" class="relative inline-block text-left">
         <div>
             <MenuButton
-                class="flex items-center rounded-full text-neutral-500 hover:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-sl-primary">
+                class="flex items-center rounded-full text-neutral-500 hover:text-neutral-400 focus:outline-hidden focus:ring-2 focus:ring-sl-primary">
                 <span class="sr-only">Open options</span>
                 <EllipsisVerticalIcon class="h-6 w-6" aria-hidden="true" />
             </MenuButton>

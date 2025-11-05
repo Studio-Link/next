@@ -2,7 +2,7 @@
     <div v-if="isActive() && isNoCall()" class="flex-1 px-4 grid grid-cols-1">
         <label :for="pkey.toString()" class="block text-sm font-medium leading-5 text-sl-on_surface_2">Enter
             Partner ID</label>
-        <div class="mt-1 relative rounded-md shadow-sm">
+        <div class="mt-1 relative rounded-md shadow-xs">
             <input @keyup.enter="api.dial(pkey, peer)" :id="pkey.toString()" v-model="peer" ref="slid" type="text"
                 class="form-input block w-full sm:text-sm sm:leading-5 text-sl-on_surface_1 bg-sl-surface mb-2 border-none focus:ring-sl-primary rounded-lg"
                 placeholder="xyz@studio.link" />

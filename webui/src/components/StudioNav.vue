@@ -10,7 +10,7 @@
   -->
 
     <!-- Static sidebar for desktop -->
-    <div class="flex flex-shrink-0 mr-2">
+    <div class="flex shrink-0 mr-2">
         <div class="flex w-16 flex-col">
             <div class="flex min-h-0 flex-1 flex-col overflow-y-auto bg-sl-01dpa ">
                 <div class="flex-1">
@@ -28,7 +28,7 @@
                                 </div>
                             </div>
                         </a>
-                        <hr class="w-2/3 border-t-white/[.06] border-t-2 rounded mx-2" />
+                        <hr class="w-2/3 border-t-white/6 border-t-2 rounded-sm mx-2" />
                         <a href="#" class="hidden relative block group" title="New Studio">
                             <div class="absolute flex items-center h-full -left-4">
                                 <div
@@ -49,15 +49,15 @@
                         </a>
                     </nav>
                 </div>
-                <div class="hidden flex flex-shrink-0 pb-5">
-                    <a v-if="auth" href="#" class="w-full flex-shrink-0" @click="oauth">
+                <div class="hidden flex shrink-0 pb-5">
+                    <a v-if="auth" href="#" class="w-full shrink-0" @click="oauth">
                         <img class="mx-auto block h-10 w-10 rounded-full" :src="user.imageUrl" alt="" />
                         <div class="sr-only">
                             <p>{{ user.name }}</p>
                             <p>Account settings</p>
                         </div>
                     </a>
-                    <a v-if="!auth" href="#" class="w-full flex-shrink-0" @click="oauth">
+                    <a v-if="!auth" href="#" class="w-full shrink-0" @click="oauth">
                         <svg class="text-sl-on_surface_2 mx-auto block size-10 rounded-full" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
   <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15M12 9l3 3m0 0-3 3m3-3H2.25" />
 </svg>
