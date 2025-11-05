@@ -10,16 +10,16 @@
         </div>
 
         <div class="flex mt-1">
-            <div class="bg-sl-02dpa rounded-lg min-h-[10em] w-full shadow pb-2">
+            <div class="bg-sl-02dpa rounded-lg min-h-[10em] w-full shadow-sm pb-2">
                 <div class="flex justify-between items-center">
                     <div :id="`track${pkey}`" tabindex="0"
                         :class="{ 'bg-sl-disabled': isActive(), 'bg-sl-24dpa': !isActive() }"
-                        class="inline-flex items-center justify-center ml-2 text-sm leading-none text-black font-bold rounded-full px-2 py-1 focus:outline-none">
+                        class="inline-flex items-center justify-center ml-2 text-sm leading-none text-black font-bold rounded-full px-2 py-1 focus:outline-hidden">
                         <span class="sr-only">Local Track</span>
                         {{ pkey }}
                         <span class="sr-only">selected</span>
                     </div>
-                    <div class="flex-shrink-0 pr-2 text-right w-8 h-8 mt-2">
+                    <div class="shrink-0 pr-2 text-right w-8 h-8 mt-2">
                         <LocalTrackSettings v-if="isActive()" :pkey="props.pkey" />
                     </div>
                 </div>

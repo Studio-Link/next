@@ -7,7 +7,7 @@
                 <button accesskey="t" aria-label="Add Remote Track" :class="{
                     'text-sl-disabled': newTrackVisible,
                     'text-sl-01dp': !newTrackVisible,
-                }" class="inline-flex items-center rounded-lg px-20 py-12 font-bold text-2xl leading-none uppercase tracking-wide focus:outline-none focus:text-sl-disabled"
+                }" class="inline-flex items-center rounded-lg px-20 py-12 font-bold text-2xl leading-none uppercase tracking-wide focus:outline-hidden focus:text-sl-disabled"
                     @focus="newTrackVisible = true" @focusout="newTrackVisible = false"
                     @click="api.track_add('remote')">
                     <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"

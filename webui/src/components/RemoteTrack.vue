@@ -13,16 +13,16 @@
         </div>
 
         <div class="flex mt-1">
-            <div class="relative bg-sl-02dpa rounded-lg min-h-[10em] w-full shadow pb-2">
+            <div class="relative bg-sl-02dpa rounded-lg min-h-[10em] w-full shadow-sm pb-2">
                 <div class="flex justify-between items-center">
                     <div :id="`track${pkey}`" ref="tid" tabindex="0" @focus="setActive()"
                         :class="[isActive() ? 'bg-sl-disabled' : 'bg-sl-24dpa']"
-                        class="inline-flex items-center justify-center ml-2 text-sm leading-none text-black font-bold rounded-full px-2 py-1 focus:outline-none">
+                        class="inline-flex items-center justify-center ml-2 text-sm leading-none text-black font-bold rounded-full px-2 py-1 focus:outline-hidden">
                         <span class="sr-only">Remote Track</span>
                         {{ pkey }}
                         <span class="sr-only">selected</span>
                     </div>
-                    <div class="flex-shrink-0 pr-2 text-right mt-2 w-8 h-8">
+                    <div class="shrink-0 pr-2 text-right mt-2 w-8 h-8">
                         <RemoteTrackSettings v-if="isActive()" :pkey="props.pkey" />
                     </div>
                 </div>

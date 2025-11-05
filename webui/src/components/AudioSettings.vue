@@ -13,7 +13,7 @@
         <div class="px-2">
             <label for="microphone" class="block text-sm font-medium text-sl-on_surface_2">Microphone</label>
             <select v-model="mic" id="microphone" name="microphone" autofocus
-                class="text-sl-on_surface_2 mt-1 block w-full rounded-md bg-sl-surface border-none py-2 pl-3 pr-10 text-base focus:border-sl-primary focus:outline-none focus:ring-sl-primary sm:text-sm">
+                class="text-sl-on_surface_2 mt-1 block w-full rounded-md bg-sl-surface border-none py-2 pl-3 pr-10 text-base focus:border-sl-primary focus:outline-hidden focus:ring-sl-primary sm:text-sm">
 
                 <option v-for="option in tracks.local_tracks[0].audio.src" :key="option.idx" :value="option.idx">
                     {{option.name}}</option>
@@ -22,7 +22,7 @@
         <div class="px-2 mt-2">
             <label for="speaker" class="block text-sm font-medium text-sl-on_surface_2">Speaker</label>
             <select v-model="speaker" id="speaker" name="speaker"
-                class="text-sl-on_surface_2 mt-1 block w-full rounded-md bg-sl-surface border-none py-2 pl-3 pr-10 text-base focus:border-sl-primary focus:outline-none focus:ring-sl-primary sm:text-sm">
+                class="text-sl-on_surface_2 mt-1 block w-full rounded-md bg-sl-surface border-none py-2 pl-3 pr-10 text-base focus:border-sl-primary focus:outline-hidden focus:ring-sl-primary sm:text-sm">
                 <option v-for="option in tracks.local_tracks[0].audio.play" :key="option.idx" :value="option.idx">
                     {{option.name}}</option>
             </select>
