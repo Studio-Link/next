@@ -9,6 +9,7 @@ static uint64_t jitter_last = 0;
 static uint64_t jitter_last_report = 0;
 static int64_t max_jitter   = 0; /* Mainloop jitter */
 static struct tmr tmr_jitter;
+static uint16_t sl_port;
 
 
 static const char *modv[] = {"turn", "ice", "dtls_srtp", "netroam",
@@ -231,7 +232,7 @@ int sl_init(void)
 		goto out;
 	}
 
-	err = sl_http_listen();
+	err = sl_http_listen(&sl_port);
 	if (err) {
 		warning("sl_init: http_listen failed (%m)\n", err);
 		goto out;
@@ -266,12 +267,15 @@ out:
 static int webui_open(void *arg)
 {
 	(void)arg;
+	char url[256];
+	re_snprintf(url, sizeof(url),
+			"chromium --app=http://127.0.0.1:%u "
+		      "--user-data-dir=/tmp/.studio-link/browser "
+		      "--window-size=1060,800 >/dev/null 2>&1", sl_port);
 
 	/* @TODO: add google-chrome and xdg-open fallback */
 	/* @TODO: use permanent browser dir */
-	return system("chromium --app=http://127.0.0.1:9999 "
-		      "--user-data-dir=/tmp/.studio-link/browser "
-		      "--window-size=1060,800 >/dev/null 2>&1");
+	return system(url);
 }
 
 

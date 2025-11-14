@@ -120,7 +120,7 @@ int sl_httpc_req(struct sl_httpc *http, enum sl_httpc_met sl_met, char *url);
  * http/server.c
  */
 
-int sl_http_listen(void);
+int sl_http_listen(uint16_t *port);
 void sl_http_close(void);
 
 

@@ -15,6 +15,8 @@
 
 static struct http_sock *server_sock = NULL;
 
+enum { HTTP_PORT = 9999, MAX_HTTP_PORT = 10032 };
+
 
 static void http_sreply(struct http_conn *conn, uint16_t scode,
 			const char *reason, const char *ctype, const char *fmt,
@@ -316,21 +318,29 @@ err:
 }
 
 
-int sl_http_listen(void)
+int sl_http_listen(uint16_t *port)
 {
 	int err;
 	struct sa srv;
+	*port = HTTP_PORT;
 
+	do {
 #ifdef RELEASE
-	err = sa_set_str(&srv, "127.0.0.1", 9999);
+		err = sa_set_str(&srv, "127.0.0.1", port);
 #else
-	err = sa_set_str(&srv, "0.0.0.0", 9999);
+		err = sa_set_str(&srv, "0.0.0.0", *port);
 #endif
-	if (err)
-		return err;
+		if (err)
+			return err;
+		err = http_listen(&server_sock, &srv, http_req_handler, NULL);
+		if (!err)
+			break;
+	} while (++*port < MAX_HTTP_PORT);
 
-	info("listen webui: http://%J\n", &srv);
-	err = http_listen(&server_sock, &srv, http_req_handler, NULL);
+	if (err)
+		warning("listen webui: http://%J FAILED (%m)\n", &srv, err);
+	else
+		info("listen webui: http://%J\n", &srv);
 
 	return err;
 }
