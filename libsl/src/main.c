@@ -320,6 +320,8 @@ void sl_close(void)
 	sl_tracks_close();
 	sl_account_close();
 
+	tmr_cancel(&tmr_jitter);
+
 	ua_stop_all(true);
 	ua_close();
 	sl_audio_close();
