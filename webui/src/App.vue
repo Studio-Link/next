@@ -14,8 +14,7 @@
             </header>
             <div>
                 <main>
-                    <Tracks class="px-2" />
-                    <div class="h-32"></div>
+                    <RouterView></RouterView>
                 </main>
             </div>
         </div>
@@ -33,7 +32,6 @@
 <script setup lang='ts'>
 import Version from './components/Version.vue'
 import BottomActions from './components/BottomActions.vue'
-import Tracks from './components/Tracks.vue'
 import Navbar from './components/Navbar.vue'
 import RoomsNav from './components/RoomsNav.vue'
 import StudioNav from './components/StudioNav.vue'

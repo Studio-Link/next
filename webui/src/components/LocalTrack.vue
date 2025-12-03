@@ -4,8 +4,10 @@
             <h2 class="ml-1 font-semibold text-sl-disabled text-sm truncate pr-2">{{ getTrackName() }}
             </h2>
             <div class="flex">
-                <div v-if="tracks.state[props.pkey].status === TrackStatus.LOCAL_REGISTER_OK" class="font-semibold text-sm text-green-600 uppercase text-right">ONLINE</div>
-                <div v-if="tracks.state[props.pkey].status === TrackStatus.LOCAL_REGISTER_FAIL" class="font-semibold text-sm text-red-600 uppercase text-right">FAILED</div>
+                <div v-if="tracks.state[props.pkey].status === TrackStatus.LOCAL_REGISTER_OK"
+                    class="font-semibold text-sm text-green-600 uppercase text-right">ONLINE</div>
+                <div v-if="tracks.state[props.pkey].status === TrackStatus.LOCAL_REGISTER_FAIL"
+                    class="font-semibold text-sm text-red-600 uppercase text-right">FAILED</div>
             </div>
         </div>
 

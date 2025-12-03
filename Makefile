@@ -23,6 +23,7 @@ endif
 
 TARGET := Linux
 
+TRACE_FLAGS := "-DJBUF_TRACE -DAUBUF_TRACE -DTRACE_FLUSH_THRESHOLD=1"
 
 ##############################################################################
 #
@@ -60,7 +61,9 @@ endif
 .PHONY: all
 all: third_party external
 	$(HIDE)echo $(OS)
-	$(HIDE)[ -d build ] || cmake -B build -GNinja -DCMAKE_BUILD_TYPE=Debug
+	$(HIDE)[ -d build ] || cmake -B build -GNinja \
+		-DCMAKE_BUILD_TYPE=Debug -DUSE_TRACE=ON \
+		-DCMAKE_C_FLAGS=$(TRACE_FLAGS)
 	$(HIDE)cmake --build build -j $(CMAKE_VERBOSE)
 
 ##############################################################################

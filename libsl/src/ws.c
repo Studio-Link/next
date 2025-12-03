@@ -3,7 +3,7 @@
 #include <studiolink.h>
 
 static struct websock *ws = NULL;
-static struct list wsl = LIST_INIT;
+static struct list wsl	  = LIST_INIT;
 struct ws_conn {
 	struct le le;
 	struct websock_conn *c;
@@ -73,9 +73,31 @@ void sl_ws_send_str(enum ws_type type, char *str)
 	LIST_FOREACH(&wsl, le)
 	{
 		struct ws_conn *ws_conn = le->data;
+
 		if (ws_conn->type != type)
 			continue;
+
 		websock_send(ws_conn->c, WEBSOCK_TEXT, "%s", str);
+	}
+}
+
+
+void sl_ws_send_mb(enum ws_type type, const struct mbuf *mb)
+{
+	struct le *le;
+
+	if (!mb)
+		return;
+
+	LIST_FOREACH(&wsl, le)
+	{
+		struct ws_conn *ws_conn = le->data;
+
+		if (ws_conn->type != type)
+			continue;
+
+		websock_send(ws_conn->c, WEBSOCK_TEXT, "%b", mbuf_buf(mb),
+			     mbuf_get_left(mb));
 	}
 }
 
