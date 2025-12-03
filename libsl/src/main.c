@@ -4,10 +4,10 @@
 
 enum { ASYNC_WORKERS = 6, JITTER_INTERVAL = 10 };
 
-static bool headless	    = false;
-static uint64_t jitter_last = 0;
+static bool headless		   = false;
+static uint64_t jitter_last	   = 0;
 static uint64_t jitter_last_report = 0;
-static int64_t max_jitter   = 0; /* Mainloop jitter */
+static int64_t max_jitter	   = 0; /* Mainloop jitter */
 static struct tmr tmr_jitter;
 static uint16_t sl_port;
 
@@ -39,7 +39,7 @@ static void jitter_stats(void *arg)
 
 	if ((tmr_jiffies() - jitter_last_report) > 1000) {
 		RE_TRACE_INSTANT_I("slmain", "max_jitter", max_jitter);
-		max_jitter = 0;
+		max_jitter	   = 0;
 		jitter_last_report = tmr_jiffies();
 	}
 
@@ -115,6 +115,12 @@ int sl_getopt(int argc, char *const argv[])
 }
 
 
+static void trace_h(const struct re_trace_event_s *e, struct mbuf *json)
+{
+	sl_ws_send_mb(WS_DEBUG, json);
+}
+
+
 int sl_baresip_init(const uint8_t *conf)
 {
 	struct sl_config *slconf;
@@ -161,6 +167,8 @@ int sl_baresip_init(const uint8_t *conf)
 	err = re_trace_init("re_trace.json");
 	if (err)
 		return err;
+
+	re_set_trace_line_h(trace_h);
 #endif
 
 	re_thread_async_init(ASYNC_WORKERS);
@@ -269,9 +277,10 @@ static int webui_open(void *arg)
 	(void)arg;
 	char url[256];
 	re_snprintf(url, sizeof(url),
-			"chromium --app=http://127.0.0.1:%u "
-		      "--user-data-dir=/tmp/.studio-link/browser "
-		      "--window-size=1060,800 >/dev/null 2>&1", sl_port);
+		    "chromium --app=http://127.0.0.1:%u "
+		    "--user-data-dir=/tmp/.studio-link/browser "
+		    "--window-size=1060,800 >/dev/null 2>&1",
+		    sl_port);
 
 	/* @TODO: add google-chrome and xdg-open fallback */
 	/* @TODO: use permanent browser dir */

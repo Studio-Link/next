@@ -36,3 +36,5 @@ cache
 node_modules
 .temp
 .cache
+
+re_trace.json

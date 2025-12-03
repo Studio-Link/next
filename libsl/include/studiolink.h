@@ -127,12 +127,13 @@ void sl_http_close(void);
 /******************************************************************************
  * ws.c
  */
-enum ws_type { WS_TRACKS, WS_METERS };
+enum ws_type { WS_TRACKS, WS_METERS, WS_DEBUG };
 int sl_ws_init(void);
 int sl_ws_close(void);
 int sl_ws_open(struct http_conn *conn, enum ws_type type,
 	       const struct http_msg *msg, websock_recv_h *recvh);
 void sl_ws_send_str(enum ws_type ws_type, char *str);
+void sl_ws_send_mb(enum ws_type type, const struct mbuf *mb);
 void sl_ws_dummyh(const struct websock_hdr *hdr, struct mbuf *mb, void *arg);
 
 

@@ -20,7 +20,9 @@
     "tailwindcss": "^4.1.16",
     "typeface-roboto": "^1.1.13",
     "typeface-roboto-mono": "^1.1.13",
-    "vue": "^3.2.26"
+    "uplot": "^1.6.32",
+    "vue": "^3.2.26",
+    "vue-router": "^4.6.3"
   },
   "devDependencies": {
     "@types/node": "^22.9.0",

@@ -165,6 +165,11 @@ static void http_req_handler(struct http_conn *conn,
 		goto out;
 	}
 
+	if (0 == pl_strcasecmp(&msg->path, "/ws/v1/debug")) {
+		sl_ws_open(conn, WS_DEBUG, msg, sl_ws_dummyh);
+		goto out;
+	}
+
 
 	/*
 	 * API Requests
