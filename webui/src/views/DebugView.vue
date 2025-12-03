@@ -6,11 +6,17 @@
 
 <script setup lang="ts">
 import "uplot/dist/uPlot.min.css"
-import { onMounted } from 'vue'
+import { onMounted, onUnmounted} from 'vue'
 import { Debug } from "../states/debug"
 import { config } from "../config"
 
 onMounted(() => {
     Debug.websocket(config.ws_host())
+})
+
+onUnmounted(()=> {
+
+    Debug.close()
+
 })
 </script>

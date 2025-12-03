@@ -3,6 +3,7 @@ import uPlot from 'uplot'
 interface Debug {
     socket?: WebSocket
     websocket(ws_host: string): void
+    close(): void
 }
 
 interface ChartStore {
@@ -17,7 +18,7 @@ interface Data {
     y: number
 }
 
-const chartsById: Record<string, ChartStore> = {}
+let chartsById: Record<string, ChartStore> = {}
 const maxPoints = 200
 
 
@@ -95,5 +96,10 @@ export const Debug: Debug = {
                 handleNewData(d)
             }
         }
+    },
+
+    close(): void {
+        chartsById = {}
+        this.socket?.close()
     }
 }
