@@ -5,7 +5,10 @@
 #include "index.html.h"
 #include "index.js.h"
 #include "vendor.js.h"
+#include "TrackView.js.h"
+#include "DebugView.js.h"
 #include "index.css.h"
+#include "DebugView.css.h"
 #include "roboto-mono-latin-400.woff2.h"
 #include "roboto-mono-latin-500.woff2.h"
 #include "roboto-mono-latin-600.woff2.h"
@@ -89,6 +92,12 @@ static void http_req_handler(struct http_conn *conn,
 			    dist_index_html_len);
 		return;
 	}
+	if (0 == pl_strcasecmp(&msg->path, "/debug")) {
+		http_sreply(conn, 200, "OK", "text/html",
+			    (const char *)dist_index_html,
+			    dist_index_html_len);
+		return;
+	}
 	if (0 == pl_strcasecmp(&msg->path, "/index.js")) {
 		http_sreply(conn, 200, "OK", "application/javascript",
 			    (const char *)dist_index_js, dist_index_js_len);
@@ -99,9 +108,27 @@ static void http_req_handler(struct http_conn *conn,
 			    (const char *)dist_vendor_js, dist_vendor_js_len);
 		return;
 	}
+	if (0 == pl_strcasecmp(&msg->path, "/TrackView.js")) {
+		http_sreply(conn, 200, "OK", "application/javascript",
+			    (const char *)dist_TrackView_js,
+			    dist_TrackView_js_len);
+		return;
+	}
+	if (0 == pl_strcasecmp(&msg->path, "/DebugView.js")) {
+		http_sreply(conn, 200, "OK", "application/javascript",
+			    (const char *)dist_DebugView_js,
+			    dist_DebugView_js_len);
+		return;
+	}
 	if (0 == pl_strcasecmp(&msg->path, "/index.css")) {
 		http_sreply(conn, 200, "OK", "text/css",
 			    (const char *)dist_index_css, dist_index_css_len);
+		return;
+	}
+	if (0 == pl_strcasecmp(&msg->path, "/DebugView.css")) {
+		http_sreply(conn, 200, "OK", "text/css",
+			    (const char *)dist_DebugView_css,
+			    dist_DebugView_css_len);
 		return;
 	}
 	if (0 == pl_strcasecmp(&msg->path, "/roboto-mono-latin-400.woff2")) {

@@ -49,7 +49,7 @@ function createChart(id: string): void {
         scales: { x: { time: false } },
         series: [
             { label: "ts" },
-            { label: "value", stroke: "blue" },
+            { label: "value", stroke: "#f27800" },
         ],
         axes: [
             { label: "timestamp (ms)", stroke: "white" },
