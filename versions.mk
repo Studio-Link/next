@@ -7,6 +7,6 @@ VPX_MIRROR        := https://chromium.googlesource.com/webm/libvpx
 PORTAUDIO_VERSION := master
 PORTAUDIO_MIRROR  := https://github.com/studio-link-3rdparty
 SAMPLERATE_MIRROR := https://github.com/studio-link-3rdparty
-LIBRE_VERSION     := trace_line_handler
+LIBRE_VERSION     := main 
 BARESIP_VERSION   := main 
 CACHE_VERSION     := 2025102001 # github cache invalidation workaround
