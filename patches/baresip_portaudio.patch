@@ -1,8 +1,46 @@
 diff --git a/modules/portaudio/portaudio.c b/modules/portaudio/portaudio.c
-index 43e87de..77b494a 100644
+index 43e87de..b22ee5b 100644
 --- a/modules/portaudio/portaudio.c
 +++ b/modules/portaudio/portaudio.c
-@@ -122,17 +122,18 @@ static int read_stream_open(struct ausrc_st *st, const struct ausrc_prm *prm,
+@@ -62,7 +62,17 @@ static int read_callback(const void *inputBuffer, void *outputBuffer,
+ 
+ 	(void)outputBuffer;
+ 	(void)timeInfo;
+-	(void)statusFlags;
++
++	if ((statusFlags & paInputUnderflow) != 0)
++		warning("portaudio: InputUnderflow\n");
++	if ((statusFlags & paInputOverflow) != 0)
++		warning("portaudio: InputOverflow\n");
++	if ((statusFlags & paOutputUnderflow) != 0)
++		warning("portaudio: OutputUnderflow\n");
++	if ((statusFlags & paOutputOverflow) != 0)
++		warning("portaudio: OutputOverflow\n");
++	if ((statusFlags & paPrimingOutput) != 0)
++		warning("portaudio: PrimingOutput\n");
+ 
+ 	if (!st->ready)
+ 		return paAbort;
+@@ -90,7 +100,17 @@ static int write_callback(const void *inputBuffer, void *outputBuffer,
+ 
+ 	(void)inputBuffer;
+ 	(void)timeInfo;
+-	(void)statusFlags;
++
++	if ((statusFlags & paInputUnderflow) != 0)
++		warning("portaudio: InputUnderflow\n");
++	if ((statusFlags & paInputOverflow) != 0)
++		warning("portaudio: InputOverflow\n");
++	if ((statusFlags & paOutputUnderflow) != 0)
++		warning("portaudio: OutputUnderflow\n");
++	if ((statusFlags & paOutputOverflow) != 0)
++		warning("portaudio: OutputOverflow\n");
++	if ((statusFlags & paPrimingOutput) != 0)
++		warning("portaudio: PrimingOutput\n");
+ 
+ 	if (!st->ready)
+ 		return paAbort;
+@@ -122,17 +142,18 @@ static int read_stream_open(struct ausrc_st *st, const struct ausrc_prm *prm,
  {
  	PaStreamParameters prm_in;
  	PaError err;
@@ -24,7 +62,7 @@ index 43e87de..77b494a 100644
  	if (paNoError != err) {
  		warning("portaudio: read: Pa_OpenStream: %s\n",
  			Pa_GetErrorText(err));
-@@ -155,17 +156,18 @@ static int write_stream_open(struct auplay_st *st,
+@@ -155,17 +176,18 @@ static int write_stream_open(struct auplay_st *st,
  {
  	PaStreamParameters prm_out;
  	PaError err;
