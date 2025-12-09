@@ -185,6 +185,8 @@ external/baresip:
 	$(HIDE) [ ! -d external/baresip ] && \
 		git -C external clone -b $(BARESIP_VERSION) --depth=1 \
 		https://github.com/baresip/baresip.git
+	cd external/baresip && \
+		patch -p1 < ../../patches/baresip_portaudio.patch
 
 
 ##############################################################################

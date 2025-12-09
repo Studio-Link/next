@@ -1,0 +1,48 @@
+diff --git a/modules/portaudio/portaudio.c b/modules/portaudio/portaudio.c
+index 43e87de..77b494a 100644
+--- a/modules/portaudio/portaudio.c
++++ b/modules/portaudio/portaudio.c
+@@ -122,17 +122,18 @@ static int read_stream_open(struct ausrc_st *st, const struct ausrc_prm *prm,
+ {
+ 	PaStreamParameters prm_in;
+ 	PaError err;
+-	unsigned long frames_per_buffer = prm->srate * prm->ptime / 1000;
+ 
+ 	memset(&prm_in, 0, sizeof(prm_in));
+ 	prm_in.device           = dev;
+ 	prm_in.channelCount     = prm->ch;
+ 	prm_in.sampleFormat     = aufmt_to_pasampleformat(prm->fmt);
+-	prm_in.suggestedLatency = 0.100;
++	prm_in.suggestedLatency =
++		Pa_GetDeviceInfo(dev)->defaultLowInputLatency;
+ 
+ 	st->stream_rd = NULL;
+ 	err = Pa_OpenStream(&st->stream_rd, &prm_in, NULL, prm->srate,
+-			    frames_per_buffer, paNoFlag, read_callback, st);
++			    paFramesPerBufferUnspecified, paNoFlag,
++			    read_callback, st);
+ 	if (paNoError != err) {
+ 		warning("portaudio: read: Pa_OpenStream: %s\n",
+ 			Pa_GetErrorText(err));
+@@ -155,17 +156,18 @@ static int write_stream_open(struct auplay_st *st,
+ {
+ 	PaStreamParameters prm_out;
+ 	PaError err;
+-	unsigned long frames_per_buffer = prm->srate * prm->ptime / 1000;
+ 
+ 	memset(&prm_out, 0, sizeof(prm_out));
+ 	prm_out.device           = dev;
+ 	prm_out.channelCount     = prm->ch;
+ 	prm_out.sampleFormat     = aufmt_to_pasampleformat(prm->fmt);
+-	prm_out.suggestedLatency = 0.100;
++	prm_out.suggestedLatency =
++		Pa_GetDeviceInfo(dev)->defaultLowOutputLatency;
+ 
+ 	st->stream_wr = NULL;
+ 	err = Pa_OpenStream(&st->stream_wr, NULL, &prm_out, prm->srate,
+-			    frames_per_buffer, paNoFlag, write_callback, st);
++			    paFramesPerBufferUnspecified, paNoFlag,
++			    write_callback, st);
+ 	if (paNoError != err) {
+ 		warning("portaudio: write: Pa_OpenStream: %s\n",
+ 			Pa_GetErrorText(err));
