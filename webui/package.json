@@ -25,16 +25,16 @@
     "vue-router": "^4.6.3"
   },
   "devDependencies": {
-    "@types/node": "^22.9.0",
+    "@types/node": "^25.0.0",
     "@typescript-eslint/eslint-plugin": "^8.13.0",
     "@typescript-eslint/parser": "^8.13.0",
-    "@vitejs/plugin-vue": "^5.1.4",
+    "@vitejs/plugin-vue": "^6.0.3",
     "@vue/compiler-sfc": "^3.2.19",
-    "eslint": "^9.14.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-vue": "^9.4.0",
+    "eslint": "^9.0.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-vue": "^9.0.0",
     "typescript": "^5.0.2",
-    "vite": "^6.0.0",
-    "vue-tsc": "^2.1.10"
+    "vite": "^7.0.0",
+    "vue-tsc": "^3.0.0"
   }
 }
