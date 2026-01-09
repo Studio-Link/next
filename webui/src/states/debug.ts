@@ -10,16 +10,18 @@ interface ChartStore {
     uplot: uPlot
     xs: number[]
     ys: number[]
+    zs: number[]
 }
 
 interface Data {
     id: string
     x: number
-    y: number
+    y?: number
+    z?: number
 }
 
 let chartsById: Record<string, ChartStore> = {}
-const maxPoints = 200
+const maxPoints = 1000
 
 
 function createChart(id: string): void {
@@ -40,6 +42,7 @@ function createChart(id: string): void {
 
     const xs: number[] = [];
     const ys: number[] = [];
+    const zs: number[] = [];
 
     const { width, height } = container.getBoundingClientRect();
 
@@ -50,7 +53,14 @@ function createChart(id: string): void {
         scales: { x: { time: false } },
         series: [
             { label: "ts" },
-            { label: "value", stroke: "#f27800" },
+            { label: "ms", stroke: "#f27800" },
+            { label: "over/underrun", stroke: "red",
+      points: {
+        show: true,
+        size: 10,          // size of the point
+      },
+
+            },
         ],
         axes: [
             { label: "timestamp (ms)", stroke: "white" },
@@ -58,8 +68,8 @@ function createChart(id: string): void {
         ],
     };
 
-    const u = new uPlot(opts, [xs, ys], chartEl);
-    chartsById[id] = { uplot: u, xs, ys };
+    const u = new uPlot(opts, [xs, ys, zs], chartEl);
+    chartsById[id] = { uplot: u, xs, ys, zs };
 }
 
 
@@ -69,17 +79,21 @@ function handleNewData(d: Data): void {
         createChart(id);
     }
 
-    const { uplot, xs, ys } = chartsById[id];
+    const { uplot, xs, ys, zs } = chartsById[id];
 
     xs.push(d.x);
-    ys.push(d.y);
+    if (d.y)
+        ys.push(d.y);
+    if (d.z)
+        zs.push(d.z)
 
     if (xs.length > maxPoints) {
         xs.shift();
         ys.shift();
+        zs.shift();
     }
 
-    uplot.setData([xs, ys]);
+    uplot.setData([xs, ys, zs]);
 }
 
 
@@ -91,9 +105,28 @@ export const Debug: Debug = {
         }
         this.socket.onmessage = (message) => {
             const json = JSON.parse(message.data)
+            const ts = json.ts / 1000 / 1000
             if (json.cat == 'slmain') {
-                const d: Data = { id: 'max_jitter', x: json.ts / 1000 / 1000, y: json.args.max_jitter }
+                const d: Data = { id: 'max_jitter', x: ts, y: json.args.max_jitter }
                 handleNewData(d)
+                return
+            }
+            if (json.cat == 'aubuf' && json.name == 'cur_sz_ms') {
+                const d: Data = { id: json.id, x: ts, y: json.args.cur_sz_ms }
+                handleNewData(d)
+                return
+            }
+            if (json.cat == 'aubuf') {
+                if (json.name == 'overrun') {
+                    const d: Data = { id: json.id, x: ts, z: 100 }
+                    handleNewData(d)
+                    return
+                }
+                else if (json.name == 'underrun') {
+                    const d: Data = { id: json.id, x: ts, z: 10 }
+                    handleNewData(d)
+                    return
+                }
             }
         }
     },
