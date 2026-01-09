@@ -23,7 +23,8 @@ endif
 
 TARGET := Linux
 
-TRACE_FLAGS := "-DJBUF_TRACE -DAUBUF_TRACE -DTRACE_FLUSH_THRESHOLD=1"
+TRACE_FLAGS := "-DJBUF_TRACE -DAUBUF_TRACE -DTRACE_FLUSH_THRESHOLD=1 \
+			   -DTRACE_FLUSH_TMR=500"
 
 ##############################################################################
 #
@@ -62,8 +63,8 @@ endif
 all: third_party external
 	$(HIDE)echo $(OS)
 	$(HIDE)[ -d build ] || cmake -B build -GNinja \
-		-DCMAKE_BUILD_TYPE=Debug -DUSE_TRACE=ON \
-		-DCMAKE_C_FLAGS=$(TRACE_FLAGS)
+		-DCMAKE_BUILD_TYPE=Debug \
+		-DUSE_TRACE=ON -DCMAKE_C_FLAGS=$(TRACE_FLAGS)
 	$(HIDE)cmake --build build -j $(CMAKE_VERBOSE)
 
 ##############################################################################
@@ -288,6 +289,7 @@ tsan: external
 	cmake -B build -GNinja -DCMAKE_BUILD_TYPE=Debug \
 		-DCMAKE_C_FLAGS="-fsanitize=undefined,thread \
 		-fno-omit-frame-pointer" \
+		-DUSE_TRACE=ON -DCMAKE_C_FLAGS=$(TRACE_FLAGS) \
 		-DHAVE_THREADS=
 	make all
 
