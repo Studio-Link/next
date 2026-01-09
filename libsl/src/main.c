@@ -128,7 +128,7 @@ int sl_baresip_init(const uint8_t *conf)
 	struct sl_config *slconf;
 	const char *conf_ = "call_max_calls	16\n"
 			    "sip_verify_server	yes\n"
-			    "audio_buffer	20-100\n"
+			    "audio_buffer	20-200\n"
 			    "audio_buffer_mode	fixed\n"
 			    "audio_silence	-35.0\n"
 			    "audio_jitter_buffer_type	adaptive\n"
