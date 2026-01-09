@@ -4,12 +4,12 @@
 
 static struct websock *ws = NULL;
 static struct list wsl	  = LIST_INIT;
+static mtx_t *wsl_lock	  = NULL;
 struct ws_conn {
 	struct le le;
 	struct websock_conn *c;
 	enum ws_type type;
 };
-
 
 void sl_ws_dummyh(const struct websock_hdr *hdr, struct mbuf *mb, void *arg)
 {
@@ -22,8 +22,12 @@ void sl_ws_dummyh(const struct websock_hdr *hdr, struct mbuf *mb, void *arg)
 static void conn_destroy(void *arg)
 {
 	struct ws_conn *ws_conn = arg;
-	mem_deref(ws_conn->c);
+
+	mtx_lock(wsl_lock);
 	list_unlink(&ws_conn->le);
+	mtx_unlock(wsl_lock);
+
+	mem_deref(ws_conn->c);
 }
 
 
@@ -53,7 +57,9 @@ int sl_ws_open(struct http_conn *conn, enum ws_type type,
 
 	ws_conn->type = type;
 
+	mtx_lock(wsl_lock);
 	list_append(&wsl, &ws_conn->le, ws_conn);
+	mtx_unlock(wsl_lock);
 
 out:
 	if (err)
@@ -70,6 +76,7 @@ void sl_ws_send_str(enum ws_type type, char *str)
 	if (!str)
 		return;
 
+	mtx_lock(wsl_lock);
 	LIST_FOREACH(&wsl, le)
 	{
 		struct ws_conn *ws_conn = le->data;
@@ -79,6 +86,7 @@ void sl_ws_send_str(enum ws_type type, char *str)
 
 		websock_send(ws_conn->c, WEBSOCK_TEXT, "%s", str);
 	}
+	mtx_unlock(wsl_lock);
 }
 
 
@@ -89,6 +97,7 @@ void sl_ws_send_mb(enum ws_type type, const struct mbuf *mb)
 	if (!mb)
 		return;
 
+	mtx_lock(wsl_lock);
 	LIST_FOREACH(&wsl, le)
 	{
 		struct ws_conn *ws_conn = le->data;
@@ -99,6 +108,7 @@ void sl_ws_send_mb(enum ws_type type, const struct mbuf *mb)
 		websock_send(ws_conn->c, WEBSOCK_TEXT, "%b", mbuf_buf(mb),
 			     mbuf_get_left(mb));
 	}
+	mtx_unlock(wsl_lock);
 }
 
 
@@ -108,6 +118,17 @@ int sl_ws_init(void)
 
 	list_init(&wsl);
 	err = websock_alloc(&ws, NULL, NULL);
+	if (err) {
+		warning("sl_ws_init: websock_alloc failed\n");
+		return err;
+	}
+
+	err = mutex_alloc(&wsl_lock);
+	if (err) {
+		warning("sl_ws_init: mutex_alloc failed\n");
+		mem_deref(ws);
+		return err;
+	}
 
 	return err;
 }
@@ -115,10 +136,12 @@ int sl_ws_init(void)
 
 int sl_ws_close(void)
 {
+	mtx_lock(wsl_lock);
 	list_flush(&wsl);
+	mtx_unlock(wsl_lock);
 
-	if (ws)
-		ws = mem_deref(ws);
+	wsl_lock = mem_deref(wsl_lock);
+	ws	 = mem_deref(ws);
 
 	return 0;
 }

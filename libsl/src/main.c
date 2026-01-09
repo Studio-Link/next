@@ -117,6 +117,8 @@ int sl_getopt(int argc, char *const argv[])
 
 static void trace_h(const struct re_trace_event_s *e, struct mbuf *json)
 {
+	(void)e;
+
 	sl_ws_send_mb(WS_DEBUG, json);
 }
 
@@ -323,6 +325,9 @@ int sl_main(void)
 
 void sl_close(void)
 {
+#ifdef RE_TRACE_ENABLED
+	re_trace_close();
+#endif
 	sl_ws_close();
 	sl_http_close();
 
@@ -342,9 +347,6 @@ void sl_close(void)
 	mod_close();
 
 	re_thread_async_close();
-#ifdef RE_TRACE_ENABLED
-	re_trace_close();
-#endif
 
 	/* Check for open timers */
 	tmr_debug();
