@@ -45,10 +45,10 @@ struct auplay_st {
 	struct amix *amix;
 };
 
-static struct ausrc *ausrc	= NULL;
-static struct auplay *auplay	= NULL;
-static struct hash *amixl	= NULL;
-static struct aumix *aumix	= NULL;
+static struct ausrc *ausrc   = NULL;
+static struct auplay *auplay = NULL;
+static struct hash *amixl    = NULL;
+static struct aumix *aumix   = NULL;
 
 
 static int device_play_by_index(struct slaudio *a, int index, char **device)
@@ -241,6 +241,14 @@ static int amix_alloc(struct amix **amixp, const char *device)
 		err = ENOMEM;
 		goto out;
 	}
+
+	struct pl *id = pl_alloc_str(device);
+	if (!id) {
+		err = ENOMEM;
+		goto out;
+	}
+	aumix_source_set_id(amix->aumix_src, id);
+	mem_deref(id);
 
 	aumix_source_readh(amix->aumix_src, mix_readh);
 
@@ -491,6 +499,8 @@ static int driver_start(struct slaudio *a)
 		return err;
 	}
 
+	aubuf_flush(a->ab_mix);
+
 	info("slaudio: driver started\n");
 
 	return err;
@@ -614,25 +624,33 @@ int sl_audio_alloc(struct slaudio **audiop, struct sl_track *track)
 
 	err = aubuf_alloc(&a->ab_mix,
 			  (SRATE * CH * PTIME) / 1000 * sizeof(int16_t),
-			  (SRATE * CH * PTIME) / 1000 * sizeof(int16_t) * 3);
+			  (SRATE * CH * PTIME) / 1000 * sizeof(int16_t) * 10);
 	if (err)
 		goto out;
 
 	aubuf_set_live(a->ab_mix, true);
 
-	struct pl *id = pl_alloc_str("slaudio");
+	struct pl *id = pl_alloc_str("slaudio_mix");
 	if (!id) {
-		a->ab_mix = mem_deref(a->ab_mix);
-		err	  = ENOMEM;
+		err = ENOMEM;
 		goto out;
 	}
 
 	aubuf_set_id(a->ab_mix, id);
-	mem_deref(id);
+	id = mem_deref(id);
 
 	err = aumix_source_alloc(&a->mix_src, aumix, driver_mixh, a);
 	if (err)
 		goto out;
+
+	id = pl_alloc_str("slaudio_source");
+	if (!id) {
+		err = ENOMEM;
+		goto out;
+	}
+
+	aumix_source_set_id(a->mix_src, id);
+	id = mem_deref(id);
 
 	aumix_source_enable(a->mix_src, true);
 
