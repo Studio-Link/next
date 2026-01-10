@@ -400,6 +400,11 @@ static void eventh(enum bevent_ev ev, struct bevent *event, void *arg)
 		return;
 	}
 
+	if (ev == BEVENT_SHUTDOWN) {
+		list_flush(&tracks);
+		return;
+	}
+
 	LIST_FOREACH(&tracks, le)
 	{
 		struct sl_track *track = le->data;
