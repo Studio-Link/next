@@ -4,8 +4,8 @@
 
 static int test_track_add(void)
 {
-	char json_str[8192] = {0};
-	struct odict *o	    = NULL;
+	char json_str[8192]		  = {0};
+	struct odict *o			  = NULL;
 	const struct odict_entry *o_entry = NULL;
 	struct sl_track *track;
 	int err;

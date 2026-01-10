@@ -125,6 +125,10 @@ a_user_can_add_tracks() {
 	[ "$track_count" == "2" ]
 }
 
+a_user_can_mute_track() {
+	curl_post /api/v1/track/mute?track=1
+}
+
 a_user_can_delete_tracks() {
 	track_count=$(ws_test /ws/v1/tracks | jq ".[].type" | grep -c remote)
 	[ "$track_count" == "2" ]
@@ -152,6 +156,7 @@ main() {
 	a_user_gets_404_if_page_not_exists
 	a_user_can_connect_with_websocket
 	a_user_can_add_tracks
+    a_user_can_mute_track
 	a_user_can_delete_tracks
 }
 
