@@ -28,6 +28,10 @@ export default {
         api_request('DELETE', '/tracks', String(id));
     },
 
+    track_mute(id: number) {
+        api_request('POST', '/track/mute?track=' + String(id), null);
+    },
+
     audio_device(track: number, mic: number, speaker: number) {
         api_request('PUT', '/audio/device?track=' + String(track), String(mic) + ";" + String(speaker));
     },

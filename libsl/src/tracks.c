@@ -21,6 +21,7 @@ struct sl_track {
 	char name[64];
 	char error[128];
 	enum sl_track_status status;
+	bool muted;
 	union
 	{
 		struct local local;
@@ -90,6 +91,7 @@ int sl_tracks_json(struct re_printf *pf, void *arg)
 		odict_entry_add(o_track, "name", ODICT_STRING, track->name);
 		odict_entry_add(o_track, "status", ODICT_INT, track->status);
 		odict_entry_add(o_track, "error", ODICT_STRING, track->error);
+		odict_entry_add(o_track, "muted", ODICT_BOOL, track->muted);
 		odict_entry_add(o_tracks, str_itoa(track->id, id, 10),
 				ODICT_OBJECT, o_track);
 		o_track = mem_deref(o_track);
@@ -170,6 +172,7 @@ int sl_track_add(struct sl_track **trackp, enum sl_track_type type)
 	track->id     = sl_track_next_id();
 	track->type   = type;
 	track->status = SL_TRACK_IDLE;
+	track->muted  = false;
 
 	list_append(&tracks, &track->le, track);
 	list_sort(&tracks, sort_handler, NULL);
@@ -299,6 +302,18 @@ void sl_track_hangup(struct sl_track *track)
 
 	track->name[0]	     = '\0';
 	track->u.remote.call = NULL;
+}
+
+
+void sl_track_toggle_mute(struct sl_track *track)
+{
+	/* only allowed for local track currently */
+	if (!track || track->id != 1)
+		return;
+
+	local_track->muted = !local_track->muted;
+	sl_audio_mute(local_track->u.local.slaudio, local_track->muted);
+	sl_track_ws_send();
 }
 
 

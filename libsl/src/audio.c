@@ -25,7 +25,6 @@ struct amix {
 	struct aumix_source *aumix_src;
 	char *device;
 	uint16_t speaker_id;
-	bool muted;
 };
 
 struct ausrc_st {
@@ -252,8 +251,6 @@ static int amix_alloc(struct amix **amixp, const char *device)
 
 	aumix_source_readh(amix->aumix_src, mix_readh);
 
-	amix->muted = true;
-
 out:
 	if (err) {
 		mem_deref(amix);
@@ -322,7 +319,6 @@ static int src_alloc(struct ausrc_st **stp, const struct ausrc *as,
 
 		st->amix = mem_ref(amix);
 
-		/* aumix_source_mute(amix->aumix_src, amix->muted); */
 		aumix_source_enable(amix->aumix_src, true);
 
 		warning("debug %H\n", aumix_debug, aumix);
@@ -396,7 +392,6 @@ static int play_alloc(struct auplay_st **stp, const struct auplay *ap,
 
 		st->amix = mem_ref(amix);
 
-		/* aumix_source_mute(amix->aumix_src, amix->muted); */
 		aumix_source_enable(amix->aumix_src, true);
 
 		goto out;
@@ -663,6 +658,12 @@ out:
 		*audiop = a;
 
 	return err;
+}
+
+
+void sl_audio_mute(struct slaudio *audio, bool mute)
+{
+	aumix_source_mute(audio->mix_src, mute);
 }
 
 

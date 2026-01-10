@@ -328,6 +328,22 @@ static void http_req_handler(struct http_conn *conn,
 		goto out;
 	}
 
+
+	if (0 == pl_strcasecmp(&msg->path, "/api/v1/track/mute") &&
+	    0 == pl_strcasecmp(&msg->met, "POST")) {
+		struct pl pltrack = PL_INIT;
+		err = re_regex(msg->prm.p, msg->prm.l, "track=[0-9]+",
+			       &pltrack);
+		if (err)
+			goto err;
+
+		sl_track_toggle_mute(sl_track_by_id(pl_u32(&pltrack)));
+		http_sreply(conn, 200, "OK", "text/html", "", 0);
+
+		goto out;
+	}
+
+
 #ifndef RELEASE
 	/* Default return OPTIONS - needed on dev for preflight CORS Check
 	 * @TODO: add release test */
