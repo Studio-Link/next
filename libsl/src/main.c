@@ -277,16 +277,22 @@ out:
 static int webui_open(void *arg)
 {
 	(void)arg;
-	char url[256];
-	re_snprintf(url, sizeof(url),
+	char cmd[256];
+
+#ifdef WIN32
+	re_snprintf(cmd, sizeof(cmd), "start http://127.0.0.1:%u/",
+		    sl_port);
+#else
+	re_snprintf(cmd, sizeof(cmd),
 		    "chromium --app=http://127.0.0.1:%u "
 		    "--user-data-dir=/tmp/.studio-link/browser "
 		    "--window-size=1060,800 >/dev/null 2>&1",
 		    sl_port);
+#endif
 
 	/* @TODO: add google-chrome and xdg-open fallback */
 	/* @TODO: use permanent browser dir */
-	return system(url);
+	return system(cmd);
 }
 
 
@@ -298,8 +304,6 @@ static void webui_closed(int err, void *arg)
 		warning("webui/browser open failed! %m\n", err);
 	else
 		info("webui/browser closed\n");
-
-	re_cancel();
 }
 
 

@@ -2,9 +2,10 @@
 #include <baresip.h>
 #include <studiolink.h>
 
-static struct websock *ws = NULL;
-static struct list wsl	  = LIST_INIT;
-static mtx_t *wsl_lock	  = NULL;
+static struct websock *ws  = NULL;
+static struct list wsl	   = LIST_INIT;
+static mtx_t *wsl_lock	   = NULL;
+static struct tmr tmr_exit = TMR_INIT;
 struct ws_conn {
 	struct le le;
 	struct websock_conn *c;
@@ -19,12 +20,24 @@ void sl_ws_dummyh(const struct websock_hdr *hdr, struct mbuf *mb, void *arg)
 }
 
 
+static void exit_baresip(void *arg)
+{
+	(void)arg;
+
+	re_cancel();
+}
+
+
 static void conn_destroy(void *arg)
 {
 	struct ws_conn *ws_conn = arg;
 
 	mtx_lock(wsl_lock);
 	list_unlink(&ws_conn->le);
+	if (list_count(&wsl) == 0) {
+		ua_stop_all(false);
+		tmr_start(&tmr_exit, 200, exit_baresip, NULL);
+	}
 	mtx_unlock(wsl_lock);
 
 	mem_deref(ws_conn->c);
