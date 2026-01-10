@@ -34,7 +34,7 @@ static void conn_destroy(void *arg)
 
 	mtx_lock(wsl_lock);
 	list_unlink(&ws_conn->le);
-	if (list_count(&wsl) == 0) {
+	if (list_count(&wsl) == 0 && !sl_headless()) {
 		ua_stop_all(false);
 		tmr_start(&tmr_exit, 200, exit_baresip, NULL);
 	}

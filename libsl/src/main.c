@@ -317,6 +317,12 @@ int sl_open_webui(void)
 }
 
 
+bool sl_headless(void)
+{
+	return headless;
+}
+
+
 int sl_main(void)
 {
 	int err;

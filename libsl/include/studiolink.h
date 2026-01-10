@@ -89,6 +89,13 @@ int sl_init(void);
 int sl_open_webui(void);
 
 /**
+ * StudioLink in headless mode?
+ *
+ * @return true for headless, otherwise false
+ */
+bool sl_headless(void);
+
+/**
  * StudioLink Main function
  *
  * @return int
