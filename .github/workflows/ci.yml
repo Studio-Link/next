@@ -65,13 +65,13 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: install clang-20 and ninja
+    - name: install clang-21 and ninja
       if: ${{ runner.os == 'Linux' }}
       run: |
         wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
-        sudo add-apt-repository "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-20 main"
+        sudo add-apt-repository "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-21 main"
         sudo apt-get update
-        sudo apt-get install -y clang-tools-20 clang-20 clang-tidy-20 ninja-build cppcheck gdb nasm yasm
+        sudo apt-get install -y clang-tools-21 clang-21 clang-tidy-21 ninja-build cppcheck gdb nasm yasm
 
     - name: install sound libs
       if: ${{ runner.os == 'Linux' }}
@@ -116,7 +116,7 @@ jobs:
 
     - name: make StudioLink - Linux
       if: ${{ runner.os == 'Linux' }}
-      run: make CC=clang-20 CI=1
+      run: make CC=clang-21 CI=1
     
     - name: Test StudioLink
       if: ${{ runner.os == 'LinuxDisabled' }}
@@ -125,12 +125,12 @@ jobs:
     - name: clang-tidy
       if: ${{ runner.os == 'Linux' }}
       run: |
-        clang-tidy-20 -p build -checks=cert-\*,-cert-dcl37-c,-cert-dcl51-cpp,-clang-analyzer-valist.Uninitialized libsl/src/*.c
-        clang-tidy-20 -p build -checks=cert-\*,-cert-dcl37-c,-cert-dcl51-cpp,-clang-analyzer-valist.Uninitialized test/src/*.c
+        clang-tidy-21 -p build -checks=cert-\*,-cert-dcl37-c,-cert-dcl51-cpp,-clang-analyzer-valist.Uninitialized libsl/src/*.c
+        clang-tidy-21 -p build -checks=cert-\*,-cert-dcl37-c,-cert-dcl51-cpp,-clang-analyzer-valist.Uninitialized test/src/*.c
 
     - name: clang scan-build
       if: ${{ runner.os == 'Linux' }}
-      run: make clean && scan-build-20 --status-bugs make
+      run: make clean && scan-build-21 --status-bugs make
 
     - name: make StudioLink - macOS
       if: ${{ runner.os == 'macOS' }}
