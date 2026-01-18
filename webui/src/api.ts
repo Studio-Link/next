@@ -32,6 +32,10 @@ export default {
         api_request('POST', '/track/mute?track=' + String(id), null);
     },
 
+    record() {
+        api_request('POST', '/record', null);
+    },
+
     audio_device(track: number, mic: number, speaker: number) {
         api_request('PUT', '/audio/device?track=' + String(track), String(mic) + ";" + String(speaker));
     },

@@ -1,9 +1,4 @@
-interface Meters {
-    socket?: WebSocket
-    websocket(ws_host: string): void
-    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-    update(message: any): void
-}
+import { Ref, ref } from 'vue'
 
 function iec_scale(db: number) {
     let def = 0.0;
@@ -38,10 +33,26 @@ function update_meters(peak: string, index: number) {
     document.getElementById("level" + (index - 2))?.style.setProperty("--my-level", val + "% 0 0 0")
 }
 
+interface Meters {
+    socket?: WebSocket
+    record_timer: Ref<string>
+    record: Ref<boolean>
+    websocket(ws_host: string): void
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+    update(message: any): void
+}
+
+function pad(num: number, size: number) {
+    const s = '0000' + num
+    return s.substring(s.length - size)
+}
+
 export const meters: Meters = {
+    record_timer: ref("0:00:00"),
+    record: ref(false),
     websocket(ws_host): void {
         this.socket = new WebSocket('ws://' + ws_host + '/ws/v1/meters')
-        this.socket.onerror = function() {
+        this.socket.onerror = function () {
             console.log('Websocket error')
         }
         this.socket.onmessage = (message) => {
@@ -50,6 +61,22 @@ export const meters: Meters = {
     },
     update(message): void {
         const peaks = message.data.split(" ")
+        let time = parseInt(peaks.shift())
+        if (time) {
+            this.record.value = true
+            time = time / 1000
+            const h = Math.floor(time / (60 * 60))
+            time = time % (60 * 60)
+            const m = Math.floor(time / 60)
+            time = time % 60
+            const s = Math.floor(time)
+
+            this.record_timer.value = pad(h, 1) + ':' + pad(m, 2) + ':' + pad(s, 2)
+        }
+        else {
+            this.record.value = false
+        }
+
         peaks.forEach(update_meters)
     }
 }
