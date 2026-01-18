@@ -160,5 +160,5 @@ err:
 	warning("record: FLAC ENCODE ERROR: %s\n",
 		FLAC__StreamEncoderStateString[state]);
 
-	return EBADFD;
+	return EPROTO;
 }
