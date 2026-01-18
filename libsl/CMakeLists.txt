@@ -22,10 +22,12 @@ set(SRCS
   src/audio.c
   src/conf.c
   src/db.c
+  src/flac.c
   src/http/client.c
   src/http/server.c
   src/main.c
   src/meters.c
+  src/record.c
   src/tracks.c
   src/ws.c
 )
@@ -83,7 +85,7 @@ LIST(APPEND COMPILED_RESOURCES ${OUTPUT_FILE})
 #
 # Main target object
 #
-set(LINKLIBS baresip re ${LMDB_LIBRARIES} ${OPENH264_LIBRARIES} stdc++)
+set(LINKLIBS baresip re FLAC ${LMDB_LIBRARIES} stdc++)
 
 if(WIN32)
   list(APPEND LINKLIBS winmm setupapi)

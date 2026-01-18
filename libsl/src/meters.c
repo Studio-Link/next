@@ -38,7 +38,7 @@ static void write_ws(void)
 	p[0] = '\0';
 
 	/* Record time */
-	re_snprintf(one_peak, sizeof(one_peak), "0 0 ");
+	re_snprintf(one_peak, sizeof(one_peak), "%llu ", sl_record_msecs());
 	strcat((char *)p, one_peak);
 
 	for (i = 0; i < MAX_METERS; i++) {

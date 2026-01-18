@@ -344,6 +344,16 @@ static void http_req_handler(struct http_conn *conn,
 	}
 
 
+	if (0 == pl_strcasecmp(&msg->path, "/api/v1/record") &&
+	    0 == pl_strcasecmp(&msg->met, "POST")) {
+
+		sl_record_toggle("/tmp");
+		http_sreply(conn, 200, "OK", "text/html", "", 0);
+
+		goto out;
+	}
+
+
 #ifndef RELEASE
 	/* Default return OPTIONS - needed on dev for preflight CORS Check
 	 * @TODO: add release test */

@@ -220,6 +220,24 @@ int sl_account_close(void);
 struct ua *sl_account_ua(void);
 
 
+/******************************************************************************
+ * record.c
+ */
+uint64_t sl_record_msecs(void);
+void sl_record_toggle(const char *folder);
+int sl_record_start(const char *folder);
+void sl_record(struct auframe *af);
+int sl_record_close(void);
+
+
+/******************************************************************************
+ * flac.c
+ */
+struct flac;
+int sl_flac_init(struct flac **flacp, struct auframe *af, char *file);
+int sl_flac_record(struct flac *flac, struct auframe *af, uint64_t offset);
+
+
 #ifdef __cplusplus
 }
 #endif
