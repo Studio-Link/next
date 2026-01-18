@@ -11,6 +11,7 @@
 project(sl LANGUAGES C)
 
 find_package(LMDB REQUIRED)
+find_package(FLAC REQUIRED)
 
 ##############################################################################
 #
@@ -85,7 +86,7 @@ LIST(APPEND COMPILED_RESOURCES ${OUTPUT_FILE})
 #
 # Main target object
 #
-set(LINKLIBS baresip re FLAC ${LMDB_LIBRARIES} stdc++)
+set(LINKLIBS baresip re ${FLAC_LIBRARIES} ${LMDB_LIBRARIES} stdc++)
 
 if(WIN32)
   list(APPEND LINKLIBS winmm setupapi)
