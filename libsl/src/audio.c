@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <studiolink.h>
 
 enum { PTIME = 20, SRATE = 48000, CH = 2 };
@@ -24,7 +25,7 @@ struct amix {
 	struct auplay_st *play;
 	struct aumix_source *aumix_src;
 	char *device;
-	uint16_t speaker_id;
+	struct sl_track *track; /* remote track */
 };
 
 struct ausrc_st {
@@ -208,7 +209,7 @@ static void mix_readh(struct auframe *af, void *arg)
 		return;
 
 	amix->play->wh(af, amix->play->arg);
-	af->id = amix->speaker_id;
+	af->id = amix->track->id;
 
 #if 0
 	re_atomic_rlx_set(&amix->play->level,
@@ -241,7 +242,9 @@ static int amix_alloc(struct amix **amixp, const char *device)
 		goto out;
 	}
 
-	struct pl *id = pl_alloc_str(device);
+	amix->track = sl_track_by_id(atoi(device));
+
+	struct pl *id = pl_alloc_str(amix->track->name);
 	if (!id) {
 		err = ENOMEM;
 		goto out;
