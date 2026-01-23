@@ -4,7 +4,6 @@
  * Copyright (C) 2026 Sebastian Reimers
  */
 
-#include <sys/stat.h>
 #include <re.h>
 #include <rem.h>
 #include <baresip.h>
@@ -28,7 +27,7 @@ struct record_entry {
 
 enum {
 	SRATE = 48000,
-	CH    = 1,
+	CH    = 2,
 	PTIME = 20,
 };
 
@@ -85,15 +84,18 @@ static int record_track(struct auframe *af)
 		track->id   = af->id;
 		track->last = re_atomic_rlx(&record.start_time);
 
-		/* TODO: add user->name */
+		/* TODO: use track name */
 		re_snprintf(track->file, sizeof(track->file),
 			    "%s/audio_id%u.flac", record.folder, track->id);
 
 		err = sl_flac_init(&track->flac, af, track->file);
 		if (err) {
+			warning("sl_record: error flac_init (%m)\n", err);
 			mem_deref(track);
 			return err;
 		}
+
+		info("sl_record: add track (%s)\n", track->file);
 
 		list_append(&record.tracks, &track->le, track);
 	}
@@ -158,7 +160,6 @@ void sl_record_toggle(const char *folder)
 		sl_record_start(folder);
 	else
 		sl_record_close();
-
 }
 
 
@@ -181,7 +182,7 @@ int sl_record_start(const char *folder)
 	}
 
 	re_atomic_rlx_set(&record.run, true);
-	info("aumix: record started\n");
+	info("sl_record: started\n");
 
 	thread_create_name(&record.thread, "sl_record", record_thread, NULL);
 
@@ -195,7 +196,7 @@ int sl_record_close(void)
 		return EINVAL;
 
 	re_atomic_rlx_set(&record.run, false);
-	info("aumix: record close\n");
+	info("sl_record: close\n");
 	thrd_join(record.thread, NULL);
 
 	mem_deref(record.ab);

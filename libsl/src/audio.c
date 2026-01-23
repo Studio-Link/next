@@ -456,7 +456,9 @@ static void driver_read_handler(struct auframe *af, void *arg)
 	auconv_from_s16(AUFMT_FLOAT, sampv, af->sampv, af->sampc);
 	sl_meter_process(0, sampv, af->sampc / CH);
 
-	aumix_source_put(a->mix_src, af->sampv, af->sampc);
+	af->id = 1;
+
+	aumix_source_put_auframe(a->mix_src, af);
 }
 
 
@@ -689,6 +691,10 @@ int sl_audio_init(void)
 	}
 
 	err = aumix_alloc(&aumix, SRATE, CH, PTIME);
+	if (err)
+		return err;
+
+	aumix_recordh(aumix, sl_record);
 
 	return err;
 }
