@@ -3,6 +3,16 @@
  *
  * Copyright (C) 2026 Sebastian Reimers
  */
+#ifdef WIN32
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#include <windows.h>
+#include <shlobj.h>
+#include <direct.h>
+#include <lmaccess.h>
+#endif
+#include <time.h>
 #include <stdlib.h>
 #include <re.h>
 #include <rem.h>
@@ -191,7 +201,6 @@ static int timestamp_print(struct re_printf *pf, const struct tm *tm)
 
 static int folder_init(void)
 {
-	int err = 0;
 	char buf[256];
 	char basefolder[256];
 
@@ -204,7 +213,7 @@ static int folder_init(void)
 	}
 	str_ncpy(buf, win32_path, sizeof(buf));
 #else
-	err = fs_gethome(buf, sizeof(buf));
+	int err = fs_gethome(buf, sizeof(buf));
 	if (err)
 		return err;
 #endif
