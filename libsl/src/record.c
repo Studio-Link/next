@@ -3,7 +3,7 @@
  *
  * Copyright (C) 2026 Sebastian Reimers
  */
-
+#include <stdlib.h>
 #include <re.h>
 #include <rem.h>
 #include <baresip.h>
@@ -15,7 +15,7 @@ static struct {
 	RE_ATOMIC bool run;
 	thrd_t thread;
 	struct aubuf *ab;
-	char *folder;
+	char folder[256];
 	RE_ATOMIC uint64_t start_time;
 } record = {.tracks = LIST_INIT, .run = false};
 
@@ -84,9 +84,8 @@ static int record_track(struct auframe *af)
 		track->id   = af->id;
 		track->last = re_atomic_rlx(&record.start_time);
 
-		/* TODO: use track name */
 		re_snprintf(track->file, sizeof(track->file),
-			    "%s/audio_id%u.flac", record.folder, track->id);
+			    "%s/track_%u.flac", record.folder, track->id);
 
 		err = sl_flac_init(&track->flac, af, track->file);
 		if (err) {
@@ -154,32 +153,97 @@ void sl_record(struct auframe *af)
 }
 
 
-void sl_record_toggle(const char *folder)
+static void record_open_folder(void)
+{
+	char command[256] = {0};
+
+#if defined(DARWIN)
+	re_snprintf(command, sizeof(command), "open %s", record.folder);
+#elif defined(WIN32)
+	re_snprintf(command, sizeof(command), "explorer.exe %s",
+		    record.folder);
+#else
+	re_snprintf(command, sizeof(command), "xdg-open %s", record.folder);
+#endif
+	system(command);
+}
+
+
+void sl_record_toggle(void)
 {
 	if (!re_atomic_rlx(&record.run))
-		sl_record_start(folder);
+		sl_record_start();
 	else
 		sl_record_close();
 }
 
 
-int sl_record_start(const char *folder)
+static int timestamp_print(struct re_printf *pf, const struct tm *tm)
+{
+	if (!tm)
+		return 0;
+
+	return re_hprintf(pf, "%d-%02d-%02d-%02d-%02d-%02d",
+			  1900 + tm->tm_year, tm->tm_mon + 1, tm->tm_mday,
+			  tm->tm_hour, tm->tm_min, tm->tm_sec);
+}
+
+
+static int folder_init(void)
+{
+	int err = 0;
+	char buf[256];
+	char basefolder[256];
+
+#ifdef WIN32
+	char win32_path[MAX_PATH];
+
+	if (S_OK !=
+	    SHGetFolderPath(NULL, CSIDL_DESKTOP, NULL, 0, win32_path)) {
+		return ENOENT;
+	}
+	str_ncpy(buf, win32_path, sizeof(buf));
+#else
+	err = fs_gethome(buf, sizeof(buf));
+	if (err)
+		return err;
+#endif
+
+	(void)re_snprintf(basefolder, sizeof(basefolder),
+			  "%s" DIR_SEP "studio-link", buf);
+	(void)fs_mkdir(basefolder, 0700);
+
+	(void)re_snprintf(basefolder, sizeof(basefolder),
+			  "%s" DIR_SEP "studio-link", buf);
+
+	time_t tnow   = time(0);
+	struct tm *tm = localtime(&tnow);
+
+	(void)re_snprintf(record.folder, sizeof(record.folder),
+			  "%s" DIR_SEP "%H", basefolder, timestamp_print, tm);
+
+	return fs_mkdir(record.folder, 0700);
+}
+
+
+int sl_record_start(void)
 {
 	int err;
-
-	if (!folder)
-		return EINVAL;
 
 	if (re_atomic_rlx(&record.run))
 		return EALREADY;
 
 	re_atomic_rlx_set(&record.start_time, 0);
-	str_dup(&record.folder, folder);
 
-	err = aubuf_alloc(&record.ab, 0, 0);
+	err = folder_init();
 	if (err) {
+		warning("sl_record_start: folder_init err %m\n", err);
 		return err;
 	}
+
+	err = aubuf_alloc(&record.ab, 0, 0);
+	if (err)
+		return err;
 
 	re_atomic_rlx_set(&record.run, true);
 	info("sl_record: started\n");
@@ -201,8 +265,9 @@ int sl_record_close(void)
 
 	mem_deref(record.ab);
 
-	record.folder = mem_deref(record.folder);
 	list_flush(&record.tracks);
+
+	record_open_folder();
 
 	return 0;
 }

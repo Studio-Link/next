@@ -347,7 +347,7 @@ static void http_req_handler(struct http_conn *conn,
 	if (0 == pl_strcasecmp(&msg->path, "/api/v1/record") &&
 	    0 == pl_strcasecmp(&msg->met, "POST")) {
 
-		sl_record_toggle("/tmp");
+		sl_record_toggle();
 		http_sreply(conn, 200, "OK", "text/html", "", 0);
 
 		goto out;

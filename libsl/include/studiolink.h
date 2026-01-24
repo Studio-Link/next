@@ -246,8 +246,8 @@ struct ua *sl_account_ua(void);
  * record.c
  */
 uint64_t sl_record_msecs(void);
-void sl_record_toggle(const char *folder);
-int sl_record_start(const char *folder);
+void sl_record_toggle(void);
+int sl_record_start(void);
 void sl_record(struct auframe *af);
 int sl_record_close(void);
 
