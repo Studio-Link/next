@@ -1,3 +1,6 @@
+#ifdef WIN32
+#define FLAC__NO_DLL
+#endif
 #include <FLAC/metadata.h>
 #include <FLAC/stream_encoder.h>
 #include <string.h>
