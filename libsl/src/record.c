@@ -3,6 +3,16 @@
  *
  * Copyright (C) 2026 Sebastian Reimers
  */
+#ifdef WIN32
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#include <windows.h>
+#include <shlobj.h>
+#include <direct.h>
+#include <lmaccess.h>
+#endif
+#include <time.h>
 #include <stdlib.h>
 #include <re.h>
 #include <rem.h>
