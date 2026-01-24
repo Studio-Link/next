@@ -3,6 +3,10 @@
  *
  * Copyright (C) 2026 Sebastian Reimers
  */
+#ifdef __MINGW32__
+#define _POSIX_C_SOURCE 200809L
+#endif
+
 #ifdef WIN32
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
