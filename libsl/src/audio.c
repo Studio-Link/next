@@ -623,7 +623,7 @@ int sl_audio_alloc(struct slaudio **audiop, struct sl_track *track)
 	driver_alloc(a);
 
 	err = aubuf_alloc(&a->ab_mix,
-			  (SRATE * CH * PTIME) / 1000 * sizeof(int16_t),
+			  (SRATE * CH * PTIME) / 1000 * sizeof(int16_t) * 2,
 			  (SRATE * CH * PTIME) / 1000 * sizeof(int16_t) * 10);
 	if (err)
 		goto out;
