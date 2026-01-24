@@ -1,7 +1,9 @@
 OPENSSL_VERSION   := 3.6.0
 OPENSSL_MIRROR    := https://www.openssl.org/source
-OPUS_VERSION      := 1.6
+OPUS_VERSION      := 1.6.1
 OPUS_MIRROR       := https://downloads.xiph.org/releases/opus
+FLAC_VERSION      := 1.5.0
+FLAC_MIRROR       := https://ftp.osuosl.org/pub/xiph/releases/flac
 VPX_VERSION       := v1.15.2
 VPX_MIRROR        := https://chromium.googlesource.com/webm/libvpx
 PORTAUDIO_VERSION := master

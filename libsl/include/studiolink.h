@@ -147,7 +147,15 @@ void sl_ws_dummyh(const struct websock_hdr *hdr, struct mbuf *mb, void *arg);
 /******************************************************************************
  * tracks.c
  */
-struct sl_track;
+/* Local audio device track */
+struct sl_local {
+	struct slaudio *slaudio;
+};
+
+/* Remote audio call track */
+struct sl_remote {
+	struct call *call;
+};
 enum sl_track_type { SL_TRACK_REMOTE, SL_TRACK_LOCAL };
 enum sl_track_status {
 	SL_TRACK_INVALID	     = -1,
@@ -159,6 +167,20 @@ enum sl_track_status {
 	SL_TRACK_REMOTE_CONNECTED    = 5,
 	SL_TRACK_REMOTE_CALLING	     = 6,
 	SL_TRACK_REMOTE_INCOMING     = 7,
+};
+struct sl_track {
+	struct le le;
+	uint16_t id;
+	enum sl_track_type type;
+	char name[64];
+	char error[128];
+	enum sl_track_status status;
+	bool muted;
+	union
+	{
+		struct sl_local local;
+		struct sl_remote remote;
+	} u;
 };
 int sl_tracks_init(void);
 int sl_tracks_close(void);
@@ -218,6 +240,24 @@ int sl_db_set(struct sldb *key, struct sldb *val);
 int sl_account_init(void);
 int sl_account_close(void);
 struct ua *sl_account_ua(void);
+
+
+/******************************************************************************
+ * record.c
+ */
+uint64_t sl_record_msecs(void);
+void sl_record_toggle(void);
+int sl_record_start(void);
+void sl_record(struct auframe *af);
+int sl_record_close(void);
+
+
+/******************************************************************************
+ * flac.c
+ */
+struct flac;
+int sl_flac_init(struct flac **flacp, struct auframe *af, char *file);
+int sl_flac_record(struct flac *flac, struct auframe *af, uint64_t offset);
 
 
 #ifdef __cplusplus

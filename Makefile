@@ -90,6 +90,9 @@ lmdb: third_party/lmdb
 .PHONY: libvpx
 libvpx: third_party/libvpx
 
+.PHONY: flac
+flac: third_party/flac
+
 .PHONY: cacert
 cacert: third_party/cacert.pem
 
@@ -100,7 +103,19 @@ third_party_dir:
 
 .PHONY: third_party
 third_party: third_party_dir libvpx openssl opus samplerate portaudio lmdb \
-	cacert
+	flac cacert
+
+
+third_party/flac:
+	$(HIDE)cd third_party && \
+		wget ${FLAC_MIRROR}/flac-${FLAC_VERSION}.tar.xz && \
+		tar -xvf flac-${FLAC_VERSION}.tar.xz && \
+		mv flac-${FLAC_VERSION} flac && cd flac && \
+		$(_ARCH_CONFIGURE) \
+		--disable-ogg --enable-static --disable-cpplibs && \
+		make -j4 && \
+		cp src/libFLAC/.libs/libFLAC.a ../lib/ && \
+		cp -a include/FLAC ../include
 
 third_party/libvpx:
 	$(HIDE)cd third_party && \

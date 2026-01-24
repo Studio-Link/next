@@ -4,31 +4,6 @@
 
 #define SL_MAX_TRACKS 16
 
-/* Local audio device track */
-struct local {
-	struct slaudio *slaudio;
-};
-
-/* Remote audio call track */
-struct remote {
-	struct call *call;
-};
-
-struct sl_track {
-	struct le le;
-	int id;
-	enum sl_track_type type;
-	char name[64];
-	char error[128];
-	enum sl_track_status status;
-	bool muted;
-	union
-	{
-		struct local local;
-		struct remote remote;
-	} u;
-};
-
 static struct list tracks = LIST_INIT;
 
 /* TODO: refactor allow multiple local tracks */
@@ -264,13 +239,13 @@ int sl_track_dial(struct sl_track *track, struct pl *peer)
 
 	track->status = SL_TRACK_REMOTE_CALLING;
 	pl_strcpy(peer, track->name, sizeof(track->name));
-	audio_set_devicename(call_audio(track->u.remote.call), track->name,
-			     track->name);
+	char buf[ITOA_BUFSZ];
+	char *id = str_itoa(track->id, buf, 10);
+	audio_set_devicename(call_audio(track->u.remote.call), id, id);
 
 out:
-	if (err) {
+	if (err)
 		re_snprintf(track->error, sizeof(track->error), "%m", err);
-	}
 
 	if (err == EINVAL)
 		str_ncpy(track->error, "Invalid ID", sizeof(track->error));
@@ -354,8 +329,9 @@ out:
 	track->u.remote.call = call;
 	track->status	     = SL_TRACK_REMOTE_INCOMING;
 	str_ncpy(track->name, call_peeruri(call), sizeof(track->name));
-
-	audio_set_devicename(call_audio(call), track->name, track->name);
+	char buf[ITOA_BUFSZ];
+	char *id = str_itoa(track->id, buf, 10);
+	audio_set_devicename(call_audio(call), id, id);
 }
 
 

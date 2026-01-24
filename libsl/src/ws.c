@@ -138,7 +138,7 @@ int sl_ws_init(void)
 		return err;
 	}
 
-	err = mutex_alloc(&wsl_lock);
+	err = mutex_alloc_tp(&wsl_lock, mtx_recursive);
 	if (err) {
 		warning("sl_ws_init: mutex_alloc failed\n");
 		mem_deref(ws);
