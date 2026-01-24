@@ -3,16 +3,6 @@
  *
  * Copyright (C) 2026 Sebastian Reimers
  */
-#ifdef WIN32
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#endif
-#include <windows.h>
-#include <shlobj.h>
-#include <direct.h>
-#include <lmaccess.h>
-#endif
-#include <time.h>
 #include <stdlib.h>
 #include <re.h>
 #include <rem.h>
@@ -225,11 +215,15 @@ static int folder_init(void)
 	(void)re_snprintf(basefolder, sizeof(basefolder),
 			  "%s" DIR_SEP "studio-link", buf);
 
-	time_t tnow   = time(0);
-	struct tm *tm = localtime(&tnow);
+	struct timespec tspec;
+	struct tm tm;
+
+	(void)clock_gettime(CLOCK_REALTIME, &tspec);
+	if (!localtime_r(&tspec.tv_sec, &tm))
+		return EINVAL;
 
 	(void)re_snprintf(record.folder, sizeof(record.folder),
-			  "%s" DIR_SEP "%H", basefolder, timestamp_print, tm);
+			  "%s" DIR_SEP "%H", basefolder, timestamp_print, &tm);
 
 	return fs_mkdir(record.folder, 0700);
 }
