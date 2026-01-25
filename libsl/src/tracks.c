@@ -264,7 +264,8 @@ void sl_track_accept(struct sl_track *track)
 	if (!track || track->type != SL_TRACK_REMOTE)
 		return;
 
-	ua_answer(sl_account_ua(), track->u.remote.call, VIDMODE_OFF);
+	ua_answer(call_get_ua(track->u.remote.call), track->u.remote.call,
+		  VIDMODE_OFF);
 }
 
 
@@ -273,7 +274,8 @@ void sl_track_hangup(struct sl_track *track)
 	if (!track || track->type != SL_TRACK_REMOTE)
 		return;
 
-	ua_hangup(sl_account_ua(), track->u.remote.call, 0, "");
+	ua_hangup(call_get_ua(track->u.remote.call), track->u.remote.call, 0,
+		  "");
 
 	track->name[0]	     = '\0';
 	track->u.remote.call = NULL;
@@ -338,10 +340,18 @@ out:
 static void eventh(enum bevent_ev ev, struct bevent *event, void *arg)
 {
 	struct le *le;
-	bool changed	  = false;
-	struct call *call = bevent_get_call(event);
-	const char *prm	  = bevent_get_text(event);
+	bool changed		  = false;
+	struct call *call	  = bevent_get_call(event);
+	const char *prm		  = bevent_get_text(event);
+	const struct sip_msg *msg = bevent_get_msg(event);
 	(void)arg;
+
+	if (ev == BEVENT_SIPSESS_CONN) {
+		struct ua *ua = uag_find_msg(msg);
+		ua_accept(ua, msg);
+		bevent_stop(event);
+		return;
+	}
 
 	if (ev == BEVENT_CALL_INCOMING) {
 		call_incoming(call);
