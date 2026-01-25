@@ -1,6 +1,7 @@
 #include <studiolink.h>
 
 static struct ua *ua;
+static struct ua *ua_quick;
 static struct sl_httpc *httpc;
 
 
@@ -65,6 +66,8 @@ static void http_resph(int err, const struct http_msg *msg, void *arg)
 	if (!stunpass)
 		goto out;
 
+	const char *quick = odict_string(o, "quick");
+
 	err = 0;
 
 	re_sdprintf(
@@ -80,6 +83,25 @@ static void http_resph(int err, const struct http_msg *msg, void *arg)
 		goto out;
 
 	err = ua_register(ua);
+	if (err)
+		goto out;
+
+	if (quick) {
+		aor = mem_deref(aor);
+		re_sdprintf(&aor,
+			    "<sip:quick-%s@%s;transport=tls>;auth_pass=%s;"
+			    "rtcp_mux=true;%s",
+			    user, domain, password, quick);
+		warning("account quick: %s\n", aor);
+
+		err = ua_alloc(&ua_quick, aor);
+		if (err)
+			goto out;
+
+		err = ua_register(ua_quick);
+		if (err)
+			goto out;
+	}
 
 out:
 	if (err)
