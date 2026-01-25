@@ -14,10 +14,8 @@ static struct tmr tmr = {.le = LE_INIT};
 
 void sl_meter_process(unsigned int ch, float *in, unsigned long nframes)
 {
-	unsigned int i;
-
 	mtx_lock(mutex);
-	for (i = 0; i < nframes; i = i + 2) {
+	for (unsigned int i = ch; i < nframes; i = i + 2) {
 		const float s = fabs(in[i]);
 		if (s > peaks[ch]) {
 			peaks[ch] = s;

@@ -203,6 +203,7 @@ static void mix_handler(const int16_t *sampv, size_t sampc, void *arg)
 
 static void mix_readh(struct auframe *af, void *arg)
 {
+	float sampv[4096];
 	struct amix *amix = arg;
 
 	if (!amix || !af || !amix->play)
@@ -211,10 +212,9 @@ static void mix_readh(struct auframe *af, void *arg)
 	amix->play->wh(af, amix->play->arg);
 	af->id = amix->track->id;
 
-#if 0
-	re_atomic_rlx_set(&amix->play->level,
-			  amix_level(af->sampv, af->sampc / CH));
-#endif
+	auconv_from_s16(AUFMT_FLOAT, sampv, af->sampv, af->sampc);
+	sl_meter_process(amix->track->id, sampv, af->sampc / CH);
+	sl_meter_process(amix->track->id+1, sampv, af->sampc / CH);
 }
 
 
@@ -458,6 +458,7 @@ static void driver_read_handler(struct auframe *af, void *arg)
 
 	auconv_from_s16(AUFMT_FLOAT, sampv, af->sampv, af->sampc);
 	sl_meter_process(0, sampv, af->sampc / CH);
+	sl_meter_process(1, sampv, af->sampc / CH);
 
 	af->id = 1;
 

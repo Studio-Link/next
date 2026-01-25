@@ -26,11 +26,8 @@ function iec_scale(db: number) {
 }
 
 function update_meters(peak: string, index: number) {
-    index = index + 1
-    if (index < 2)
-        return
     const val = iec_scale(parseFloat(peak))
-    document.getElementById("level" + (index - 2))?.style.setProperty("--my-level", val + "% 0 0 0")
+    document.getElementById("level" + (index + 1))?.style.setProperty("--my-level", val + "% 0 0 0")
 }
 
 interface Meters {
@@ -77,6 +74,7 @@ export const meters: Meters = {
             this.record.value = false
         }
 
+        //console.log(peaks)
         peaks.forEach(update_meters)
     }
 }
