@@ -87,12 +87,12 @@ static void http_resph(int err, const struct http_msg *msg, void *arg)
 		goto out;
 
 	if (quick) {
+		info("sl/account: quick active\n");
 		aor = mem_deref(aor);
 		re_sdprintf(&aor,
 			    "<sip:quick-%s@%s;transport=tls>;auth_pass=%s;"
 			    "rtcp_mux=true;%s",
 			    user, domain, password, quick);
-		warning("account quick: %s\n", aor);
 
 		err = ua_alloc(&ua_quick, aor);
 		if (err)

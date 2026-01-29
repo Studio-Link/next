@@ -324,8 +324,6 @@ static int src_alloc(struct ausrc_st **stp, const struct ausrc *as,
 
 		aumix_source_enable(amix->aumix_src, true);
 
-		warning("debug %H\n", aumix_debug, aumix);
-
 		goto out;
 	}
 
