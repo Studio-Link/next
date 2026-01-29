@@ -23,8 +23,8 @@ endif
 
 TARGET := Linux
 
-TRACE_FLAGS := "-DJBUF_TRACE -DAUBUF_TRACE -DTRACE_FLUSH_THRESHOLD=1 \
-			   -DTRACE_FLUSH_TMR=500"
+TRACE_FLAGS := "-DJBUF_TRACE -DAUBUF_TRACE -DTRACE_FLUSH_THRESHOLD=100 \
+			   -DTRACE_FLUSH_TMR=1000"
 
 ##############################################################################
 #
@@ -137,7 +137,7 @@ third_party/openssl:
 		mv openssl-${OPENSSL_VERSION} openssl
 	@rm -f third_party/openssl-${OPENSSL_VERSION}.tar.gz
 	$(HIDE)cd third_party/openssl && \
-		./config $(OPENSSL_TARGET) no-shared && \
+		./config $(OPENSSL_TARGET) no-shared no-quic && \
 		make -j32 build_libs && \
 		cp *.a ../lib && \
 		cp -a include/openssl ../include/
