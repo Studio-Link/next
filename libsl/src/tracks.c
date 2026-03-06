@@ -296,8 +296,8 @@ void sl_track_toggle_mute(struct sl_track *track)
 
 void sl_track_ws_send(void)
 {
-	char *json_str = mem_zalloc(SL_MAX_JSON + 1, NULL);
-	re_snprintf(json_str, SL_MAX_JSON, "%H", sl_tracks_json, NULL);
+	char *json_str;
+	re_sdprintf(&json_str, "%H", sl_tracks_json, NULL);
 	sl_ws_send_str(WS_TRACKS, json_str);
 	mem_deref(json_str);
 }
