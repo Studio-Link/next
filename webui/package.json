@@ -1,6 +1,7 @@
 {
   "name": "webui",
   "version": "0.0.0",
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "dev-host": "vite --host",
@@ -20,7 +21,6 @@
     "tailwindcss": "^4.1.16",
     "typeface-roboto": "^1.1.13",
     "typeface-roboto-mono": "^1.1.13",
-    "uplot": "^1.6.32",
     "vue": "^3.2.26",
     "vue-router": "^4.6.3"
   },

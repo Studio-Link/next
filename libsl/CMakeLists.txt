@@ -52,7 +52,6 @@ set(COMPILED_RESOURCES
   TrackView.js
   DebugView.js
   index.css
-  DebugView.css
   roboto-mono-latin-400.woff2
   roboto-mono-latin-500.woff2
   roboto-mono-latin-600.woff2

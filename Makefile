@@ -23,8 +23,8 @@ endif
 
 TARGET := Linux
 
-TRACE_FLAGS := "-DJBUF_TRACE -DAUBUF_TRACE -DTRACE_FLUSH_THRESHOLD=100 \
-			   -DTRACE_FLUSH_TMR=1000"
+TRACE_FLAGS := "-DJBUF_TRACE -DAUBUF_TRACE -DTRACE_FLUSH_THRESHOLD=10 \
+			   -DTRACE_FLUSH_TMR=100"
 
 ##############################################################################
 #

@@ -5,7 +5,6 @@
 </template>
 
 <script setup lang="ts">
-import "uplot/dist/uPlot.min.css"
 import { onMounted, onUnmounted} from 'vue'
 import { Debug } from "../states/debug"
 import { config } from "../config"

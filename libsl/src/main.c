@@ -38,7 +38,7 @@ static void jitter_stats(void *arg)
 	}
 
 	if ((tmr_jiffies() - jitter_last_report) > 1000) {
-		RE_TRACE_INSTANT_I("slmain", "max_jitter", max_jitter);
+		RE_TRACE_INSTANT_I("slmain", "loop_jitter", max_jitter);
 		max_jitter	   = 0;
 		jitter_last_report = tmr_jiffies();
 	}
@@ -119,7 +119,9 @@ static void trace_h(const struct re_trace_event_s *e, struct mbuf *json)
 {
 	(void)e;
 
+	re_thread_enter();
 	sl_ws_send_mb(WS_DEBUG, json);
+	re_thread_leave();
 }
 
 
@@ -132,7 +134,7 @@ int sl_baresip_init(const uint8_t *conf)
 			    "audio_buffer_mode	fixed\n"
 			    "audio_silence	-35.0\n"
 			    "audio_jitter_buffer_type	adaptive\n"
-			    "audio_jitter_buffer_ms	60-200\n"
+			    "audio_jitter_buffer_ms	100-200\n"
 			    "video_jitter_buffer_type	adaptive\n"
 			    "video_jitter_buffer_ms	100-200\n"
 			    "video_jitter_buffer_size 1000\n"
