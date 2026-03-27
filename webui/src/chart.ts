@@ -24,7 +24,7 @@ export class CanvasLineChart {
         this.data = { x: [], y: [] };
     }
 
-    realDraw() {
+    private realDraw() {
         const { x, y } = this.data;
 
         const width = this.canvas.width;

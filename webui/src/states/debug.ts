@@ -25,9 +25,6 @@ function createChart(id: string): void {
     const canvas = document.createElement("canvas")
     canvas.className = "chart-container bg-sl-01dpa text-gray-500"
     canvas.id = id
-    //canvas.style = "image-rendering: pixelated;"
-    //canvas.width = canvas.getBoundingClientRect().width;
-    //canvas.height = canvas.getBoundingClientRect().height;
 
     document.getElementById("charts")!.appendChild(canvas)
 
@@ -56,7 +53,7 @@ function handleNewData(d: Data, maxPoints: number = 100): void {
         ys.shift();
     }
 
-    chart.draw({x: xs, y: ys});
+    chart.draw({ x: xs, y: ys });
 }
 
 
@@ -75,21 +72,20 @@ export const Debug: Debug = {
                 return
             }
             if (json.cat == 'aubuf' && json.name == 'cur_sz_ms' && json.id) {
-                const d: Data = { id: json.id, x: ts, y: json.args.cur_sz_ms }
+                const d: Data = { id: 'aubuf_'+json.id, x: ts, y: json.args.cur_sz_ms }
                 handleNewData(d, 500)
                 return
             }
             if (json.cat == 'aubuf') {
-                if (json.name == 'overrun') {
-                    const d: Data = { id: json.id, x: ts, y: 100 }
+                if (json.name == 'overrun' || json.name == 'underrun') {
+                    const d: Data = { id: json.id + json.name, x: ts, y: 1 }
                     handleNewData(d)
                     return
                 }
-                else if (json.name == 'underrun') {
-                    const d: Data = { id: json.id, x: ts, y: 10 }
-                    handleNewData(d)
-                    return
-                }
+            }
+            if (json.cat == 'jbuf') {
+                const d: Data = { id: "jbuf_" + json.id + "_" + json.name, x: ts, y: json.args[json.name] }
+                handleNewData(d)
             }
         }
     },
