@@ -12,8 +12,8 @@ android {
         applicationId = "link.studio.app"
         minSdk = 26
         targetSdk = 34
-        versionCode = 24010
-        versionName = "24.1.0"
+        versionCode = 25010
+        versionName = "25.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
