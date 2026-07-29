@@ -1,6 +1,7 @@
 import { createApp } from "vue";
 import App from "./App.vue";
 import "./index.css";
+// @ts-ignore
 import "typeface-roboto-mono";
 import ButtonPrimary from "./components/ButtonPrimary.vue";
 import ButtonSecondary from "./components/ButtonSecondary.vue";
