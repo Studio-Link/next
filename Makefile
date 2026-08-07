@@ -179,7 +179,7 @@ third_party/lmdb:
 	$(HIDE)cd third_party && \
 		git clone https://github.com/LMDB/lmdb && \
 		cd lmdb/libraries/liblmdb && \
-		make CC=$(CC) -j && \
+		make CC=$(CC) -j liblmdb.a && \
 		cp liblmdb.a ../../../lib/ && \
 		cp lmdb.h ../../../include/
 
