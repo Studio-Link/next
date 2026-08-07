@@ -10,9 +10,9 @@ jobs:
   webui:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     - name: Use Node.js
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v7
       with:
         node-version: '24'
         cache: 'npm'
@@ -21,7 +21,7 @@ jobs:
       run: |
         cd webui && npm install && npm run build && cd ..
         zip -r webui.zip webui/dist
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v7
       with:
         name: webui
         path: webui.zip
@@ -30,7 +30,7 @@ jobs:
   ccheck:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     - name: ccheck
       run: |
         make ccheck
@@ -39,13 +39,13 @@ jobs:
     runs-on: ubuntu-latest
     needs: webui
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/download-artifact@v4
+    - uses: actions/checkout@v7
+    - uses: actions/download-artifact@v8
       with:
         name: webui
     - name: unzip webui
       run: rm -Rf webui && unzip webui.zip
-    - uses: actions/cache@v4
+    - uses: actions/cache@v6
       with:
         path: third_party
         key: mingw-${{ hashFiles('versions.mk') }}
@@ -63,7 +63,7 @@ jobs:
     env:
       MACOSX_DEPLOYMENT_TARGET: "10.12"
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
 
     - name: install clang-21 and ninja
       if: ${{ runner.os == 'Linux' }}
@@ -102,12 +102,12 @@ jobs:
         mv websocat.x86_64-apple-darwin /usr/local/bin/websocat
         chmod +x /usr/local/bin/websocat
 
-    - uses: actions/cache@v4
+    - uses: actions/cache@v6
       with:
         path: third_party
         key: ${{ runner.os }}-${{ hashFiles('versions.mk') }}
 
-    - uses: actions/download-artifact@v4
+    - uses: actions/download-artifact@v8
       with:
         name: webui
 
@@ -143,7 +143,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
     
     - name: install and ninja
       run: |
@@ -154,12 +154,12 @@ jobs:
       run: |
         sudo apt-get install -y libasound2-dev libjack-jackd2-dev libpulse-dev libpulse0
 
-    - uses: actions/cache@v4
+    - uses: actions/cache@v6
       with:
         path: third_party
         key: ${{ runner.os }}-gcc-${{ hashFiles('versions.mk') }}
 
-    - uses: actions/download-artifact@v4
+    - uses: actions/download-artifact@v8
       with:
         name: webui
 
