@@ -12,6 +12,7 @@ project(sl LANGUAGES C)
 
 find_package(LMDB REQUIRED)
 find_package(FLAC REQUIRED)
+find_package(SampleRate REQUIRED)
 
 ##############################################################################
 #
@@ -23,12 +24,14 @@ set(SRCS
   src/audio.c
   src/conf.c
   src/db.c
+  src/drift.c
   src/flac.c
   src/http/client.c
   src/http/server.c
   src/main.c
   src/meters.c
   src/record.c
+  src/resample.c
   src/tracks.c
   src/ws.c
 )
@@ -85,7 +88,8 @@ LIST(APPEND COMPILED_RESOURCES ${OUTPUT_FILE})
 #
 # Main target object
 #
-set(LINKLIBS baresip re ${FLAC_LIBRARIES} ${LMDB_LIBRARIES} stdc++)
+set(LINKLIBS baresip re ${FLAC_LIBRARIES} ${LMDB_LIBRARIES}
+    ${SAMPLERATE_LIBRARIES} stdc++)
 
 if(WIN32)
   list(APPEND LINKLIBS winmm setupapi)
@@ -93,7 +97,8 @@ endif()
 
 add_library(${PROJECT_NAME} STATIC ${SRCS} ${HEADERS} ${COMPILED_RESOURCES})
 target_link_libraries(${PROJECT_NAME} PUBLIC ${LINKLIBS})
-target_include_directories(${PROJECT_NAME} PUBLIC include PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+target_include_directories(${PROJECT_NAME} PUBLIC include
+  PRIVATE ${CMAKE_CURRENT_BINARY_DIR} ${SAMPLERATE_INCLUDE_DIR})
 target_compile_definitions(${PROJECT_NAME} PRIVATE ${RE_DEFINITIONS})
   
 if(WIN32)

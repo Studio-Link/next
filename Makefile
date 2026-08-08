@@ -159,7 +159,7 @@ third_party/portaudio:
 	$(HIDE)cd third_party && \
 		git clone ${PORTAUDIO_MIRROR}/portaudio.git && \
 	    cd portaudio && \
-		cmake -B build -DBUILD_SHARED_LIBS=0 \
+		cmake -B build -DBUILD_SHARED_LIBS=0 -DPA_USE_SNDIO=OFF \
 		-DPA_USE_WMME=OFF -DPA_USE_DS=OFF -DPA_USE_WDMKS=OFF && \
 		cmake --build build -j && \
 		cp -a build/libportaudio.a ../lib/ && \
@@ -204,6 +204,25 @@ external/baresip:
 	cd external/baresip && \
 		patch -p1 < ../../patches/baresip_portaudio.patch
 
+
+.PHONY: vst3sdk
+vst3sdk: external/vst3sdk
+
+# Only the submodules the plug-in actually needs. VSTGUI is skipped, the
+# plug-in has no editor of its own.
+external/vst3sdk:
+	$(HIDE) [ ! -d external/vst3sdk ] && \
+		git -C external clone -b $(VST3SDK_VERSION) --depth=1 \
+		$(VST3SDK_MIRROR) vst3sdk && \
+		cd external/vst3sdk && \
+		git submodule update --init --depth=1 \
+		base cmake pluginterfaces public.sdk
+
+.PHONY: vst3
+vst3: third_party external external/vst3sdk
+	$(HIDE)[ -d build ] || cmake -B build -GNinja \
+		-DCMAKE_BUILD_TYPE=Release -DSL_BUILD_VST3=ON
+	$(HIDE)cmake --build build -j $(CMAKE_VERBOSE) --target studiolink_vst3
 
 ##############################################################################
 #

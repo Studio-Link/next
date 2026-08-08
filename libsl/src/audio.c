@@ -3,6 +3,12 @@
 
 enum { PTIME = 20, SRATE = 48000, CH = 2 };
 
+/*
+ * Largest hardware block we will drift correct. Blocks above this fall back
+ * to an uncorrected read instead of overrunning the scratch buffers.
+ */
+enum { PLAY_MAX_FRM = (SRATE * PTIME / 1000) * 4 }; /* 80 ms */
+
 struct slaudio {
 	struct le le;
 	struct sl_track *local_track;
@@ -16,6 +22,21 @@ struct slaudio {
 	} play, src;
 	struct aumix_source *mix_src; /**< filled by local driver */
 	struct aubuf *ab_mix;
+
+	/*
+	 * ab_mix sits on a clock boundary: it is written by the aumix
+	 * thread, which is paced by the OS monotonic clock, and drained by
+	 * the sound card callback, which runs on the device crystal. The
+	 * two are never identical, so without correction the buffer slowly
+	 * fills or empties until aubuf drops or zero fills a whole frame.
+	 */
+	struct {
+		struct sl_drift *drift;
+		struct sl_rsmp *rsmp;
+		int16_t *s16;
+		float *flin;
+		float *flout;
+	} play_dc;
 };
 
 struct amix {
@@ -432,15 +453,67 @@ static void driver_mixh(const int16_t *sampv, size_t sampc, void *arg)
 
 static void driver_write_handler(struct auframe *af, void *arg)
 {
-	(void)af;
 	struct slaudio *a = arg;
+	struct auframe rd;
+	size_t frm, need, staged, n;
+	double ratio;
 
 	if (af->fmt != AUFMT_S16LE) {
 		warning("auplay wrong format\n");
 		return;
 	}
 
-	aubuf_read_auframe(a->ab_mix, af);
+	frm = af->sampc / CH;
+
+	/* no correction available, or an unexpectedly large block */
+	if (!a->play_dc.drift || !a->play_dc.rsmp || !frm ||
+	    frm > PLAY_MAX_FRM) {
+		aubuf_read_auframe(a->ab_mix, af);
+		return;
+	}
+
+	/* the setpoint must clear one device block plus a mixer frame, or a
+	   large block drains the buffer between refills */
+	sl_drift_set_target(a->play_dc.drift,
+			    (frm + (SRATE * PTIME / 1000) * 2) * CH *
+				    sizeof(int16_t));
+
+	sl_drift_update(a->play_dc.drift, aubuf_cur_size(a->ab_mix),
+			tmr_jiffies());
+
+	ratio = sl_drift_ratio(a->play_dc.drift);
+
+	if (ratio != 1.0)
+		warning("ratio: %f\n", ratio);
+
+	/* ratio is "mixer samples consumed per device sample", the
+	   resampler wants output/input */
+	sl_rsmp_set_ratio(a->play_dc.rsmp, 1.0 / ratio);
+
+	need = (size_t)((double)frm * ratio) + 2;
+	if (need > PLAY_MAX_FRM)
+		need = PLAY_MAX_FRM;
+
+	staged = sl_rsmp_staged(a->play_dc.rsmp);
+	need   = (need > staged) ? need - staged : 0;
+
+	if (need) {
+		auframe_init(&rd, AUFMT_S16LE, a->play_dc.s16, need * CH,
+			     SRATE, CH);
+		aubuf_read_auframe(a->ab_mix, &rd);
+		auconv_to_float(a->play_dc.flin, AUFMT_S16LE, a->play_dc.s16,
+				need * CH);
+	}
+
+	n = sl_rsmp_process(a->play_dc.rsmp, need ? a->play_dc.flin : NULL,
+			    need, a->play_dc.flout, frm);
+
+	if (n < frm) {
+		memset(a->play_dc.flout + n * CH, 0,
+		       (frm - n) * CH * sizeof(float));
+	}
+
+	auconv_to_s16(af->sampv, AUFMT_FLOAT, a->play_dc.flout, frm * CH);
 }
 
 
@@ -499,6 +572,8 @@ static int driver_start(struct slaudio *a)
 	}
 
 	aubuf_flush(a->ab_mix);
+	sl_drift_reset(a->play_dc.drift);
+	sl_rsmp_reset(a->play_dc.rsmp);
 
 	info("slaudio: driver started\n");
 
@@ -541,6 +616,11 @@ static void slaudio_destructor(void *data)
 	mem_deref(audio->ausrc_st);
 	mem_deref(audio->mix_src);
 	mem_deref(audio->ab_mix);
+	mem_deref(audio->play_dc.drift);
+	mem_deref(audio->play_dc.rsmp);
+	mem_deref(audio->play_dc.s16);
+	mem_deref(audio->play_dc.flin);
+	mem_deref(audio->play_dc.flout);
 }
 
 
@@ -652,6 +732,32 @@ int sl_audio_alloc(struct slaudio **audiop, struct sl_track *track)
 	id = mem_deref(id);
 
 	aumix_source_enable(a->mix_src, true);
+
+	/* Clock drift correction on the playback path. Failing to set it up
+	   is not fatal - we simply fall back to the uncorrected read. */
+	err = sl_drift_alloc(&a->play_dc.drift, SRATE, CH,
+			     (SRATE * CH * PTIME) / 1000 * sizeof(int16_t) *
+				     3);
+	err |= sl_rsmp_alloc(&a->play_dc.rsmp, CH, SRATE, SRATE,
+			     PLAY_MAX_FRM * 2);
+
+	a->play_dc.s16 = mem_zalloc(PLAY_MAX_FRM * CH * sizeof(int16_t),
+				    NULL);
+	a->play_dc.flin = mem_zalloc(PLAY_MAX_FRM * CH * sizeof(float),
+				     NULL);
+	a->play_dc.flout = mem_zalloc(PLAY_MAX_FRM * CH * sizeof(float),
+				      NULL);
+
+	if (err || !a->play_dc.s16 || !a->play_dc.flin ||
+	    !a->play_dc.flout) {
+		warning("slaudio: drift correction disabled (%m)\n", err);
+		a->play_dc.drift = mem_deref(a->play_dc.drift);
+		a->play_dc.rsmp	 = mem_deref(a->play_dc.rsmp);
+		err		 = 0;
+	}
+	else {
+		info("slaudio: clock drift correction enabled\n");
+	}
 
 out:
 	if (err) {

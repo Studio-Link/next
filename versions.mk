@@ -11,4 +11,6 @@ PORTAUDIO_MIRROR  := https://github.com/studio-link-3rdparty
 SAMPLERATE_MIRROR := https://github.com/studio-link-3rdparty
 LIBRE_VERSION     := main 
 BARESIP_VERSION   := main 
+VST3SDK_VERSION   := v3.8.0_build_66
+VST3SDK_MIRROR    := https://github.com/steinbergmedia/vst3sdk.git
 CACHE_VERSION     := 2026012901 # github cache invalidation workaround
