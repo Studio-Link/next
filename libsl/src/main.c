@@ -287,6 +287,7 @@ static int webui_open(void *arg)
 #else
 	re_snprintf(cmd, sizeof(cmd),
 		    "chromium --app=http://127.0.0.1:%u "
+		    "--no-first-run "
 		    "--user-data-dir=/tmp/.studio-link/browser "
 		    "--window-size=1060,800 >/dev/null 2>&1",
 		    sl_port);
