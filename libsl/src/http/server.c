@@ -377,7 +377,7 @@ int sl_http_listen(uint16_t *port)
 
 	do {
 #ifdef RELEASE
-		err = sa_set_str(&srv, "127.0.0.1", port);
+		err = sa_set_str(&srv, "127.0.0.1", *port);
 #else
 		err = sa_set_str(&srv, "0.0.0.0", *port);
 #endif

@@ -17,6 +17,7 @@ project(test VERSION 0.0.1 LANGUAGES C)
 
 set(SRCS
   src/db.c
+  src/drift.c
   src/http.c
   src/main.c
   src/tracks.c

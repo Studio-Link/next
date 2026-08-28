@@ -27,6 +27,11 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_C_STANDARD 11)
+option(SL_BUILD_VST3 "Build the VST3 plug-in" OFF)
+
+if(SL_BUILD_VST3)
+  set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+endif()
 
 if(MSVC)
   add_compile_options("/W3")
@@ -87,21 +92,20 @@ set(STATIC
     CACHE BOOL "")
 
 set(MODULES
-    alsa
     auconv
     auresamp
     vp8
-    coreaudio
     dtls_srtp
     g711
     ice
-    jack
     netroam
     opus
-    portaudio
-    pulse
     turn
     CACHE STRING "")
+
+if(NOT SL_BUILD_VST3)
+    list(APPEND MODULES alsa coreaudio jack pulse portaudio)
+endif()
 
 # Baresip dependencies
 add_subdirectory(external/re EXCLUDE_FROM_ALL)
@@ -112,6 +116,11 @@ find_package(re CONFIG REQUIRED)
 
 add_compile_definitions(SL_VERSION="${PROJECT_VERSION}")
 
+
 add_subdirectory(libsl)
 add_subdirectory(test)
 add_subdirectory(app/cli)
+
+if(SL_BUILD_VST3)
+  add_subdirectory(app/vst3)
+endif()

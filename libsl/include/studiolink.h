@@ -253,6 +253,79 @@ int sl_record_close(void);
 
 
 /******************************************************************************
+ * resample.c
+ */
+struct sl_rsmp;
+int sl_rsmp_alloc(struct sl_rsmp **rsmpp, unsigned ch, uint32_t irate,
+		  uint32_t orate, size_t in_max);
+size_t sl_rsmp_process(struct sl_rsmp *rsmp, const float *in, size_t in_frm,
+		       float *out, size_t out_max);
+void sl_rsmp_set_ratio(struct sl_rsmp *rsmp, double ratio);
+double sl_rsmp_get_ratio(const struct sl_rsmp *rsmp);
+size_t sl_rsmp_staged(const struct sl_rsmp *rsmp);
+void sl_rsmp_reset(struct sl_rsmp *rsmp);
+
+
+/******************************************************************************
+ * drift.c
+ */
+struct sl_drift;
+
+/**
+ * Allocate a clock drift controller for one audio buffer
+ *
+ * @param driftp    Allocated controller
+ * @param srate     Samplerate of the buffer content
+ * @param ch        Channels of the buffer content
+ * @param target_sz Wanted fill level in bytes
+ *
+ * @return 0 if success, otherwise errorcode
+ */
+int sl_drift_alloc(struct sl_drift **driftp, uint32_t srate, uint8_t ch,
+		   size_t target_sz);
+
+/**
+ * Feed the current fill level of the buffer to the controller
+ *
+ * @param drift  Controller
+ * @param cur_sz Current fill level in bytes
+ * @param now    Current time in ms (tmr_jiffies)
+ */
+void sl_drift_update(struct sl_drift *drift, size_t cur_sz, uint64_t now);
+
+/**
+ * @return Resample ratio that cancels the drift, 1.0 means no correction
+ */
+double sl_drift_ratio(const struct sl_drift *drift);
+
+/**
+ * @return Applied correction in ppm. This is the negative of the measured
+ *         clock offset between producer and consumer.
+ */
+double sl_drift_ppm(const struct sl_drift *drift);
+
+/**
+ * @return true once the controller has settled and is steering
+ */
+bool sl_drift_locked(const struct sl_drift *drift);
+
+/**
+ * Move the wanted fill level
+ *
+ * The setpoint has to clear one hardware block plus the mixer frame size,
+ * otherwise a large block can empty the buffer between refills no matter
+ * how well the drift itself is tracked.
+ *
+ * @param drift     Controller
+ * @param target_sz Wanted fill level in bytes
+ */
+void sl_drift_set_target(struct sl_drift *drift, size_t target_sz);
+
+/** Drop the estimate, e.g. after a device change or a buffer flush */
+void sl_drift_reset(struct sl_drift *drift);
+
+
+/******************************************************************************
  * flac.c
  */
 struct flac;
