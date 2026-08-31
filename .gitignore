@@ -32,6 +32,7 @@ cache
 
 /external
 /third_party
+/third_party_android
 
 node_modules
 .temp
